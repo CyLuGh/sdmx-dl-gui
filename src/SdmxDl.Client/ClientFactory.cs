@@ -6,7 +6,7 @@ using Sdmxdl.Grpc;
 
 namespace SdmxDl.Client;
 
-public class Consumer : IClient
+public class ClientFactory : IClient
 {
     public SdmxWebManager.SdmxWebManagerClient GetClient()
     {

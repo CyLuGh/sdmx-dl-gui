@@ -2,7 +2,34 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:SdmxDl.Browser.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="SdmxDl.Browser.Browser">
-    Welcome to Avalonia!
+             x:Class="SdmxDl.Browser.Browser"
+             x:DataType="viewModels:BrowserViewModel">
+    <DockPanel Margin="5">
+        <StackPanel HorizontalAlignment="Stretch" 
+                    Margin="5" 
+                    Orientation="Horizontal"
+                    DockPanel.Dock="Bottom">
+            <ToggleButton IsChecked="{Binding Path=ServerIsRunning}"
+                          Classes.Warning="{Binding Path=!ServerIsRunning}"
+                          Classes.Secondary="{Binding Path=ServerIsRunning}">
+                Server is offline
+                <ToggleButton.Styles>
+                    <Style Selector="ToggleButton.Warning">
+                        <Setter Property="Foreground" Value="{DynamicResource ToggleButtonCheckedForeground}"/>
+                        <Setter Property="Background" Value="{DynamicResource ToggleButtonWarningCheckedBackground}"/>
+                    </Style>
+                    <Style Selector="ToggleButton.Secondary">
+                        <Setter Property="Foreground" Value="{DynamicResource ToggleButtonCheckedForeground}"/>
+                        <Setter Property="Background" Value="{DynamicResource ToggleButtonSecondaryCheckedBackground}"/>
+                    </Style>
+                </ToggleButton.Styles>
+            </ToggleButton>
+            
+            
+        </StackPanel>
+        
+        <Grid></Grid>
+    </DockPanel>
 </UserControl>

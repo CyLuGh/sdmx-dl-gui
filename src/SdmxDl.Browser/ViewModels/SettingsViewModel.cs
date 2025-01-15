@@ -15,7 +15,7 @@ public partial class SettingsViewModel : BaseViewModel
     public partial string? ServerUri { get; set; }
     public partial bool UseRunningServer { get; set; }
 
-    public SettingsViewModel(Consumer consumer)
+    public SettingsViewModel(ClientFactory clientFactory)
     {
         this.WhenAnyValue(
                 x => x.JavaPath,
@@ -26,7 +26,7 @@ public partial class SettingsViewModel : BaseViewModel
             .Throttle(TimeSpan.FromMilliseconds(500))
             .Subscribe(_ =>
             {
-                consumer.Settings = Settings;
+                clientFactory.Settings = Settings;
             });
     }
 

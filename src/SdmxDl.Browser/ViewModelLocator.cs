@@ -11,7 +11,7 @@ public class ViewModelLocator
         Locator.CurrentMutable.InitializeSplat();
 
         SplatRegistrations.RegisterLazySingleton<SettingsViewModel>();
-        SplatRegistrations.RegisterLazySingleton<Consumer>();
+        SplatRegistrations.RegisterLazySingleton<ClientFactory>();
         SplatRegistrations.RegisterLazySingleton<BrowserViewModel>();
 
         SplatRegistrations.SetupIOC();

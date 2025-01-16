@@ -36,13 +36,16 @@ public partial class Browser : ReactiveUrsaView<BrowserViewModel>
     {
         viewModel.LaunchServerInteraction.RegisterHandler(async ctx =>
         {
-            await OverlayDialog.ShowCustomModal<ServerStartup, SettingsViewModel, RxUnit>(
+            await OverlayDialog.ShowModal<ServerStartup, SettingsViewModel>(
                 ViewModelLocator.SettingsViewModel,
                 options: new OverlayDialogOptions()
                 {
                     Buttons = DialogButton.None,
                     Mode = DialogMode.None,
                     IsCloseButtonVisible = false,
+                    FullScreen = false,
+                    CanDragMove = false,
+                    Title = "SDMX-DL",
                 }
             );
             ctx.SetOutput(RxUnit.Default);

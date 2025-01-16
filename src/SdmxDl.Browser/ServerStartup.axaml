@@ -6,29 +6,46 @@
              xmlns:viewModels="clr-namespace:SdmxDl.Browser.ViewModels"
              mc:Ignorable="d" 
              Width="800"
-             Height="450"
              x:Class="SdmxDl.Browser.ServerStartup"
              x:DataType="viewModels:SettingsViewModel">
     <Grid RowDefinitions="*,auto">
         <StackPanel Margin="20">
-            <RadioButton IsChecked="{Binding Path=UseRunningServer}">Connect to existing server</RadioButton>
-            <u:Form Margin="30 10 30 20" HorizontalAlignment="Stretch">
-                <TextBox u:FormItem.Label="Server URI"
-                         Text="{Binding Path=ServerUri}"/>
-            </u:Form>
-            <RadioButton IsChecked="{Binding Path=!UseRunningServer}">Host own server</RadioButton>
-            <u:Form Margin="30 10 30 20" HorizontalAlignment="Stretch">
-                <TextBox u:FormItem.Label="Path to Java binaries"/>
-                <TextBox u:FormItem.Label="Path to sdmx-dl jar"/>
-            </u:Form>
+            <RadioButton Name="RadioButtonConnect" 
+                         IsChecked="{Binding Path=UseRunningServer}">Connect to existing server</RadioButton>
+            <u:DisableContainer>
+                <u:Form Margin="30 10 30 20" 
+                        IsEnabled="{Binding #RadioButtonConnect.IsChecked}"
+                        HorizontalAlignment="Stretch">
+                    <TextBox u:FormItem.Label="Server URI"
+                             Text="{Binding Path=ServerUri}"/>
+                </u:Form>
+            </u:DisableContainer>
+            
+            <RadioButton Name="RadioButtonHost" 
+                         IsChecked="{Binding Path=!UseRunningServer}">Host own server</RadioButton>
+            <u:DisableContainer>
+                <u:Form Margin="30 10 30 20" 
+                        IsEnabled="{Binding #RadioButtonHost.IsChecked}"
+                        HorizontalAlignment="Stretch">
+                    <TextBox u:FormItem.Label="Path to Java binaries"/>
+                    <TextBox u:FormItem.Label="Path to sdmx-dl jar"/>
+                </u:Form>
+            </u:DisableContainer>
+            
         </StackPanel>
         
         <StackPanel Orientation="Horizontal" 
                     HorizontalAlignment="Right"
                     Margin="0 20 45 20"
                     Grid.Row="1">
-            <Button Margin="5">Cancel</Button>
-            <Button Margin="5">Connect</Button>
+            <Button Command="{Binding Path=Cancel}" 
+                    Classes="Tertiary"
+                    Theme="{DynamicResource BorderlessButton}"
+                    Margin="5">CANCEL</Button>
+            <Button Command="{Binding Path=Connect}" 
+                    Classes="Primary"
+                    Theme="{DynamicResource SolidButton}"
+                    Margin="5">CONNECT</Button>
         </StackPanel>
     </Grid>
 </UserControl>

@@ -12,8 +12,15 @@ public partial class BrowserViewModel : BaseViewModel
     [Reactive]
     public partial bool ServerIsRunning { get; set; }
 
+    public RxCommand LaunchServer { get; }
+    public RxInteraction LaunchServerInteraction { get; } = new(RxApp.MainThreadScheduler);
+
     public BrowserViewModel(ClientFactory clientFactory)
     {
+        LaunchServer = ReactiveCommand.CreateFromObservable(
+            () => LaunchServerInteraction.Handle(RxUnit.Default)
+        );
+
         this.WhenActivated(disposables =>
         {
             this.WhenAnyValue(x => x.ServerIsRunning)

@@ -12,6 +12,7 @@
                     Orientation="Horizontal"
                     DockPanel.Dock="Bottom">
             <ToggleButton IsChecked="{Binding Path=ServerIsRunning}"
+                          Command="{Binding Path=LaunchServer}"
                           Classes.Warning="{Binding Path=!ServerIsRunning}"
                           Classes.Secondary="{Binding Path=ServerIsRunning}">
                 Server is offline

@@ -15,19 +15,9 @@ public partial class SettingsViewModel : BaseViewModel
     public partial string? ServerUri { get; set; }
     public partial bool UseRunningServer { get; set; }
 
-    public SettingsViewModel(ClientFactory clientFactory)
+    public SettingsViewModel()
     {
-        this.WhenAnyValue(
-                x => x.JavaPath,
-                x => x.JarPath,
-                x => x.UseRunningServer,
-                x => x.ServerUri
-            )
-            .Throttle(TimeSpan.FromMilliseconds(500))
-            .Subscribe(_ =>
-            {
-                clientFactory.Settings = Settings;
-            });
+        ServerUri = @"http://localhost:4567";
     }
 
     public Settings Settings =>

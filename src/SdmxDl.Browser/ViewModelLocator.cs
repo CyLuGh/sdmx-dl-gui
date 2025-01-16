@@ -1,3 +1,6 @@
+global using RxCommand = ReactiveUI.ReactiveCommand<System.Reactive.Unit, System.Reactive.Unit>;
+global using RxInteraction = ReactiveUI.Interaction<System.Reactive.Unit, System.Reactive.Unit>;
+global using RxUnit = System.Reactive.Unit;
 using SdmxDl.Browser.ViewModels;
 using SdmxDl.Client;
 using Splat;
@@ -19,4 +22,7 @@ public class ViewModelLocator
 
     public static BrowserViewModel BrowserViewModel =>
         Locator.Current.GetService<BrowserViewModel>()!;
+
+    public static SettingsViewModel SettingsViewModel =>
+        Locator.Current.GetService<SettingsViewModel>()!;
 }

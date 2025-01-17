@@ -3,34 +3,37 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:SdmxDl.Browser.ViewModels"
+             xmlns:converters="clr-namespace:SdmxDl.Browser.Infrastructure.Converters"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SdmxDl.Browser.Browser"
              x:DataType="viewModels:BrowserViewModel">
+    <UserControl.Resources>
+        <converters:BrowserStatusConverter x:Key="BrowserStatusConverter"/>
+    </UserControl.Resources>
     <DockPanel Margin="5">
-        <StackPanel HorizontalAlignment="Stretch" 
-                    Margin="5" 
+        <StackPanel HorizontalAlignment="Stretch"
+                    Margin="5"
                     Orientation="Horizontal"
                     DockPanel.Dock="Bottom">
-            <ToggleButton IsChecked="{Binding Path=ServerIsRunning}"
-                          Command="{Binding Path=LaunchServer}"
-                          Classes.Warning="{Binding Path=!ServerIsRunning}"
-                          Classes.Secondary="{Binding Path=ServerIsRunning}">
-                Server is offline
-                <ToggleButton.Styles>
-                    <Style Selector="ToggleButton.Warning">
-                        <Setter Property="Foreground" Value="{DynamicResource ToggleButtonCheckedForeground}"/>
-                        <Setter Property="Background" Value="{DynamicResource ToggleButtonWarningCheckedBackground}"/>
+            <Button Content="{Binding Path=Status, Converter={StaticResource BrowserStatusConverter}}"
+                Command="{Binding Path=LaunchServer}"
+                    Classes.Warning="{Binding Path=!ServerIsRunning}"
+                    Classes.Secondary="{Binding Path=ServerIsRunning}">
+                <Button.Styles>
+                    <Style Selector="Button.Warning">
+                        <Setter Property="Foreground" Value="{DynamicResource ToggleButtonCheckedForeground}" />
+                        <Setter Property="Background" Value="{DynamicResource ToggleButtonWarningCheckedBackground}" />
                     </Style>
-                    <Style Selector="ToggleButton.Secondary">
-                        <Setter Property="Foreground" Value="{DynamicResource ToggleButtonCheckedForeground}"/>
-                        <Setter Property="Background" Value="{DynamicResource ToggleButtonSecondaryCheckedBackground}"/>
+                    <Style Selector="Button.Secondary">
+                        <Setter Property="Foreground" Value="{DynamicResource ToggleButtonCheckedForeground}" />
+                        <Setter Property="Background" Value="{DynamicResource ToggleButtonSecondaryCheckedBackground}" />
                     </Style>
-                </ToggleButton.Styles>
-            </ToggleButton>
-            
-            
+                </Button.Styles>
+            </Button>
+
+
         </StackPanel>
-        
+
         <Grid></Grid>
     </DockPanel>
 </UserControl>

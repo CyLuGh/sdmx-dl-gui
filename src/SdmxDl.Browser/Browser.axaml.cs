@@ -3,6 +3,7 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using ReactiveUI;
 using SdmxDl.Browser.ViewModels;
+using SdmxDl.Engine;
 using Ursa.Controls;
 using Ursa.ReactiveUIExtension;
 
@@ -34,21 +35,27 @@ public partial class Browser : ReactiveUrsaView<BrowserViewModel>
         CompositeDisposable disposables
     )
     {
-        viewModel.LaunchServerInteraction.RegisterHandler(async ctx =>
-        {
-            await OverlayDialog.ShowModal<ServerStartup, SettingsViewModel>(
-                ViewModelLocator.SettingsViewModel,
-                options: new OverlayDialogOptions()
-                {
-                    Buttons = DialogButton.None,
-                    Mode = DialogMode.None,
-                    IsCloseButtonVisible = false,
-                    FullScreen = false,
-                    CanDragMove = false,
-                    Title = "SDMX-DL",
-                }
-            );
-            ctx.SetOutput(RxUnit.Default);
-        });
+        viewModel
+            .LaunchServerInteraction.RegisterHandler(async ctx =>
+            {
+                var settings = await OverlayDialog.ShowCustomModal<
+                    ServerStartup,
+                    SettingsViewModel,
+                    Settings
+                >(
+                    ViewModelLocator.SettingsViewModel,
+                    options: new OverlayDialogOptions()
+                    {
+                        Buttons = DialogButton.None,
+                        Mode = DialogMode.None,
+                        IsCloseButtonVisible = false,
+                        FullScreen = false,
+                        CanDragMove = false,
+                        Title = "SDMX-DL",
+                    }
+                );
+                ctx.SetOutput(settings);
+            })
+            .DisposeWith(disposables);
     }
 }

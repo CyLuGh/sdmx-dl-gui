@@ -20,7 +20,7 @@ public partial class SettingsViewModel : BaseViewModel, IDialogContext
     {
         ServerUri = @"http://localhost:4567";
 
-        Connect = ReactiveCommand.Create(Close);
+        Connect = ReactiveCommand.Create(() => Close(Settings));
         Cancel = ReactiveCommand.Create(Close);
     }
 
@@ -31,11 +31,14 @@ public partial class SettingsViewModel : BaseViewModel, IDialogContext
             JarPath = UseRunningServer || string.IsNullOrEmpty(JarPath) ? string.Empty : JarPath,
             ServerUri =
                 UseRunningServer && !string.IsNullOrEmpty(ServerUri) ? ServerUri : string.Empty,
+            IsHosting = !UseRunningServer,
         };
 
-    public void Close()
+    public void Close() => Close(Settings.None);
+
+    public void Close(Settings settings)
     {
-        RequestClose?.Invoke(this, null);
+        RequestClose?.Invoke(this, settings);
     }
 
     public event EventHandler<object?>? RequestClose;

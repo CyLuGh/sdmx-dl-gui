@@ -8,7 +8,8 @@
         x:Class="SdmxDl.Browser.MainWindow"
         IsFullScreenButtonVisible="{OnPlatform True, macOS=False}"
         IsManagedResizerVisible="{OnPlatform False, Linux=True}"
-        Title="SdmxDl.Browser">
+        Title="SdmxDl.Browser"
+        Closing="Window_OnClosing">
     <u:UrsaWindow.RightContent>
         <u:ThemeToggleButton
             IsThreeState="True"

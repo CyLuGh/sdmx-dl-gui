@@ -2,10 +2,13 @@ using System;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using Avalonia.Controls;
+using Irihi.Avalonia.Shared.Helpers;
 using ReactiveUI;
+using SdmxDl.Browser.Infrastructure;
 using SdmxDl.Browser.Models;
 using SdmxDl.Client;
 using SdmxDl.Engine;
+using Sdmxdl.Grpc;
 
 namespace SdmxDl.Browser.ViewModels;
 
@@ -20,20 +23,21 @@ public partial class BrowserViewModel : BaseViewModel
     [ObservableAsProperty]
     public partial Settings Settings { get; }
 
+    [ObservableAsProperty]
+    public partial string? Version { get; }
+
     public ReactiveCommand<RxUnit, Settings> LaunchServer { get; }
     public Interaction<RxUnit, Settings> LaunchServerInteraction { get; } =
         new(RxApp.MainThreadScheduler);
 
     public ReactiveCommand<RxUnit, string> RetrieveVersion { get; }
 
-    public BrowserViewModel(ClientFactory clientFactory)
+    public Interaction<Exception, RxUnit> DisplayErrorMessageInteraction { get; } =
+        new(RxApp.MainThreadScheduler);
+
+    public BrowserViewModel(ClientFactory clientFactory, ExceptionHandler exceptionHandler)
     {
-        LaunchServer = ReactiveCommand.CreateFromObservable(
-            () => LaunchServerInteraction.Handle(RxUnit.Default)
-        );
-
-        RetrieveVersion = CreateCommandRetrieveVersion(clientFactory);
-
+        LaunchServer = CreateCommandLaunchServer();
         LaunchServer.ToProperty(
             this,
             x => x.Settings,
@@ -69,25 +73,59 @@ public partial class BrowserViewModel : BaseViewModel
                 scheduler: RxApp.MainThreadScheduler
             );
 
+        RetrieveVersion = CreateCommandRetrieveVersion(clientFactory);
+
         this.WhenActivated(disposables =>
         {
-            this.WhenAnyValue(x => x.Status)
-                .Throttle(TimeSpan.FromSeconds(1))
-                .Where(status => status == BrowserStatus.Offline)
-                .Select(_ => RxUnit.Default)
+            Observable
+                .Return(RxUnit.Default)
+                .Delay(TimeSpan.FromSeconds(1))
                 .InvokeCommand(LaunchServer)
                 .DisposeWith(disposables);
+
+            ObservableExtensions.Subscribe(
+                exceptionHandler.Alerts,
+                async ex =>
+                {
+                    await DisplayErrorMessageInteraction.Handle(ex);
+                }
+            );
         });
     }
 
-    private static ReactiveCommand<RxUnit, string> CreateCommandRetrieveVersion(
+    private ReactiveCommand<RxUnit, Settings> CreateCommandLaunchServer()
+    {
+        return ReactiveCommand.CreateFromObservable(
+            () => LaunchServerInteraction.Handle(RxUnit.Default)
+        );
+    }
+
+    private ReactiveCommand<RxUnit, string> CreateCommandRetrieveVersion(
         ClientFactory clientFactory
     )
     {
         var command = ReactiveCommand.CreateRunInBackground(() =>
         {
-            return "?";
+            var about = clientFactory.GetClient().GetAbout(new Empty());
+            return $"{about.Name} {about.Version}";
         });
+
+        command.ToProperty(
+            this,
+            x => x.Version,
+            out _versionHelper,
+            initialValue: string.Empty,
+            scheduler: RxApp.MainThreadScheduler
+        );
+
+        Observable
+            .Interval(TimeSpan.FromSeconds(30))
+            .Where(_ => ServerIsRunning)
+            .Select(_ => RxUnit.Default)
+            .Merge(
+                this.WhenAnyValue(x => x.ServerIsRunning).Where(x => x).Select(_ => RxUnit.Default)
+            )
+            .InvokeCommand(command);
 
         return command;
     }

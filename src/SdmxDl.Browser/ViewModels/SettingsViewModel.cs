@@ -1,5 +1,9 @@
 using System;
+using System.IO;
+using System.Reactive.Linq;
 using Irihi.Avalonia.Shared.Contracts;
+using Irihi.Avalonia.Shared.Helpers;
+using Jot;
 using ReactiveUI;
 using SdmxDl.Engine;
 
@@ -8,6 +12,11 @@ namespace SdmxDl.Browser.ViewModels;
 [Reactive]
 public partial class SettingsViewModel : BaseViewModel, IDialogContext
 {
+    /*
+     * /Users/jed/Softwares/sdmx-dl-cli-3.0.0-beta.13-bin.jar
+     *
+     */
+
     public partial string? JavaPath { get; set; }
     public partial string? JarPath { get; set; }
     public partial string? ServerUri { get; set; }
@@ -15,13 +24,80 @@ public partial class SettingsViewModel : BaseViewModel, IDialogContext
 
     public RxCommand Connect { get; }
     public RxCommand Cancel { get; }
+    public ReactiveCommand<RxUnit, string?> PickJavaPath { get; }
+    public ReactiveCommand<RxUnit, string?> PickJarPath { get; }
+    public Interaction<string, string?> PickPathInteraction { get; } =
+        new(RxApp.MainThreadScheduler);
 
-    public SettingsViewModel()
+    public SettingsViewModel(Tracker tracker)
     {
-        ServerUri = @"http://localhost:4567";
+        ServerUri = "http://localhost:4567";
+        tracker.Track(this);
 
-        Connect = ReactiveCommand.Create(() => Close(Settings));
+        Connect = CreateCommandConnect();
         Cancel = ReactiveCommand.Create(Close);
+
+        PickJavaPath = CreateCommandPickJavaPath();
+        PickJarPath = CreateCommandPickJarPath();
+    }
+
+    private ReactiveCommand<RxUnit, string?> CreateCommandPickJavaPath()
+    {
+        var cmd = ReactiveCommand.CreateFromObservable(
+            () => PickPathInteraction.Handle("Pick Java path")
+        );
+
+        ObservableExtensions.Subscribe(
+            cmd.Where(p => !string.IsNullOrWhiteSpace(p)).ObserveOn(RxApp.MainThreadScheduler),
+            path =>
+            {
+                JavaPath = path;
+            }
+        );
+
+        return cmd;
+    }
+
+    private ReactiveCommand<RxUnit, string?> CreateCommandPickJarPath()
+    {
+        var cmd = ReactiveCommand.CreateFromObservable(
+            () => PickPathInteraction.Handle("Pick jar path")
+        );
+
+        ObservableExtensions.Subscribe(
+            cmd.Where(p => !string.IsNullOrWhiteSpace(p)).ObserveOn(RxApp.MainThreadScheduler),
+            path =>
+            {
+                JarPath = path;
+            }
+        );
+
+        return cmd;
+    }
+
+    private RxCommand CreateCommandConnect()
+    {
+        var canConnect = this.WhenAnyValue(
+                x => x.UseRunningServer,
+                x => x.ServerUri,
+                x => x.JavaPath,
+                x => x.JarPath
+            )
+            .Select(t =>
+            {
+                var (useServer, serverUri, javaPath, jarPath) = t;
+
+                if (useServer)
+                    return !string.IsNullOrWhiteSpace(serverUri);
+
+                return !string.IsNullOrWhiteSpace(javaPath)
+                    && !string.IsNullOrWhiteSpace(jarPath)
+                    && File.Exists(javaPath)
+                    && File.Exists(jarPath);
+            })
+            .ObserveOn(RxApp.MainThreadScheduler);
+
+        return ReactiveCommand.Create(() => Close(Settings), canConnect);
     }
 
     public Settings Settings =>

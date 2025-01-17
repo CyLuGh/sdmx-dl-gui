@@ -1,6 +1,9 @@
 using System;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.Notifications;
 using ReactiveUI;
 using SdmxDl.Browser.ViewModels;
 using SdmxDl.Engine;
@@ -11,6 +14,8 @@ namespace SdmxDl.Browser;
 
 public partial class Browser : ReactiveUrsaView<BrowserViewModel>
 {
+    private WindowToastManager? _toastManager;
+
     public Browser()
     {
         InitializeComponent();
@@ -57,5 +62,29 @@ public partial class Browser : ReactiveUrsaView<BrowserViewModel>
                 ctx.SetOutput(settings);
             })
             .DisposeWith(disposables);
+
+        viewModel
+            .DisplayErrorMessageInteraction.RegisterHandler(ctx =>
+            {
+                view._toastManager?.Show(
+                    new Toast(ctx.Input.Message, NotificationType.Error),
+                    NotificationType.Error
+                );
+                ctx.SetOutput(RxUnit.Default);
+            })
+            .DisposeWith(disposables);
+    }
+
+    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnAttachedToVisualTree(e);
+        var topLevel = TopLevel.GetTopLevel(this);
+        _toastManager = new(topLevel) { MaxItems = 3 };
+    }
+
+    protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
+    {
+        base.OnDetachedFromVisualTree(e);
+        _toastManager?.Uninstall();
     }
 }

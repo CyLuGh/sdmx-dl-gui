@@ -5,34 +5,51 @@
              xmlns:viewModels="clr-namespace:SdmxDl.Browser.ViewModels"
              xmlns:converters="clr-namespace:SdmxDl.Browser.Infrastructure.Converters"
              xmlns:u="https://irihi.tech/ursa"
+             xmlns:browser="clr-namespace:SdmxDl.Browser"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SdmxDl.Browser.Browser"
              x:DataType="viewModels:BrowserViewModel">
     <UserControl.Resources>
-        <converters:BrowserStatusConverter x:Key="BrowserStatusConverter"/>
+        <converters:BrowserStatusConverter x:Key="BrowserStatusConverter" />
     </UserControl.Resources>
-    <DockPanel Margin="5">
+    <Grid RowDefinitions="*,Auto" Margin="5">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition MinWidth="300" Width="500" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Grid RowDefinitions="Auto,Auto,*">
+            <Rectangle Height="200"></Rectangle>
+            <browser:SourceSelector Grid.Row="1"/>
+
+        </Grid>
+
+        <GridSplitter ResizeBehavior="PreviousAndNext" ResizeDirection="Columns" Grid.Column="1" />
+
         <StackPanel HorizontalAlignment="Right"
                     Margin="5"
                     Orientation="Horizontal"
-                    DockPanel.Dock="Bottom">
-            <Label Content="{Binding Path=Status, Converter={StaticResource BrowserStatusConverter},FallbackValue=STATUS}"
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="3">
+            <Label
+                Content="{Binding Path=Status, Converter={StaticResource BrowserStatusConverter},FallbackValue=STATUS}"
                 Classes="Solid Orange"
                 Theme="{StaticResource TagLabel}"
-                IsVisible="{Binding Path=!ServerIsRunning}"/>
-            
-            <Label Content="{Binding Path=Status, Converter={StaticResource BrowserStatusConverter},FallbackValue=STATUS}"
-                   Classes="LightGreen"
-                   Theme="{StaticResource TagLabel}"
-                   IsVisible="{Binding Path=ServerIsRunning}"/>
-            
-            <Label Content="{Binding Version}"   
+                IsVisible="{Binding Path=!ServerIsRunning}" />
+
+            <Label
+                Content="{Binding Path=Status, Converter={StaticResource BrowserStatusConverter},FallbackValue=STATUS}"
+                Classes="LightGreen"
+                Theme="{StaticResource TagLabel}"
+                IsVisible="{Binding Path=ServerIsRunning}" />
+
+            <Label Content="{Binding Version}"
                    Classes="H6"
                    Theme="{StaticResource TitleLabel}"
                    Margin="5 0"
                    IsVisible="{Binding Path=ServerIsRunning}" />
         </StackPanel>
-
-        <Grid></Grid>
-    </DockPanel>
+    </Grid>
 </UserControl>

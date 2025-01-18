@@ -12,11 +12,6 @@ namespace SdmxDl.Browser.ViewModels;
 [Reactive]
 public partial class SettingsViewModel : BaseViewModel, IDialogContext
 {
-    /*
-     * /Users/jed/Softwares/sdmx-dl-cli-3.0.0-beta.13-bin.jar
-     *
-     */
-
     public partial string? JavaPath { get; set; }
     public partial string? JarPath { get; set; }
     public partial string? ServerUri { get; set; }

@@ -1,0 +1,46 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:SdmxDl.Browser.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="SdmxDl.Browser.SourceSelector"
+             x:DataType="viewModels:SourceSelectorViewModel">
+    <Grid>
+        <TextBox Name="TextBoxSource" Watermark="Source" Classes="clearButton" />
+        <Popup PlacementTarget="TextBoxSource"
+               Placement="RightEdgeAlignedTop"
+               PlacementConstraintAdjustment="FlipX"
+               IsOpen="{Binding #TextBoxSource.IsFocused}">
+            <Border Classes="Shadow" Theme="{StaticResource CardBorder}" Width="400" Height="600">
+                <ListBox>
+                    <ListBoxItem>ccc</ListBoxItem>
+                    <ListBoxItem>eee</ListBoxItem>
+                    <ListBoxItem>ccc</ListBoxItem>
+                    <ListBoxItem>eee</ListBoxItem>
+                    <ListBoxItem>ccc</ListBoxItem>
+                    <ListBoxItem>eee</ListBoxItem>
+                    <ListBoxItem>ccc</ListBoxItem>
+                    <ListBoxItem>eee</ListBoxItem>
+                    <ListBoxItem>ccc</ListBoxItem>
+                    <ListBoxItem>eee</ListBoxItem>
+                    <ListBoxItem>ccc</ListBoxItem>
+                    <ListBoxItem>eee</ListBoxItem>
+                    <ListBoxItem>ccc</ListBoxItem>
+                    <ListBoxItem>eee</ListBoxItem>
+                    <ListBoxItem>ccc</ListBoxItem>
+                    <ListBoxItem>eee</ListBoxItem>
+                    <ListBoxItem>ccc</ListBoxItem>
+                    <ListBoxItem>eee</ListBoxItem>
+                    <ListBoxItem>ccc</ListBoxItem>
+                    <ListBoxItem>eee</ListBoxItem>
+                    <ListBoxItem>ccc</ListBoxItem>
+                    <ListBoxItem>eee</ListBoxItem>
+                    <ListBoxItem>ccc</ListBoxItem>
+                    <ListBoxItem>eee</ListBoxItem>
+                </ListBox>
+            </Border>
+        </Popup>
+    </Grid>
+
+</UserControl>

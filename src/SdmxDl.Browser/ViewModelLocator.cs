@@ -33,6 +33,7 @@ public class ViewModelLocator
         SplatRegistrations.RegisterLazySingleton<SettingsViewModel>();
         SplatRegistrations.RegisterLazySingleton<ClientFactory>();
         SplatRegistrations.RegisterLazySingleton<BrowserViewModel>();
+        SplatRegistrations.RegisterLazySingleton<SourceSelectorViewModel>();
 
         SplatRegistrations.SetupIOC();
     }

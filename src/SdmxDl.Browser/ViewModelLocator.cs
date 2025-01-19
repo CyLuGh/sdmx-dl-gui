@@ -43,4 +43,7 @@ public class ViewModelLocator
 
     public static SettingsViewModel SettingsViewModel =>
         Locator.Current.GetService<SettingsViewModel>()!;
+
+    public static SourceSelectorViewModel SourceSelectorViewModel =>
+        Locator.Current.GetService<SourceSelectorViewModel>()!;
 }

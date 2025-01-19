@@ -3,42 +3,81 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:SdmxDl.Browser.ViewModels"
+             xmlns:models="clr-namespace:SdmxDl.Browser.Models"
+             xmlns:converters="clr-namespace:SdmxDl.Browser.Infrastructure.Converters"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SdmxDl.Browser.SourceSelector"
              x:DataType="viewModels:SourceSelectorViewModel">
+    <UserControl.Resources>
+        <converters:SourceSelectorToggleTextConverter x:Key="SourceSelectorToggleTextConverter" />
+    </UserControl.Resources>
     <Grid>
-        <TextBox Name="TextBoxSource" Watermark="Source" Classes="clearButton" />
+        <ToggleButton Name="ToggleSourceSearch"
+                      Content="{Binding Selection,Converter={StaticResource SourceSelectorToggleTextConverter}}"
+                      IsChecked="{Binding IsSearching}"
+                      IsVisible="{Binding !IsSearching}"
+                      HorizontalAlignment="Stretch">
+            
+        </ToggleButton>
+
+        <TextBox Name="TextBoxSource"
+                 Text="{Binding CurrentInput}"
+                 Watermark="Source"
+                 Classes="clearButton"
+                 IsVisible="{Binding #ToggleSourceSearch.IsChecked}">
+            <Interaction.Behaviors>
+                <EventTriggerBehavior EventName="KeyDown">
+                    <InvokeCommandAction Command="{Binding CheckTextBoxInput}"
+                                         PassEventArgsToCommand="True" />
+                </EventTriggerBehavior>
+                <FocusOnAttachedToVisualTreeBehavior />
+            </Interaction.Behaviors>
+        </TextBox>
         <Popup PlacementTarget="TextBoxSource"
                Placement="RightEdgeAlignedTop"
                PlacementConstraintAdjustment="FlipX"
-               IsOpen="{Binding #TextBoxSource.IsFocused}">
-            <Border Classes="Shadow" Theme="{StaticResource CardBorder}" Width="400" Height="600">
-                <ListBox>
-                    <ListBoxItem>ccc</ListBoxItem>
-                    <ListBoxItem>eee</ListBoxItem>
-                    <ListBoxItem>ccc</ListBoxItem>
-                    <ListBoxItem>eee</ListBoxItem>
-                    <ListBoxItem>ccc</ListBoxItem>
-                    <ListBoxItem>eee</ListBoxItem>
-                    <ListBoxItem>ccc</ListBoxItem>
-                    <ListBoxItem>eee</ListBoxItem>
-                    <ListBoxItem>ccc</ListBoxItem>
-                    <ListBoxItem>eee</ListBoxItem>
-                    <ListBoxItem>ccc</ListBoxItem>
-                    <ListBoxItem>eee</ListBoxItem>
-                    <ListBoxItem>ccc</ListBoxItem>
-                    <ListBoxItem>eee</ListBoxItem>
-                    <ListBoxItem>ccc</ListBoxItem>
-                    <ListBoxItem>eee</ListBoxItem>
-                    <ListBoxItem>ccc</ListBoxItem>
-                    <ListBoxItem>eee</ListBoxItem>
-                    <ListBoxItem>ccc</ListBoxItem>
-                    <ListBoxItem>eee</ListBoxItem>
-                    <ListBoxItem>ccc</ListBoxItem>
-                    <ListBoxItem>eee</ListBoxItem>
-                    <ListBoxItem>ccc</ListBoxItem>
-                    <ListBoxItem>eee</ListBoxItem>
-                </ListBox>
+               IsOpen="{Binding IsSearching}">
+            <Interaction.Behaviors>
+                <EventTriggerBehavior EventName="KeyDown">
+                    <InvokeCommandAction Command="{Binding CheckTextBoxInput}"
+                                         PassEventArgsToCommand="True" />
+                </EventTriggerBehavior>
+            </Interaction.Behaviors>
+            <Border Classes="Shadow" Theme="{StaticResource CardBorder}" Width="400" MaxHeight="600">
+                <Grid RowDefinitions="*,Auto">
+                    <ListBox SelectedItem="{Binding CurrentSelection}"
+                             ItemsSource="{Binding CurrentSources}">
+                        <Interaction.Behaviors>
+                            <EventTriggerBehavior EventName="DoubleTapped">
+                                <InvokeCommandAction Command="{Binding ValidateSelection}" />
+                            </EventTriggerBehavior>
+                        </Interaction.Behaviors>
+                        <ListBox.DataTemplates>
+                            <DataTemplate DataType="models:SdmxWebSource">
+                                <Grid>
+                                    <TextBlock Text="{Binding Id}"></TextBlock>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.DataTemplates>
+                    </ListBox>
+                    
+                    <UniformGrid Margin="0 5 0 0" 
+                                 HorizontalAlignment="Right"
+                                 Rows="1"
+                                 Grid.Row="1">
+                        <Button Command="{Binding CancelSelection}" 
+                                Classes="Tertiary"
+                                Theme="{DynamicResource BorderlessButton}"
+                                
+                        ></Button>
+                        <Button Command="{Binding ValidateSelection}" 
+                                Classes="Primary"
+                                Theme="{DynamicResource SolidButton}"
+                                Margin="5 0 0 0" 
+                        ></Button>
+                    </UniformGrid>
+                    
+                </Grid>
             </Border>
         </Popup>
     </Grid>

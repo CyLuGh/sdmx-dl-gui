@@ -90,6 +90,12 @@ public partial class BrowserViewModel : BaseViewModel
                     await DisplayErrorMessageInteraction.Handle(ex);
                 }
             );
+
+            this.WhenAnyValue(x => x.ServerIsRunning)
+                .Where(x => x)
+                .Select(_ => RxUnit.Default)
+                .InvokeCommand(ViewModelLocator.SourceSelectorViewModel, x => x.RetrieveSources)
+                .DisposeWith(disposables);
         });
     }
 

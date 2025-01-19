@@ -21,7 +21,8 @@
 
         <Grid RowDefinitions="Auto,Auto,*">
             <Rectangle Height="200"></Rectangle>
-            <browser:SourceSelector Grid.Row="1"/>
+            <browser:SourceSelector ViewModel="{x:Static browser:ViewModelLocator.SourceSelectorViewModel}" 
+                                    Grid.Row="1"/>
 
         </Grid>
 

@@ -1,5 +1,8 @@
+using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Threading;
+using System.Threading.Tasks;
 using LanguageExt;
 using ReactiveUI;
 using SdmxDl.Browser.Models;
@@ -8,54 +11,43 @@ using Sdmxdl.Grpc;
 
 namespace SdmxDl.Browser.ViewModels;
 
-public partial class DataFlowSelectorViewModel : BaseViewModel
+public partial class DataFlowSelectorViewModel : SelectorViewModel<DataFlow, SdmxWebSource>
 {
-    [Reactive]
-    public partial bool IsSearching { get; set; }
-
-    [Reactive]
-    public partial string CurrentInput { get; set; }
-
-    [Reactive]
-    public partial DataFlow? CurrentSelection { get; set; }
-
-    [Reactive]
-    public partial Option<DataFlow> Selection { get; set; }
-
-    [ObservableAsProperty]
-    public partial Seq<DataFlow> AllFlows { get; }
-
-    [ObservableAsProperty]
-    public partial Seq<DataFlow> CurrentFlows { get; }
-
-    public ReactiveCommand<SdmxWebSource, Seq<DataFlow>> RetrieveDataFlows { get; }
-
     public DataFlowSelectorViewModel(ClientFactory clientFactory)
+        : base(clientFactory) { }
+
+    [Pure]
+    protected override Seq<DataFlow> Filter(Seq<DataFlow> all, string? input)
     {
-        RetrieveDataFlows = CreateCommandRetrieveDataFlows(clientFactory);
+        if (string.IsNullOrWhiteSpace(input))
+            return all;
+
+        return all.Where(s =>
+                s.Name.Contains(input, StringComparison.CurrentCultureIgnoreCase)
+                || s.Description.Contains(input, StringComparison.CurrentCultureIgnoreCase)
+            )
+            .OrderBy(s => s.Name)
+            .ToSeq()
+            .Strict();
     }
 
-    private static ReactiveCommand<SdmxWebSource, Seq<DataFlow>> CreateCommandRetrieveDataFlows(
+    [Pure]
+    protected override async Task<Seq<DataFlow>> RetrieveDataImpl(
+        SdmxWebSource input,
         ClientFactory clientFactory
     )
     {
-        return ReactiveCommand.CreateFromTask(
-            async (SdmxWebSource source) =>
-            {
-                var rawFlows = new List<Sdmxdl.Format.Protobuf.Dataflow>();
-                using var response = clientFactory
-                    .GetClient()
-                    .GetFlows(new SourceRequest() { Source = source.Id });
+        var rawFlows = new List<Sdmxdl.Format.Protobuf.Dataflow>();
+        using var response = clientFactory
+            .GetClient()
+            .GetFlows(new SourceRequest() { Source = input.Id });
 
-                while (await response.ResponseStream.MoveNext(CancellationToken.None))
-                {
-                    var dataFlow = response.ResponseStream.Current;
-                    rawFlows.Add(dataFlow);
-                }
+        while (await response.ResponseStream.MoveNext(CancellationToken.None))
+        {
+            var dataFlow = response.ResponseStream.Current;
+            rawFlows.Add(dataFlow);
+        }
 
-                return rawFlows.Map(f => new DataFlow(f)).ToSeq().Strict();
-                // return Seq<DataFlow>.Empty;
-            }
-        );
+        return rawFlows.Map(f => new DataFlow(f)).ToSeq().Strict();
     }
 }

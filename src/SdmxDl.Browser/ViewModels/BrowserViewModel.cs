@@ -94,14 +94,14 @@ public partial class BrowserViewModel : BaseViewModel
             this.WhenAnyValue(x => x.ServerIsRunning)
                 .Where(x => x)
                 .Select(_ => RxUnit.Default)
-                .InvokeCommand(sourceSelectorViewModel, x => x.RetrieveSources)
+                .InvokeCommand(sourceSelectorViewModel, x => x.RetrieveData)
                 .DisposeWith(disposables);
 
             sourceSelectorViewModel
                 .WhenAnyValue(x => x.Selection)
                 .Select(o => o.Some(Observable.Return).None(Observable.Empty<SdmxWebSource>))
                 .Switch()
-                .InvokeCommand(dataFlowSelectorViewModel, x => x.RetrieveDataFlows)
+                .InvokeCommand(dataFlowSelectorViewModel, x => x.RetrieveData)
                 .DisposeWith(disposables);
         });
     }

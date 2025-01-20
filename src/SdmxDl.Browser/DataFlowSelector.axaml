@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:SdmxDl.Browser.ViewModels"
              xmlns:converters="clr-namespace:SdmxDl.Browser.Infrastructure.Converters"
+             xmlns:models="clr-namespace:SdmxDl.Browser.Models"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SdmxDl.Browser.DataFlowSelector"
              x:DataType="viewModels:DataFlowSelectorViewModel">
@@ -16,7 +17,75 @@
                       IsChecked="{Binding IsSearching}"
                       IsVisible="{Binding !IsSearching}"
                       HorizontalAlignment="Stretch">
-            
+            <Interaction.Behaviors>
+                <ButtonClickEventTriggerBehavior>
+                    <FocusControlAction TargetControl="TextBoxSource"/>
+                </ButtonClickEventTriggerBehavior>
+            </Interaction.Behaviors>
         </ToggleButton>
+
+        <TextBox Name="TextBoxSource"
+                 Text="{Binding CurrentInput}"
+                 Watermark="Flow"
+                 Classes="clearButton"
+                 IsVisible="{Binding #ToggleSearch.IsChecked}"
+                 >
+            <Interaction.Behaviors>
+                <EventTriggerBehavior EventName="KeyDown">
+                    <InvokeCommandAction Command="{Binding CheckTextBoxInput}"
+                                         PassEventArgsToCommand="True" />
+                </EventTriggerBehavior>
+                <EventTriggerBehavior EventName="TextInput">
+                    <InvokeCommandAction Command="{Binding CheckTextBoxInput}"
+                                         PassEventArgsToCommand="True" />
+                </EventTriggerBehavior>
+            </Interaction.Behaviors>
+        </TextBox>
+        <Popup PlacementTarget="TextBoxSource"
+               Placement="RightEdgeAlignedTop"
+               PlacementConstraintAdjustment="FlipX"
+               IsOpen="{Binding IsSearching}">
+            <Interaction.Behaviors>
+                <EventTriggerBehavior EventName="KeyDown">
+                    <InvokeCommandAction Command="{Binding CheckTextBoxInput}"
+                                         PassEventArgsToCommand="True" />
+                </EventTriggerBehavior>
+            </Interaction.Behaviors>
+            <Border Classes="Shadow" Theme="{StaticResource CardBorder}" Width="400" MaxHeight="600">
+                <Grid RowDefinitions="*,Auto">
+                    <ListBox SelectedItem="{Binding CurrentSelection}"
+                             ItemsSource="{Binding CurrentSources}">
+                        <Interaction.Behaviors>
+                            <EventTriggerBehavior EventName="DoubleTapped">
+                                <InvokeCommandAction Command="{Binding ValidateSelection}" />
+                            </EventTriggerBehavior>
+                        </Interaction.Behaviors>
+                        <ListBox.DataTemplates>
+                            <DataTemplate DataType="models:DataFlow">
+                                <Grid>
+                                    <TextBlock Text="{Binding Name}"></TextBlock>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.DataTemplates>
+                    </ListBox>
+
+                    <UniformGrid Margin="0 5 0 0"
+                                 HorizontalAlignment="Right"
+                                 Rows="1"
+                                 Grid.Row="1">
+                        <Button Command="{Binding CancelSelection}"
+                                Classes="Tertiary"
+                                Theme="{DynamicResource BorderlessButton}">
+                        </Button>
+                        <Button Command="{Binding ValidateSelection}"
+                                Classes="Primary"
+                                Theme="{DynamicResource SolidButton}"
+                                Margin="5 0 0 0">
+                        </Button>
+                    </UniformGrid>
+
+                </Grid>
+            </Border>
+        </Popup>
     </Grid>
 </UserControl>

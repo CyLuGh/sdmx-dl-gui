@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 using System.Reactive.Linq;
 using Avalonia.Input;
 using DynamicData;
@@ -186,6 +187,7 @@ public partial class SourceSelectorViewModel : BaseViewModel
         return command;
     }
 
+    [Pure]
     private static Seq<SdmxWebSource> Filter(Seq<SdmxWebSource> allSources, string input)
     {
         return allSources

@@ -12,26 +12,41 @@
     <UserControl.Resources>
         <converters:BrowserStatusConverter x:Key="BrowserStatusConverter" />
     </UserControl.Resources>
-    <Grid RowDefinitions="*,Auto" Margin="5">
+    <Grid RowDefinitions="Auto,*,Auto" Margin="5">
         <Grid.ColumnDefinitions>
             <ColumnDefinition MinWidth="300" Width="500" />
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
+        
+        <Label Content="SDMX-DL GUI" 
+                   HorizontalAlignment="Center" 
+                   Classes="H4"
+                   Theme="{StaticResource TitleLabel}"
+                   Grid.ColumnSpan="3"/>
 
-        <Grid RowDefinitions="Auto,Auto,*">
+        <Grid RowDefinitions="Auto,Auto,Auto,*"
+              Grid.Row="1">
             <Rectangle Height="200"></Rectangle>
-            <browser:SourceSelector ViewModel="{x:Static browser:ViewModelLocator.SourceSelectorViewModel}" 
-                                    Grid.Row="1"/>
-
+            
+            <u:Form HorizontalAlignment="Stretch" 
+                    Margin="10"
+                    Grid.Row="1">
+                    <browser:SourceSelector ViewModel="{x:Static browser:ViewModelLocator.SourceSelectorViewModel}"
+                                            u:FormItem.Label="Source"/>     
+                <AutoCompleteBox u:FormItem.Label="Flow"></AutoCompleteBox>
+            </u:Form>
         </Grid>
 
-        <GridSplitter ResizeBehavior="PreviousAndNext" ResizeDirection="Columns" Grid.Column="1" />
+        <GridSplitter ResizeBehavior="PreviousAndNext"
+                      ResizeDirection="Columns"
+                      Grid.Column="1"
+                      Grid.Row="1" />
 
         <StackPanel HorizontalAlignment="Right"
                     Margin="5"
                     Orientation="Horizontal"
-                    Grid.Row="1"
+                    Grid.Row="2"
                     Grid.Column="0"
                     Grid.ColumnSpan="3">
             <Label

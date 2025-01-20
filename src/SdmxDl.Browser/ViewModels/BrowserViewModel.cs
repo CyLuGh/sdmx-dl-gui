@@ -1,8 +1,6 @@
 using System;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using Avalonia.Controls;
-using Irihi.Avalonia.Shared.Helpers;
 using ReactiveUI;
 using SdmxDl.Browser.Infrastructure;
 using SdmxDl.Browser.Models;
@@ -35,7 +33,12 @@ public partial class BrowserViewModel : BaseViewModel
     public Interaction<Exception, RxUnit> DisplayErrorMessageInteraction { get; } =
         new(RxApp.MainThreadScheduler);
 
-    public BrowserViewModel(ClientFactory clientFactory, ExceptionHandler exceptionHandler)
+    public BrowserViewModel(
+        ClientFactory clientFactory,
+        SourceSelectorViewModel sourceSelectorViewModel,
+        DataFlowSelectorViewModel dataFlowSelectorViewModel,
+        ExceptionHandler exceptionHandler
+    )
     {
         LaunchServer = CreateCommandLaunchServer();
         LaunchServer.ToProperty(
@@ -83,18 +86,22 @@ public partial class BrowserViewModel : BaseViewModel
                 .InvokeCommand(LaunchServer)
                 .DisposeWith(disposables);
 
-            ObservableExtensions.Subscribe(
-                exceptionHandler.Alerts,
-                async ex =>
-                {
-                    await DisplayErrorMessageInteraction.Handle(ex);
-                }
-            );
+            exceptionHandler.Alerts.Subscribe(async ex =>
+            {
+                await DisplayErrorMessageInteraction.Handle(ex);
+            });
 
             this.WhenAnyValue(x => x.ServerIsRunning)
                 .Where(x => x)
                 .Select(_ => RxUnit.Default)
-                .InvokeCommand(ViewModelLocator.SourceSelectorViewModel, x => x.RetrieveSources)
+                .InvokeCommand(sourceSelectorViewModel, x => x.RetrieveSources)
+                .DisposeWith(disposables);
+
+            sourceSelectorViewModel
+                .WhenAnyValue(x => x.Selection)
+                .Select(o => o.Some(Observable.Return).None(Observable.Empty<SdmxWebSource>))
+                .Switch()
+                .InvokeCommand(dataFlowSelectorViewModel, x => x.RetrieveDataFlows)
                 .DisposeWith(disposables);
         });
     }

@@ -9,28 +9,36 @@
              x:Class="SdmxDl.Browser.SourceSelector"
              x:DataType="viewModels:SourceSelectorViewModel">
     <UserControl.Resources>
-        <converters:SourceSelectorToggleTextConverter x:Key="SourceSelectorToggleTextConverter" />
+        <converters:SelectorToggleTextConverter x:Key="SelectorToggleTextConverter" />
     </UserControl.Resources>
     <Grid>
-        <ToggleButton Name="ToggleSourceSearch"
-                      Content="{Binding Selection,Converter={StaticResource SourceSelectorToggleTextConverter}}"
+        <ToggleButton Name="ToggleSearch"
+                      Content="{Binding Selection,Converter={StaticResource SelectorToggleTextConverter}}"
                       IsChecked="{Binding IsSearching}"
                       IsVisible="{Binding !IsSearching}"
                       HorizontalAlignment="Stretch">
-            
+            <Interaction.Behaviors>
+                <ButtonClickEventTriggerBehavior>
+                    <FocusControlAction TargetControl="TextBoxSource"/>
+                </ButtonClickEventTriggerBehavior>
+            </Interaction.Behaviors>
         </ToggleButton>
 
         <TextBox Name="TextBoxSource"
                  Text="{Binding CurrentInput}"
                  Watermark="Source"
                  Classes="clearButton"
-                 IsVisible="{Binding #ToggleSourceSearch.IsChecked}">
+                 IsVisible="{Binding #ToggleSearch.IsChecked}"
+                 >
             <Interaction.Behaviors>
                 <EventTriggerBehavior EventName="KeyDown">
                     <InvokeCommandAction Command="{Binding CheckTextBoxInput}"
                                          PassEventArgsToCommand="True" />
                 </EventTriggerBehavior>
-                <FocusOnAttachedToVisualTreeBehavior />
+                <EventTriggerBehavior EventName="TextInput">
+                    <InvokeCommandAction Command="{Binding CheckTextBoxInput}"
+                                         PassEventArgsToCommand="True" />
+                </EventTriggerBehavior>
             </Interaction.Behaviors>
         </TextBox>
         <Popup PlacementTarget="TextBoxSource"
@@ -60,23 +68,22 @@
                             </DataTemplate>
                         </ListBox.DataTemplates>
                     </ListBox>
-                    
-                    <UniformGrid Margin="0 5 0 0" 
+
+                    <UniformGrid Margin="0 5 0 0"
                                  HorizontalAlignment="Right"
                                  Rows="1"
                                  Grid.Row="1">
-                        <Button Command="{Binding CancelSelection}" 
+                        <Button Command="{Binding CancelSelection}"
                                 Classes="Tertiary"
-                                Theme="{DynamicResource BorderlessButton}"
-                                
-                        ></Button>
-                        <Button Command="{Binding ValidateSelection}" 
+                                Theme="{DynamicResource BorderlessButton}">
+                        </Button>
+                        <Button Command="{Binding ValidateSelection}"
                                 Classes="Primary"
                                 Theme="{DynamicResource SolidButton}"
-                                Margin="5 0 0 0" 
-                        ></Button>
+                                Margin="5 0 0 0">
+                        </Button>
                     </UniformGrid>
-                    
+
                 </Grid>
             </Border>
         </Popup>

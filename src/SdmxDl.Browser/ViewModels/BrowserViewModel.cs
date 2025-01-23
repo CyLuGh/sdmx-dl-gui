@@ -99,6 +99,7 @@ public partial class BrowserViewModel : BaseViewModel
 
             sourceSelectorViewModel
                 .WhenAnyValue(x => x.Selection)
+                .Do(async _ => await dataFlowSelectorViewModel.Reset())
                 .Select(o => o.Some(Observable.Return).None(Observable.Empty<SdmxWebSource>))
                 .Switch()
                 .InvokeCommand(dataFlowSelectorViewModel, x => x.RetrieveData)

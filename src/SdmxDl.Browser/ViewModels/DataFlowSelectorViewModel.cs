@@ -11,11 +11,9 @@ using Sdmxdl.Grpc;
 
 namespace SdmxDl.Browser.ViewModels;
 
-public partial class DataFlowSelectorViewModel : SelectorViewModel<DataFlow, SdmxWebSource>
+public class DataFlowSelectorViewModel(ClientFactory clientFactory)
+    : SelectorViewModel<DataFlow, SdmxWebSource>(clientFactory)
 {
-    public DataFlowSelectorViewModel(ClientFactory clientFactory)
-        : base(clientFactory) { }
-
     [Pure]
     protected override Seq<DataFlow> Filter(Seq<DataFlow> all, string? input)
     {
@@ -37,12 +35,36 @@ public partial class DataFlowSelectorViewModel : SelectorViewModel<DataFlow, Sdm
         ClientFactory clientFactory
     )
     {
+        return Seq.create(
+            new DataFlow()
+            {
+                Name = $"{input.Id} AAA",
+                Description = "Desc AAA",
+                Ref = "",
+                StructureRef = "",
+            },
+            new DataFlow()
+            {
+                Name = $"{input.Id} BBB",
+                Description = "Desc BBB",
+                Ref = "",
+                StructureRef = "",
+            },
+            new DataFlow()
+            {
+                Name = $"{input.Id} CCC",
+                Description = "Desc CCC",
+                Ref = "",
+                StructureRef = "",
+            }
+        );
+
         var rawFlows = new List<Sdmxdl.Format.Protobuf.Dataflow>();
         using var response = clientFactory
             .GetClient()
             .GetFlows(new SourceRequest() { Source = input.Id });
 
-        while (await response.ResponseStream.MoveNext(CancellationToken.None))
+        while (await response.ResponseStream.MoveNext(CancelTokenSource.Token))
         {
             var dataFlow = response.ResponseStream.Current;
             rawFlows.Add(dataFlow);

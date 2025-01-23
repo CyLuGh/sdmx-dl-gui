@@ -11,7 +11,7 @@ using SdmxDl.Client;
 
 namespace SdmxDl.Browser.ViewModels;
 
-public abstract partial class SelectorViewModel<TData, TInput> : BaseViewModel
+public abstract partial class SelectorViewModel<TData, TInput> : CancellableBaseViewModel
 {
     [Pure]
     protected abstract Seq<TData> Filter(Seq<TData> all, string? input);
@@ -52,6 +52,13 @@ public abstract partial class SelectorViewModel<TData, TInput> : BaseViewModel
             IsSearching = false;
         });
         CheckTextBoxInput = CreateCommandCheckTextBoxInput();
+
+        this.WhenAnyValue(x => x.AllData)
+            .ObserveOn(RxApp.MainThreadScheduler)
+            .Subscribe(_ =>
+            {
+                Selection = Option<TData>.None;
+            });
 
         this.WhenAnyValue(x => x.AllData)
             .CombineLatest(this.WhenAnyValue(x => x.CurrentInput))

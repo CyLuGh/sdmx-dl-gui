@@ -15,11 +15,9 @@ using Sdmxdl.Grpc;
 
 namespace SdmxDl.Browser.ViewModels;
 
-public partial class SourceSelectorViewModel : SelectorViewModel<SdmxWebSource, RxUnit>
+public class SourceSelectorViewModel(ClientFactory clientFactory)
+    : SelectorViewModel<SdmxWebSource, RxUnit>(clientFactory)
 {
-    public SourceSelectorViewModel(ClientFactory clientFactory)
-        : base(clientFactory) { }
-
     [Pure]
     protected override async Task<Seq<SdmxWebSource>> RetrieveDataImpl(
         RxUnit input,
@@ -52,7 +50,7 @@ public partial class SourceSelectorViewModel : SelectorViewModel<SdmxWebSource, 
 
         var rawSources = new List<Sdmxdl.Format.Protobuf.Web.SdmxWebSource>();
         using var response = clientFactory.GetClient().GetSources(new Empty());
-        while (await response.ResponseStream.MoveNext(CancellationToken.None))
+        while (await response.ResponseStream.MoveNext(CancelTokenSource.Token))
         {
             var source = response.ResponseStream.Current;
             rawSources.Add(source);

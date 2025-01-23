@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using System.Reactive.Linq;
 using Irihi.Avalonia.Shared.Contracts;
-using Irihi.Avalonia.Shared.Helpers;
 using Jot;
 using ReactiveUI;
 using SdmxDl.Engine;

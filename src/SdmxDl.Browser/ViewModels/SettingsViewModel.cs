@@ -4,7 +4,7 @@ using System.Reactive.Linq;
 using Irihi.Avalonia.Shared.Contracts;
 using Jot;
 using ReactiveUI;
-using SdmxDl.Engine;
+using SdmxDl.Client.Models;
 
 namespace SdmxDl.Browser.ViewModels;
 

@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace SdmxDl.Browser.Models;
+namespace SdmxDl.Client.Models;
 
 public readonly record struct DataFlow
 {

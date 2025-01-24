@@ -3,8 +3,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:SdmxDl.Browser.ViewModels"
-             xmlns:models="clr-namespace:SdmxDl.Browser.Models"
              xmlns:converters="clr-namespace:SdmxDl.Browser.Infrastructure.Converters"
+             xmlns:models="clr-namespace:SdmxDl.Client.Models;assembly=SdmxDl.Client"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SdmxDl.Browser.SourceSelector"
              x:DataType="viewModels:SourceSelectorViewModel">

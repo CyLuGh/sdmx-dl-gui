@@ -6,7 +6,6 @@ using Avalonia.Input;
 using DynamicData;
 using LanguageExt;
 using ReactiveUI;
-using SdmxDl.Browser.Models;
 using SdmxDl.Client;
 
 namespace SdmxDl.Browser.ViewModels;

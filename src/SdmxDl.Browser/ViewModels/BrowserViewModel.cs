@@ -5,7 +5,7 @@ using ReactiveUI;
 using SdmxDl.Browser.Infrastructure;
 using SdmxDl.Browser.Models;
 using SdmxDl.Client;
-using SdmxDl.Engine;
+using SdmxDl.Client.Models;
 using Sdmxdl.Grpc;
 
 namespace SdmxDl.Browser.ViewModels;

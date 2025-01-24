@@ -5,8 +5,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using LanguageExt;
 using ReactiveUI;
-using SdmxDl.Browser.Models;
 using SdmxDl.Client;
+using SdmxDl.Client.Models;
 using Sdmxdl.Grpc;
 
 namespace SdmxDl.Browser.ViewModels;

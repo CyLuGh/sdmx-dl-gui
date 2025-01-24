@@ -14,6 +14,7 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="LanguageExt.Core" Version="4.4.9" />
     </ItemGroup>
     
     <ItemGroup>
@@ -27,9 +28,6 @@
         <Protobuf Include="..\..\..\sdmx-dl\sdmx-dl-format-protobuf\src\main\proto\sdmxdl_repository.proto" AdditionalImportDirs="..\..\..\sdmx-dl\sdmx-dl-format-protobuf\src\main\proto" OutputDir="sdmxdl\format\protobuf\" CompileOutputs="false" GrpcServices="None" />
         <Protobuf Include="..\..\..\sdmx-dl\sdmx-dl-format-protobuf\src\main\proto\sdmxdl_source.proto" AdditionalImportDirs="..\..\..\sdmx-dl\sdmx-dl-format-protobuf\src\main\proto" OutputDir="sdmxdl\format\protobuf\" CompileOutputs="false" GrpcServices="None" />
         <Protobuf Include="..\..\..\sdmx-dl\sdmx-dl-grpc\src\main\proto\sdmxdl_grpc.proto" AdditionalImportDirs="..\..\..\sdmx-dl\sdmx-dl-format-protobuf\src\main\proto" OutputDir="sdmxdl\grpc\" CompileOutputs="false" GrpcServices="Client" />
-    </ItemGroup>
-    <ItemGroup>
-      <ProjectReference Include="..\SdmxDl.Engine\SdmxDl.Engine.csproj" />
     </ItemGroup>
 
 </Project>

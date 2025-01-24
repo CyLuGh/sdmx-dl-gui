@@ -6,7 +6,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Notifications;
 using ReactiveUI;
 using SdmxDl.Browser.ViewModels;
-using SdmxDl.Engine;
+using SdmxDl.Client.Models;
 using Ursa.Controls;
 using Ursa.ReactiveUIExtension;
 

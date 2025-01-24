@@ -1,4 +1,4 @@
-namespace SdmxDl.Engine;
+namespace SdmxDl.Client.Models;
 
 public readonly record struct Settings
 {

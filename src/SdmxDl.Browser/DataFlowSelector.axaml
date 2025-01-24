@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:SdmxDl.Browser.ViewModels"
              xmlns:converters="clr-namespace:SdmxDl.Browser.Infrastructure.Converters"
-             xmlns:models="clr-namespace:SdmxDl.Browser.Models"
+             xmlns:models="clr-namespace:SdmxDl.Client.Models;assembly=SdmxDl.Client"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SdmxDl.Browser.DataFlowSelector"
              x:DataType="viewModels:DataFlowSelectorViewModel">

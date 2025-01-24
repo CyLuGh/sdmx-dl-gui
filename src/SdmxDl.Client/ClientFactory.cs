@@ -1,12 +1,12 @@
 ﻿using CliWrap;
 using CliWrap.Buffered;
 using Grpc.Net.Client;
-using SdmxDl.Engine;
+using SdmxDl.Client.Models;
 using Sdmxdl.Grpc;
 
 namespace SdmxDl.Client;
 
-public class ClientFactory : IClient
+public class ClientFactory
 {
     public SdmxWebManager.SdmxWebManagerClient GetClient()
     {
@@ -18,7 +18,7 @@ public class ClientFactory : IClient
 
     public Settings Settings { get; set; }
 
-    public async Task StartServer(string javaPath, string jarPath, CancellationToken token)
+    /*public async Task StartServer(string javaPath, string jarPath, CancellationToken token)
     {
         var cmd = Cli.Wrap(javaPath).WithArguments(["-jar", jarPath]);
         var commandResults = await cmd.ExecuteBufferedAsync(token);
@@ -27,5 +27,5 @@ public class ClientFactory : IClient
             throw new SdmxDlServerException(
                 $"SDMXDL server has encountered an exception:{System.Environment.NewLine}{commandResults.StandardError}"
             );
-    }
+    }*/
 }

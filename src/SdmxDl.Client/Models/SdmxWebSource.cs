@@ -1,8 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using LanguageExt;
 
-namespace SdmxDl.Browser.Models;
+namespace SdmxDl.Client.Models;
 
 public readonly record struct SdmxWebSource
 {
@@ -12,9 +11,9 @@ public readonly record struct SdmxWebSource
     public required string Endpoint { get; init; }
     public HashMap<string, string> Properties { get; init; }
     public Seq<string> Aliases { get; init; }
-    public string? Website { get; init; }
-    public string? Monitor { get; init; }
-    public string? MonitorWebsite { get; init; }
+    public Option<string> Website { get; init; }
+    public Option<string> Monitor { get; init; }
+    public Option<string> MonitorWebsite { get; init; }
     public Confidentiality Confidentiality { get; init; }
 
     public SdmxWebSource() { }

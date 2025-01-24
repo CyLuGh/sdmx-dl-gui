@@ -35,6 +35,7 @@ public class ViewModelLocator
         SplatRegistrations.RegisterLazySingleton<BrowserViewModel>();
         SplatRegistrations.RegisterLazySingleton<SourceSelectorViewModel>();
         SplatRegistrations.RegisterLazySingleton<DataFlowSelectorViewModel>();
+        SplatRegistrations.RegisterLazySingleton<DimensionsSelectorViewModel>();
 
         SplatRegistrations.SetupIOC();
     }
@@ -50,4 +51,7 @@ public class ViewModelLocator
 
     public static DataFlowSelectorViewModel DataFlowSelectorViewModel =>
         Locator.Current.GetService<DataFlowSelectorViewModel>()!;
+
+    public static DimensionsSelectorViewModel DimensionsSelectorViewModel =>
+        Locator.Current.GetService<DimensionsSelectorViewModel>()!;
 }

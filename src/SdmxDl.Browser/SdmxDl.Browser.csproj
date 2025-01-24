@@ -40,6 +40,5 @@
 
     <ItemGroup>
       <ProjectReference Include="..\SdmxDl.Client\SdmxDl.Client.csproj" />
-      <ProjectReference Include="..\SdmxDl.Engine\SdmxDl.Engine.csproj" />
     </ItemGroup>
 </Project>

@@ -37,6 +37,7 @@ public partial class BrowserViewModel : BaseViewModel
         ClientFactory clientFactory,
         SourceSelectorViewModel sourceSelectorViewModel,
         DataFlowSelectorViewModel dataFlowSelectorViewModel,
+        DimensionsSelectorViewModel dimensionsSelectorViewModel,
         ExceptionHandler exceptionHandler
     )
     {
@@ -103,6 +104,34 @@ public partial class BrowserViewModel : BaseViewModel
                 .Select(o => o.Some(Observable.Return).None(Observable.Empty<SdmxWebSource>))
                 .Switch()
                 .InvokeCommand(dataFlowSelectorViewModel, x => x.RetrieveData)
+                .DisposeWith(disposables);
+
+            sourceSelectorViewModel
+                .WhenAnyValue(x => x.Selection)
+                .Do(_ =>
+                    Observable
+                        .Return(RxUnit.Default)
+                        .InvokeCommand(dimensionsSelectorViewModel, x => x.Clear)
+                )
+                .CombineLatest(
+                    dataFlowSelectorViewModel
+                        .WhenAnyValue(x => x.Selection)
+                        .Do(_ =>
+                            Observable
+                                .Return(RxUnit.Default)
+                                .InvokeCommand(dimensionsSelectorViewModel, x => x.Clear)
+                        )
+                )
+                .Throttle(TimeSpan.FromMilliseconds(50))
+                .Select(t =>
+                {
+                    var (source, flow) = t;
+                    var o = from s in source from f in flow select (s, f);
+                    return o.Some(Observable.Return)
+                        .None(Observable.Empty<(SdmxWebSource, DataFlow)>);
+                })
+                .Switch()
+                .InvokeCommand(dimensionsSelectorViewModel, x => x.RetrieveDimensions)
                 .DisposeWith(disposables);
         });
     }

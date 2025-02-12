@@ -41,10 +41,8 @@
                     HorizontalAlignment="Stretch"
                     Margin="10"
                     Grid.Row="2">
-                <Border u:FormItem.Label="Dimensions" Background="Red" Height="500" >
-                    
-                    
-                </Border>
+                <browser:DimensionsBrowser ViewModel="{x:Static browser:ViewModelLocator.DimensionsSelectorViewModel}" 
+                                           u:FormItem.Label="Dimensions"/>
             </u:Form>
         </Grid>
         

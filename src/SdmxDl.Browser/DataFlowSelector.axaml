@@ -2,6 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:u="https://irihi.tech/ursa"
              xmlns:viewModels="clr-namespace:SdmxDl.Browser.ViewModels"
              xmlns:converters="clr-namespace:SdmxDl.Browser.Infrastructure.Converters"
              xmlns:models="clr-namespace:SdmxDl.Client.Models;assembly=SdmxDl.Client"
@@ -11,81 +12,82 @@
     <UserControl.Resources>
         <converters:SelectorToggleTextConverter x:Key="SelectorToggleTextConverter" />
     </UserControl.Resources>
-    <Grid>
-        <ToggleButton Name="ToggleSearch"
-                      Content="{Binding Selection,Converter={StaticResource SelectorToggleTextConverter}}"
-                      IsChecked="{Binding IsSearching}"
-                      IsVisible="{Binding !IsSearching}"
-                      HorizontalAlignment="Stretch">
-            <Interaction.Behaviors>
-                <ButtonClickEventTriggerBehavior>
-                    <FocusControlAction TargetControl="TextBoxSource"/>
-                </ButtonClickEventTriggerBehavior>
-            </Interaction.Behaviors>
-        </ToggleButton>
+    <u:DisableContainer>
+        <Grid IsEnabled="{Binding !AllData.IsEmpty}">
+            <ToggleButton Name="ToggleSearch"
+                          Content="{Binding Selection,Converter={StaticResource SelectorToggleTextConverter}}"
+                          IsChecked="{Binding IsSearching}"
+                          IsVisible="{Binding !IsSearching}"
+                          HorizontalAlignment="Stretch">
+                <Interaction.Behaviors>
+                    <ButtonClickEventTriggerBehavior>
+                        <FocusControlAction TargetControl="TextBoxSource" />
+                    </ButtonClickEventTriggerBehavior>
+                </Interaction.Behaviors>
+            </ToggleButton>
 
-        <TextBox Name="TextBoxSource"
-                 Text="{Binding CurrentInput}"
-                 Watermark="Flow"
-                 Classes="clearButton"
-                 IsVisible="{Binding #ToggleSearch.IsChecked}"
-                 >
-            <Interaction.Behaviors>
-                <EventTriggerBehavior EventName="KeyDown">
-                    <InvokeCommandAction Command="{Binding CheckTextBoxInput}"
-                                         PassEventArgsToCommand="True" />
-                </EventTriggerBehavior>
-                <EventTriggerBehavior EventName="TextInput">
-                    <InvokeCommandAction Command="{Binding CheckTextBoxInput}"
-                                         PassEventArgsToCommand="True" />
-                </EventTriggerBehavior>
-            </Interaction.Behaviors>
-        </TextBox>
-        <Popup PlacementTarget="TextBoxSource"
-               Placement="RightEdgeAlignedTop"
-               PlacementConstraintAdjustment="FlipX"
-               IsOpen="{Binding IsSearching}">
-            <Interaction.Behaviors>
-                <EventTriggerBehavior EventName="KeyDown">
-                    <InvokeCommandAction Command="{Binding CheckTextBoxInput}"
-                                         PassEventArgsToCommand="True" />
-                </EventTriggerBehavior>
-            </Interaction.Behaviors>
-            <Border Classes="Shadow" Theme="{StaticResource CardBorder}" Width="400" MaxHeight="600">
-                <Grid RowDefinitions="*,Auto">
-                    <ListBox SelectedItem="{Binding CurrentSelection}"
-                             ItemsSource="{Binding CurrentSources}">
-                        <Interaction.Behaviors>
-                            <EventTriggerBehavior EventName="DoubleTapped">
-                                <InvokeCommandAction Command="{Binding ValidateSelection}" />
-                            </EventTriggerBehavior>
-                        </Interaction.Behaviors>
-                        <ListBox.DataTemplates>
-                            <DataTemplate DataType="models:DataFlow">
-                                <Grid>
-                                    <TextBlock Text="{Binding Name}"></TextBlock>
-                                </Grid>
-                            </DataTemplate>
-                        </ListBox.DataTemplates>
-                    </ListBox>
+            <TextBox Name="TextBoxSource"
+                     Text="{Binding CurrentInput}"
+                     Watermark="Flow"
+                     Classes="clearButton"
+                     IsVisible="{Binding #ToggleSearch.IsChecked}">
+                <Interaction.Behaviors>
+                    <EventTriggerBehavior EventName="KeyDown">
+                        <InvokeCommandAction Command="{Binding CheckTextBoxInput}"
+                                             PassEventArgsToCommand="True" />
+                    </EventTriggerBehavior>
+                    <EventTriggerBehavior EventName="TextInput">
+                        <InvokeCommandAction Command="{Binding CheckTextBoxInput}"
+                                             PassEventArgsToCommand="True" />
+                    </EventTriggerBehavior>
+                </Interaction.Behaviors>
+            </TextBox>
+            <Popup PlacementTarget="TextBoxSource"
+                   Placement="RightEdgeAlignedTop"
+                   PlacementConstraintAdjustment="FlipX"
+                   IsOpen="{Binding IsSearching}">
+                <Interaction.Behaviors>
+                    <EventTriggerBehavior EventName="KeyDown">
+                        <InvokeCommandAction Command="{Binding CheckTextBoxInput}"
+                                             PassEventArgsToCommand="True" />
+                    </EventTriggerBehavior>
+                </Interaction.Behaviors>
+                <Border Classes="Shadow" Theme="{StaticResource CardBorder}" Width="400" MaxHeight="600">
+                    <Grid RowDefinitions="*,Auto">
+                        <ListBox SelectedItem="{Binding CurrentSelection}"
+                                 ItemsSource="{Binding CurrentSources}">
+                            <Interaction.Behaviors>
+                                <EventTriggerBehavior EventName="DoubleTapped">
+                                    <InvokeCommandAction Command="{Binding ValidateSelection}" />
+                                </EventTriggerBehavior>
+                            </Interaction.Behaviors>
+                            <ListBox.DataTemplates>
+                                <DataTemplate DataType="models:DataFlow">
+                                    <Grid>
+                                        <TextBlock Text="{Binding Name}"></TextBlock>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.DataTemplates>
+                        </ListBox>
 
-                    <UniformGrid Margin="0 5 0 0"
-                                 HorizontalAlignment="Right"
-                                 Rows="1"
-                                 Grid.Row="1">
-                        <Button Command="{Binding CancelSelection}"
-                                Classes="Tertiary"
-                                Theme="{DynamicResource BorderlessButton}">
-                        </Button>
-                        <Button Command="{Binding ValidateSelection}"
-                                Classes="Primary"
-                                Theme="{DynamicResource SolidButton}"
-                                Margin="5 0 0 0">
-                        </Button>
-                    </UniformGrid>
+                        <UniformGrid Margin="0 5 0 0"
+                                     HorizontalAlignment="Right"
+                                     Rows="1"
+                                     Grid.Row="1">
+                            <Button Command="{Binding CancelSelection}"
+                                    Classes="Tertiary"
+                                    Theme="{DynamicResource BorderlessButton}">
+                            </Button>
+                            <Button Command="{Binding ValidateSelection}"
+                                    Classes="Primary"
+                                    Theme="{DynamicResource SolidButton}"
+                                    Margin="5 0 0 0">
+                            </Button>
+                        </UniformGrid>
 
-                </Grid>
-            </Border>
-        </Popup>
-    </Grid>
+                    </Grid>
+                </Border>
+            </Popup>
+        </Grid>
+    </u:DisableContainer>
 </UserControl>

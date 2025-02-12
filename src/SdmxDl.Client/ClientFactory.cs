@@ -21,6 +21,16 @@ public class ClientFactory
     /*public async Task StartServer(string javaPath, string jarPath, CancellationToken token)
     {
         var cmd = Cli.Wrap(javaPath).WithArguments(["-jar", jarPath]);
+        var cmd = Cli.Wrap(javaPath)
+            .WithArguments(
+                new []
+                {
+                    $"-Dquarkus.grpc.server.port={port}",
+                    "-Dquarkus.http.host-enabled=false"
+                }
+            )
+            .WithWorkingDirectory(...);
+        
         var commandResults = await cmd.ExecuteBufferedAsync(token);
 
         if (!string.IsNullOrEmpty(commandResults.StandardError))

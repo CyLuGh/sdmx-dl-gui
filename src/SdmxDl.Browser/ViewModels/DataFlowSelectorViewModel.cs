@@ -35,34 +35,34 @@ public class DataFlowSelectorViewModel(ClientFactory clientFactory)
         ClientFactory clientFactory
     )
     {
-        return Seq.create(
-            new DataFlow()
-            {
-                Name = $"{input.Id} AAA",
-                Description = "Desc AAA",
-                Ref = "",
-                StructureRef = "",
-            },
-            new DataFlow()
-            {
-                Name = $"{input.Id} BBB",
-                Description = "Desc BBB",
-                Ref = "",
-                StructureRef = "",
-            },
-            new DataFlow()
-            {
-                Name = $"{input.Id} CCC",
-                Description = "Desc CCC",
-                Ref = "",
-                StructureRef = "",
-            }
-        );
+        // return Seq.create(
+        //     new DataFlow()
+        //     {
+        //         Name = $"{input.Id} AAA",
+        //         Description = "Desc AAA",
+        //         Ref = "",
+        //         StructureRef = "",
+        //     },
+        //     new DataFlow()
+        //     {
+        //         Name = $"{input.Id} BBB",
+        //         Description = "Desc BBB",
+        //         Ref = "",
+        //         StructureRef = "",
+        //     },
+        //     new DataFlow()
+        //     {
+        //         Name = $"{input.Id} CCC",
+        //         Description = "Desc CCC",
+        //         Ref = "",
+        //         StructureRef = "",
+        //     }
+        // );
 
-        var rawFlows = new List<Sdmxdl.Format.Protobuf.Dataflow>();
+        var rawFlows = new List<Sdmxdl.Format.Protobuf.Flow>();
         using var response = clientFactory
             .GetClient()
-            .GetFlows(new SourceRequest() { Source = input.Id });
+            .GetFlows(new DatabaseRequest() { Source = input.Id });
 
         while (await response.ResponseStream.MoveNext(CancelTokenSource.Token))
         {

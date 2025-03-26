@@ -1,6 +1,7 @@
 using System;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.Threading;
 using ReactiveUI;
 using SdmxDl.Browser.Infrastructure;
 using SdmxDl.Browser.Models;
@@ -33,6 +34,8 @@ public partial class BrowserViewModel : BaseViewModel
     public Interaction<Exception, RxUnit> DisplayErrorMessageInteraction { get; } =
         new(RxApp.MainThreadScheduler);
 
+    public ReactiveCommand<Settings, RxUnit> HostServer { get; }
+
     public BrowserViewModel(
         ClientFactory clientFactory,
         SourceSelectorViewModel sourceSelectorViewModel,
@@ -41,6 +44,8 @@ public partial class BrowserViewModel : BaseViewModel
         ExceptionHandler exceptionHandler
     )
     {
+        HostServer = CreateCommandHostServer(clientFactory);
+
         LaunchServer = CreateCommandLaunchServer();
         LaunchServer.ToProperty(
             this,
@@ -59,6 +64,7 @@ public partial class BrowserViewModel : BaseViewModel
 
                 return settings.IsHosting ? BrowserStatus.Hosting : BrowserStatus.Connected;
             })
+            .Merge(HostServer.ThrownExceptions.Select(_ => BrowserStatus.Offline))
             .ToProperty(
                 this,
                 x => x.Status,
@@ -66,6 +72,8 @@ public partial class BrowserViewModel : BaseViewModel
                 initialValue: BrowserStatus.Offline,
                 scheduler: RxApp.MainThreadScheduler
             );
+
+        this.WhenAnyValue(x => x.Settings).Where(x => x.IsHosting).InvokeCommand(HostServer);
 
         this.WhenAnyValue(x => x.Status)
             .Select(s => s != BrowserStatus.Offline)
@@ -171,5 +179,19 @@ public partial class BrowserViewModel : BaseViewModel
             .InvokeCommand(command);
 
         return command;
+    }
+
+    private ReactiveCommand<Settings, RxUnit> CreateCommandHostServer(ClientFactory clientFactory)
+    {
+        var cmd = ReactiveCommand.CreateFromTask(
+            async (Settings settings) =>
+            {
+                await clientFactory.StartServer(settings.JavaPath, settings.JarPath);
+            }
+        );
+
+        cmd.ThrownExceptions.Subscribe(async ex => await DisplayErrorMessageInteraction.Handle(ex));
+
+        return cmd;
     }
 }

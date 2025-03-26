@@ -10,11 +10,11 @@ public readonly record struct DataFlow
     public required string Description { get; init; }
 
     [SetsRequiredMembers]
-    public DataFlow(Sdmxdl.Format.Protobuf.Dataflow dataFlow)
+    public DataFlow(Sdmxdl.Format.Protobuf.Flow flow)
     {
-        Ref = dataFlow.Ref;
-        StructureRef = dataFlow.StructureRef;
-        Name = dataFlow.Name;
-        Description = dataFlow.HasDescription ? dataFlow.Description : string.Empty;
+        Ref = flow.Ref;
+        StructureRef = flow.StructureRef;
+        Name = flow.Name;
+        Description = flow.HasDescription ? flow.Description : string.Empty;
     }
 }

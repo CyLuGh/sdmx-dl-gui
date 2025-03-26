@@ -24,31 +24,31 @@ public class SourceSelectorViewModel(ClientFactory clientFactory)
         ClientFactory clientFactory
     )
     {
-        return Seq.create(
-            new SdmxWebSource()
-            {
-                Driver = "test",
-                Endpoint = "",
-                Id = "AAA",
-                Confidentiality = Confidentiality.Public,
-            },
-            new SdmxWebSource()
-            {
-                Driver = "test",
-                Endpoint = "",
-                Id = "CCC",
-                Confidentiality = Confidentiality.Public,
-            },
-            new SdmxWebSource()
-            {
-                Driver = "test",
-                Endpoint = "",
-                Id = "BBB",
-                Confidentiality = Confidentiality.Public,
-            }
-        );
+        // return Seq.create(
+        //     new SdmxWebSource()
+        //     {
+        //         Driver = "test",
+        //         Endpoint = "",
+        //         Id = "AAA",
+        //         Confidentiality = Confidentiality.Public,
+        //     },
+        //     new SdmxWebSource()
+        //     {
+        //         Driver = "test",
+        //         Endpoint = "",
+        //         Id = "CCC",
+        //         Confidentiality = Confidentiality.Public,
+        //     },
+        //     new SdmxWebSource()
+        //     {
+        //         Driver = "test",
+        //         Endpoint = "",
+        //         Id = "BBB",
+        //         Confidentiality = Confidentiality.Public,
+        //     }
+        // );
 
-        var rawSources = new List<Sdmxdl.Format.Protobuf.Web.SdmxWebSource>();
+        var rawSources = new List<Sdmxdl.Format.Protobuf.Web.WebSource>();
         using var response = clientFactory.GetClient().GetSources(new Empty());
         while (await response.ResponseStream.MoveNext(CancelTokenSource.Token))
         {

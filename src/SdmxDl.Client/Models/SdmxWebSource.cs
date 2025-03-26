@@ -19,24 +19,24 @@ public readonly record struct SdmxWebSource
     public SdmxWebSource() { }
 
     [SetsRequiredMembers]
-    public SdmxWebSource(Sdmxdl.Format.Protobuf.Web.SdmxWebSource source)
+    public SdmxWebSource(Sdmxdl.Format.Protobuf.Web.WebSource webSource)
     {
-        Id = source.Id;
-        Driver = source.Driver;
-        Endpoint = source.Endpoint;
-        Aliases = source.Aliases.ToSeq();
+        Id = webSource.Id;
+        Driver = webSource.Driver;
+        Endpoint = webSource.Endpoint;
+        Aliases = webSource.Aliases.ToSeq();
 
-        Names = source.Names.Select(x => (x.Key, x.Value)).ToHashMap();
-        Properties = source.Properties.Select(x => (x.Key, x.Value)).ToHashMap();
+        Names = webSource.Names.Select(x => (x.Key, x.Value)).ToHashMap();
+        Properties = webSource.Properties.Select(x => (x.Key, x.Value)).ToHashMap();
 
-        if (source.HasWebsite)
-            Website = source.Website;
-        if (source.HasMonitor)
-            Monitor = source.Monitor;
-        if (source.HasMonitorWebsite)
-            MonitorWebsite = source.MonitorWebsite;
+        if (webSource.HasWebsite)
+            Website = webSource.Website;
+        if (webSource.HasMonitor)
+            Monitor = webSource.Monitor;
+        if (webSource.HasMonitorWebsite)
+            MonitorWebsite = webSource.MonitorWebsite;
 
-        Confidentiality = (Confidentiality)source.Confidentiality;
+        Confidentiality = (Confidentiality)webSource.Confidentiality;
     }
 }
 

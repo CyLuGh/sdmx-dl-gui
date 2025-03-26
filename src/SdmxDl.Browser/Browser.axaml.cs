@@ -67,8 +67,10 @@ public partial class Browser : ReactiveUrsaView<BrowserViewModel>
             .DisplayErrorMessageInteraction.RegisterHandler(ctx =>
             {
                 view._toastManager?.Show(
-                    new Toast(ctx.Input.Message, NotificationType.Error),
-                    NotificationType.Error
+                    new Toast(ctx.Input.Message),
+                    showIcon: true,
+                    type: NotificationType.Error,
+                    classes: ["Light"]
                 );
                 ctx.SetOutput(RxUnit.Default);
             })

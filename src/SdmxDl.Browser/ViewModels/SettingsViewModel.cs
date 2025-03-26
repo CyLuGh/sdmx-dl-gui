@@ -91,7 +91,13 @@ public partial class SettingsViewModel : BaseViewModel, IDialogContext
             })
             .ObserveOn(RxApp.MainThreadScheduler);
 
-        return ReactiveCommand.Create(() => Close(Settings), canConnect);
+        return ReactiveCommand.Create(
+            () =>
+            {
+                Close(Settings);
+            },
+            canConnect
+        );
     }
 
     public Settings Settings =>

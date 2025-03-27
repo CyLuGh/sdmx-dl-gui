@@ -5,6 +5,7 @@
              xmlns:viewModels="clr-namespace:SdmxDl.Browser.ViewModels"
              xmlns:converters="clr-namespace:SdmxDl.Browser.Infrastructure.Converters"
              xmlns:models="clr-namespace:SdmxDl.Client.Models;assembly=SdmxDl.Client"
+             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SdmxDl.Browser.SourceSelector"
              x:DataType="viewModels:SourceSelectorViewModel">
@@ -74,10 +75,12 @@
                                  Rows="1"
                                  Grid.Row="1">
                         <Button Command="{Binding CancelSelection}"
+                                Content="{materialIcons:MaterialIconTextExt Kind=Cancel, Text=CANCEL}"
                                 Classes="Tertiary"
                                 Theme="{DynamicResource BorderlessButton}">
                         </Button>
                         <Button Command="{Binding ValidateSelection}"
+                                Content="{materialIcons:MaterialIconTextExt Kind=CheckboxMarkedCircleOutline, Text=USE SOURCE}"
                                 Classes="Primary"
                                 Theme="{DynamicResource SolidButton}"
                                 Margin="5 0 0 0">

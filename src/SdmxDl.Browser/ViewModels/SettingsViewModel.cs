@@ -25,7 +25,7 @@ public partial class SettingsViewModel : BaseViewModel, IDialogContext
 
     public SettingsViewModel(Tracker tracker)
     {
-        ServerUri = "http://localhost:4567";
+        ServerUri = "http://localhost:4557";
         tracker.Track(this);
 
         Connect = CreateCommandConnect();

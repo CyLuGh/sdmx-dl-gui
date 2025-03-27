@@ -13,15 +13,24 @@ namespace SdmxDl.Browser.ViewModels;
 
 public partial class BrowserViewModel : BaseViewModel
 {
+    /// <summary>
+    /// Indicates if a server is available.
+    /// </summary>
     [ObservableAsProperty]
     public partial bool ServerIsRunning { get; }
 
+    /// <summary>
+    /// Indicates server status.
+    /// </summary>
     [ObservableAsProperty]
     public partial BrowserStatus Status { get; }
 
     [ObservableAsProperty]
     public partial Settings Settings { get; }
 
+    /// <summary>
+    /// Running SDMX-DL server version.
+    /// </summary>
     [ObservableAsProperty]
     public partial string? Version { get; }
 
@@ -29,6 +38,9 @@ public partial class BrowserViewModel : BaseViewModel
     public Interaction<RxUnit, Settings> LaunchServerInteraction { get; } =
         new(RxApp.MainThreadScheduler);
 
+    /// <summary>
+    /// Ask server to provide its version.
+    /// </summary>
     public ReactiveCommand<RxUnit, string> RetrieveVersion { get; }
 
     public Interaction<Exception, RxUnit> DisplayErrorMessageInteraction { get; } =
@@ -55,35 +67,10 @@ public partial class BrowserViewModel : BaseViewModel
             scheduler: RxApp.MainThreadScheduler
         );
 
-        this.WhenAnyValue(x => x.Settings)
-            .WhereNotNull()
-            .Select(settings =>
-            {
-                if (settings == Settings.None)
-                    return BrowserStatus.Offline;
-
-                return settings.IsHosting ? BrowserStatus.Hosting : BrowserStatus.Connected;
-            })
-            .Merge(HostServer.ThrownExceptions.Select(_ => BrowserStatus.Offline))
-            .ToProperty(
-                this,
-                x => x.Status,
-                out _statusHelper,
-                initialValue: BrowserStatus.Offline,
-                scheduler: RxApp.MainThreadScheduler
-            );
-
         this.WhenAnyValue(x => x.Settings).Where(x => x.IsHosting).InvokeCommand(HostServer);
 
-        this.WhenAnyValue(x => x.Status)
-            .Select(s => s != BrowserStatus.Offline)
-            .ToProperty(
-                this,
-                x => x.ServerIsRunning,
-                out _serverIsRunningHelper,
-                initialValue: false,
-                scheduler: RxApp.MainThreadScheduler
-            );
+        UpdateServerHostingStatus();
+        UpdateServerRunningStatus();
 
         RetrieveVersion = CreateCommandRetrieveVersion(clientFactory);
 
@@ -100,11 +87,7 @@ public partial class BrowserViewModel : BaseViewModel
                 await DisplayErrorMessageInteraction.Handle(ex);
             });
 
-            this.WhenAnyValue(x => x.ServerIsRunning)
-                .Where(x => x)
-                .Select(_ => RxUnit.Default)
-                .InvokeCommand(sourceSelectorViewModel, x => x.RetrieveData)
-                .DisposeWith(disposables);
+            FetchSourcesOnServerStartup(sourceSelectorViewModel, disposables);
 
             sourceSelectorViewModel
                 .WhenAnyValue(x => x.Selection)
@@ -144,6 +127,63 @@ public partial class BrowserViewModel : BaseViewModel
         });
     }
 
+    /// <summary>
+    /// Update hosting status according to chosen settings.
+    /// Status is Offline if connection was cancelled or hosting failed.
+    /// Status is Hosting if process is hosting own instance of sdmx-dl.
+    /// Status is Connected if process connects to an already running instance of sdmx-dl.
+    /// </summary>
+    private void UpdateServerHostingStatus()
+    {
+        this.WhenAnyValue(x => x.Settings)
+            .WhereNotNull()
+            .Select(settings =>
+            {
+                if (settings == Settings.None)
+                    return BrowserStatus.Offline;
+
+                return settings.IsHosting ? BrowserStatus.Hosting : BrowserStatus.Connected;
+            })
+            .Merge(HostServer.ThrownExceptions.Select(_ => BrowserStatus.Offline))
+            .ToProperty(
+                this,
+                x => x.Status,
+                out _statusHelper,
+                initialValue: BrowserStatus.Offline,
+                scheduler: RxApp.MainThreadScheduler
+            );
+    }
+
+    /// <summary>
+    /// Trigger sources retrieval on server startup
+    /// </summary>
+    private void FetchSourcesOnServerStartup(
+        SourceSelectorViewModel sourceSelectorViewModel,
+        CompositeDisposable disposables
+    )
+    {
+        this.WhenAnyValue(x => x.ServerIsRunning, x => x.Version)
+            .Where(t => t.Item1 && !string.IsNullOrWhiteSpace(t.Item2))
+            .DistinctUntilChanged()
+            .Throttle(TimeSpan.FromSeconds(1))
+            .Select(_ => RxUnit.Default)
+            .InvokeCommand(sourceSelectorViewModel, x => x.RetrieveData)
+            .DisposeWith(disposables);
+    }
+
+    private void UpdateServerRunningStatus()
+    {
+        this.WhenAnyValue(x => x.Status)
+            .Select(s => s != BrowserStatus.Offline)
+            .ToProperty(
+                this,
+                x => x.ServerIsRunning,
+                out _serverIsRunningHelper,
+                initialValue: false,
+                scheduler: RxApp.MainThreadScheduler
+            );
+    }
+
     private ReactiveCommand<RxUnit, Settings> CreateCommandLaunchServer()
     {
         return ReactiveCommand.CreateFromObservable(
@@ -151,6 +191,9 @@ public partial class BrowserViewModel : BaseViewModel
         );
     }
 
+    /// <summary>
+    /// Once server is running, app will try to fetch version after 1 second then every 5 minutes.
+    /// </summary>
     private ReactiveCommand<RxUnit, string> CreateCommandRetrieveVersion(
         ClientFactory clientFactory
     )
@@ -169,13 +212,21 @@ public partial class BrowserViewModel : BaseViewModel
             scheduler: RxApp.MainThreadScheduler
         );
 
-        Observable
-            .Interval(TimeSpan.FromSeconds(30))
-            .Where(_ => ServerIsRunning)
-            .Select(_ => RxUnit.Default)
-            .Merge(
-                this.WhenAnyValue(x => x.ServerIsRunning).Where(x => x).Select(_ => RxUnit.Default)
-            )
+        this.WhenAnyValue(x => x.ServerIsRunning)
+            .Select(b =>
+            {
+                if (!b)
+                    return Observable.Empty<RxUnit>();
+
+                return Observable
+                    .Timer(
+                        TimeSpan.FromSeconds(1),
+                        TimeSpan.FromMinutes(5),
+                        RxApp.TaskpoolScheduler
+                    )
+                    .Select(_ => RxUnit.Default);
+            })
+            .Switch()
             .InvokeCommand(command);
 
         return command;
@@ -191,7 +242,6 @@ public partial class BrowserViewModel : BaseViewModel
         );
 
         cmd.ThrownExceptions.Subscribe(async ex => await DisplayErrorMessageInteraction.Handle(ex));
-
         return cmd;
     }
 }

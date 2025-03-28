@@ -6,7 +6,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.Notifications;
 using ReactiveUI;
 using SdmxDl.Browser.ViewModels;
-using SdmxDl.Engine;
+using SdmxDl.Client.Models;
 using Ursa.Controls;
 using Ursa.ReactiveUIExtension;
 
@@ -67,8 +67,11 @@ public partial class Browser : ReactiveUrsaView<BrowserViewModel>
             .DisplayErrorMessageInteraction.RegisterHandler(ctx =>
             {
                 view._toastManager?.Show(
-                    new Toast(ctx.Input.Message, NotificationType.Error),
-                    NotificationType.Error
+                    new Toast(ctx.Input.Message),
+                    showIcon: true,
+                    type: NotificationType.Error,
+                    classes: ["Light"],
+                    expiration: TimeSpan.FromSeconds(10)
                 );
                 ctx.SetOutput(RxUnit.Default);
             })

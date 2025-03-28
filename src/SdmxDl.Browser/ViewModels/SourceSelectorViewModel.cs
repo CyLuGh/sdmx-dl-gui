@@ -8,51 +8,26 @@ using System.Threading.Tasks;
 using Avalonia.Input;
 using DynamicData;
 using LanguageExt;
+using Polly;
 using ReactiveUI;
-using SdmxDl.Browser.Models;
 using SdmxDl.Client;
+using SdmxDl.Client.Models;
 using Sdmxdl.Grpc;
 
 namespace SdmxDl.Browser.ViewModels;
 
-public partial class SourceSelectorViewModel : SelectorViewModel<SdmxWebSource, RxUnit>
+public class SourceSelectorViewModel(ClientFactory clientFactory, ResiliencePipeline pipeline)
+    : SelectorViewModel<SdmxWebSource, RxUnit>(clientFactory, pipeline)
 {
-    public SourceSelectorViewModel(ClientFactory clientFactory)
-        : base(clientFactory) { }
-
     [Pure]
     protected override async Task<Seq<SdmxWebSource>> RetrieveDataImpl(
         RxUnit input,
         ClientFactory clientFactory
     )
     {
-        return Seq.create(
-            new SdmxWebSource()
-            {
-                Driver = "test",
-                Endpoint = "",
-                Id = "AAA",
-                Confidentiality = Confidentiality.Public,
-            },
-            new SdmxWebSource()
-            {
-                Driver = "test",
-                Endpoint = "",
-                Id = "CCC",
-                Confidentiality = Confidentiality.Public,
-            },
-            new SdmxWebSource()
-            {
-                Driver = "test",
-                Endpoint = "",
-                Id = "BBB",
-                Confidentiality = Confidentiality.Public,
-            }
-        );
-
-        var rawSources = new List<Sdmxdl.Format.Protobuf.Web.SdmxWebSource>();
+        var rawSources = new List<Sdmxdl.Format.Protobuf.Web.WebSource>();
         using var response = clientFactory.GetClient().GetSources(new Empty());
-        while (await response.ResponseStream.MoveNext(CancellationToken.None))
+        while (await response.ResponseStream.MoveNext(CancelTokenSource.Token))
         {
             var source = response.ResponseStream.Current;
             rawSources.Add(source);
@@ -70,6 +45,8 @@ public partial class SourceSelectorViewModel : SelectorViewModel<SdmxWebSource, 
         return all.Where(s =>
                 s.Id.Contains(input, StringComparison.CurrentCultureIgnoreCase)
                 || s.Aliases.Any(a => a.Contains(input, StringComparison.CurrentCultureIgnoreCase))
+                // TODO: check culture?
+                || s.GetDescription().Contains(input, StringComparison.CurrentCultureIgnoreCase)
             )
             .OrderBy(s => s.Id)
             .ToSeq()

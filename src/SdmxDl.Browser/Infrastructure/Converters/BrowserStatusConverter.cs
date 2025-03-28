@@ -2,6 +2,7 @@ using System;
 using System.Globalization;
 using Avalonia.Data.Converters;
 using SdmxDl.Browser.Models;
+using SdmxDl.Client.Models;
 
 namespace SdmxDl.Browser.Infrastructure.Converters;
 

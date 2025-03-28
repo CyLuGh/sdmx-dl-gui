@@ -24,33 +24,41 @@ namespace Sdmxdl.Grpc {
     static SdmxdlGrpcReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "ChFzZG14ZGxfZ3JwYy5wcm90bxILc2RteGRsLmdycGMaFHNkbXhkbF9tb25p",
-            "dG9yLnByb3RvGhdzZG14ZGxfcmVwb3NpdG9yeS5wcm90bxoTc2RteGRsX3Nv",
-            "dXJjZS5wcm90byIHCgVFbXB0eSIfCg1Tb3VyY2VSZXF1ZXN0Eg4KBnNvdXJj",
-            "ZRgBIAEoCSIrCgtGbG93UmVxdWVzdBIOCgZzb3VyY2UYASABKAkSDAoEZmxv",
-            "dxgCIAEoCSI3CgpLZXlSZXF1ZXN0Eg4KBnNvdXJjZRgBIAEoCRIMCgRmbG93",
-            "GAIgASgJEgsKA2tleRgDIAEoCTLuBAoOU2RteFdlYk1hbmFnZXISPQoIR2V0",
-            "QWJvdXQSEi5zZG14ZGwuZ3JwYy5FbXB0eRodLnNkbXhkbC5mb3JtYXQucHJv",
-            "dG9idWYuQWJvdXQSTQoKR2V0U291cmNlcxISLnNkbXhkbC5ncnBjLkVtcHR5",
-            "Gikuc2RteGRsLmZvcm1hdC5wcm90b2J1Zi53ZWIuU2RteFdlYlNvdXJjZTAB",
-            "ElkKEEdldE1vbml0b3JSZXBvcnQSGi5zZG14ZGwuZ3JwYy5Tb3VyY2VSZXF1",
-            "ZXN0Gikuc2RteGRsLmZvcm1hdC5wcm90b2J1Zi53ZWIuTW9uaXRvclJlcG9y",
-            "dBJKCghHZXRGbG93cxIaLnNkbXhkbC5ncnBjLlNvdXJjZVJlcXVlc3QaIC5z",
-            "ZG14ZGwuZm9ybWF0LnByb3RvYnVmLkRhdGFmbG93MAESRQoHR2V0RmxvdxIY",
-            "LnNkbXhkbC5ncnBjLkZsb3dSZXF1ZXN0GiAuc2RteGRsLmZvcm1hdC5wcm90",
-            "b2J1Zi5EYXRhZmxvdxJPCgxHZXRTdHJ1Y3R1cmUSGC5zZG14ZGwuZ3JwYy5G",
-            "bG93UmVxdWVzdBolLnNkbXhkbC5mb3JtYXQucHJvdG9idWYuRGF0YVN0cnVj",
-            "dHVyZRJDCgdHZXREYXRhEhcuc2RteGRsLmdycGMuS2V5UmVxdWVzdBofLnNk",
-            "bXhkbC5mb3JtYXQucHJvdG9idWYuRGF0YVNldBJKCg1HZXREYXRhU3RyZWFt",
-            "Ehcuc2RteGRsLmdycGMuS2V5UmVxdWVzdBoeLnNkbXhkbC5mb3JtYXQucHJv",
-            "dG9idWYuU2VyaWVzMAFCAlABYgZwcm90bzM="));
+            "ChFzZG14ZGxfZ3JwYy5wcm90bxILc2RteGRsLmdycGMaEHNkbXhkbF9hcGku",
+            "cHJvdG8aEHNkbXhkbF93ZWIucHJvdG8iBwoFRW1wdHkiRQoNU291cmNlUmVx",
+            "dWVzdBIOCgZzb3VyY2UYASABKAkSFgoJbGFuZ3VhZ2VzGAIgASgJSACIAQFC",
+            "DAoKX2xhbmd1YWdlcyJrCg9EYXRhYmFzZVJlcXVlc3QSDgoGc291cmNlGAEg",
+            "ASgJEhUKCGRhdGFiYXNlGAIgASgJSACIAQESFgoJbGFuZ3VhZ2VzGAMgASgJ",
+            "SAGIAQFCCwoJX2RhdGFiYXNlQgwKCl9sYW5ndWFnZXMidQoLRmxvd1JlcXVl",
+            "c3QSDgoGc291cmNlGAEgASgJEgwKBGZsb3cYAiABKAkSFQoIZGF0YWJhc2UY",
+            "AyABKAlIAIgBARIWCglsYW5ndWFnZXMYBCABKAlIAYgBAUILCglfZGF0YWJh",
+            "c2VCDAoKX2xhbmd1YWdlcyKBAQoKS2V5UmVxdWVzdBIOCgZzb3VyY2UYASAB",
+            "KAkSDAoEZmxvdxgCIAEoCRILCgNrZXkYAyABKAkSFQoIZGF0YWJhc2UYBCAB",
+            "KAlIAIgBARIWCglsYW5ndWFnZXMYBSABKAlIAYgBAUILCglfZGF0YWJhc2VC",
+            "DAoKX2xhbmd1YWdlczKwBQoOU2RteFdlYk1hbmFnZXISPQoIR2V0QWJvdXQS",
+            "Ei5zZG14ZGwuZ3JwYy5FbXB0eRodLnNkbXhkbC5mb3JtYXQucHJvdG9idWYu",
+            "QWJvdXQSSQoKR2V0U291cmNlcxISLnNkbXhkbC5ncnBjLkVtcHR5GiUuc2Rt",
+            "eGRsLmZvcm1hdC5wcm90b2J1Zi53ZWIuV2ViU291cmNlMAESWQoQR2V0TW9u",
+            "aXRvclJlcG9ydBIaLnNkbXhkbC5ncnBjLlNvdXJjZVJlcXVlc3QaKS5zZG14",
+            "ZGwuZm9ybWF0LnByb3RvYnVmLndlYi5Nb25pdG9yUmVwb3J0Ek4KDEdldERh",
+            "dGFiYXNlcxIaLnNkbXhkbC5ncnBjLlNvdXJjZVJlcXVlc3QaIC5zZG14ZGwu",
+            "Zm9ybWF0LnByb3RvYnVmLkRhdGFiYXNlMAESSAoIR2V0Rmxvd3MSHC5zZG14",
+            "ZGwuZ3JwYy5EYXRhYmFzZVJlcXVlc3QaHC5zZG14ZGwuZm9ybWF0LnByb3Rv",
+            "YnVmLkZsb3cwARJBCgdHZXRGbG93Ehguc2RteGRsLmdycGMuRmxvd1JlcXVl",
+            "c3QaHC5zZG14ZGwuZm9ybWF0LnByb3RvYnVmLkZsb3cSSwoMR2V0U3RydWN0",
+            "dXJlEhguc2RteGRsLmdycGMuRmxvd1JlcXVlc3QaIS5zZG14ZGwuZm9ybWF0",
+            "LnByb3RvYnVmLlN0cnVjdHVyZRJDCgdHZXREYXRhEhcuc2RteGRsLmdycGMu",
+            "S2V5UmVxdWVzdBofLnNkbXhkbC5mb3JtYXQucHJvdG9idWYuRGF0YVNldBJK",
+            "Cg1HZXREYXRhU3RyZWFtEhcuc2RteGRsLmdycGMuS2V5UmVxdWVzdBoeLnNk",
+            "bXhkbC5mb3JtYXQucHJvdG9idWYuU2VyaWVzMAFCAlABYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
-          new pbr::FileDescriptor[] { global::Sdmxdl.Format.Protobuf.Web.SdmxdlMonitorReflection.Descriptor, global::Sdmxdl.Format.Protobuf.SdmxdlRepositoryReflection.Descriptor, global::Sdmxdl.Format.Protobuf.Web.SdmxdlSourceReflection.Descriptor, },
+          new pbr::FileDescriptor[] { global::Sdmxdl.Format.Protobuf.SdmxdlApiReflection.Descriptor, global::Sdmxdl.Format.Protobuf.Web.SdmxdlWebReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::Sdmxdl.Grpc.Empty), global::Sdmxdl.Grpc.Empty.Parser, null, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Sdmxdl.Grpc.SourceRequest), global::Sdmxdl.Grpc.SourceRequest.Parser, new[]{ "Source" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Sdmxdl.Grpc.FlowRequest), global::Sdmxdl.Grpc.FlowRequest.Parser, new[]{ "Source", "Flow" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Sdmxdl.Grpc.KeyRequest), global::Sdmxdl.Grpc.KeyRequest.Parser, new[]{ "Source", "Flow", "Key" }, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Sdmxdl.Grpc.SourceRequest), global::Sdmxdl.Grpc.SourceRequest.Parser, new[]{ "Source", "Languages" }, new[]{ "Languages" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Sdmxdl.Grpc.DatabaseRequest), global::Sdmxdl.Grpc.DatabaseRequest.Parser, new[]{ "Source", "Database", "Languages" }, new[]{ "Database", "Languages" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Sdmxdl.Grpc.FlowRequest), global::Sdmxdl.Grpc.FlowRequest.Parser, new[]{ "Source", "Flow", "Database", "Languages" }, new[]{ "Database", "Languages" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Sdmxdl.Grpc.KeyRequest), global::Sdmxdl.Grpc.KeyRequest.Parser, new[]{ "Source", "Flow", "Key", "Database", "Languages" }, new[]{ "Database", "Languages" }, null, null, null)
           }));
     }
     #endregion
@@ -254,6 +262,7 @@ namespace Sdmxdl.Grpc {
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public SourceRequest(SourceRequest other) : this() {
       source_ = other.source_;
+      languages_ = other.languages_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -275,6 +284,32 @@ namespace Sdmxdl.Grpc {
       }
     }
 
+    /// <summary>Field number for the "languages" field.</summary>
+    public const int LanguagesFieldNumber = 2;
+    private readonly static string LanguagesDefaultValue = "";
+
+    private string languages_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string Languages {
+      get { return languages_ ?? LanguagesDefaultValue; }
+      set {
+        languages_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+    /// <summary>Gets whether the "languages" field is set</summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool HasLanguages {
+      get { return languages_ != null; }
+    }
+    /// <summary>Clears the value of the "languages" field</summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void ClearLanguages() {
+      languages_ = null;
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
@@ -291,6 +326,7 @@ namespace Sdmxdl.Grpc {
         return true;
       }
       if (Source != other.Source) return false;
+      if (Languages != other.Languages) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -299,6 +335,7 @@ namespace Sdmxdl.Grpc {
     public override int GetHashCode() {
       int hash = 1;
       if (Source.Length != 0) hash ^= Source.GetHashCode();
+      if (HasLanguages) hash ^= Languages.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -321,6 +358,10 @@ namespace Sdmxdl.Grpc {
         output.WriteRawTag(10);
         output.WriteString(Source);
       }
+      if (HasLanguages) {
+        output.WriteRawTag(18);
+        output.WriteString(Languages);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -335,6 +376,10 @@ namespace Sdmxdl.Grpc {
         output.WriteRawTag(10);
         output.WriteString(Source);
       }
+      if (HasLanguages) {
+        output.WriteRawTag(18);
+        output.WriteString(Languages);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -347,6 +392,9 @@ namespace Sdmxdl.Grpc {
       int size = 0;
       if (Source.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(Source);
+      }
+      if (HasLanguages) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Languages);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -362,6 +410,9 @@ namespace Sdmxdl.Grpc {
       }
       if (other.Source.Length != 0) {
         Source = other.Source;
+      }
+      if (other.HasLanguages) {
+        Languages = other.Languages;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -384,6 +435,10 @@ namespace Sdmxdl.Grpc {
             break;
           case 10: {
             Source = input.ReadString();
+            break;
+          }
+          case 18: {
+            Languages = input.ReadString();
             break;
           }
         }
@@ -409,6 +464,310 @@ namespace Sdmxdl.Grpc {
             Source = input.ReadString();
             break;
           }
+          case 18: {
+            Languages = input.ReadString();
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
+  [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+  public sealed partial class DatabaseRequest : pb::IMessage<DatabaseRequest>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<DatabaseRequest> _parser = new pb::MessageParser<DatabaseRequest>(() => new DatabaseRequest());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pb::MessageParser<DatabaseRequest> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Sdmxdl.Grpc.SdmxdlGrpcReflection.Descriptor.MessageTypes[2]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public DatabaseRequest() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public DatabaseRequest(DatabaseRequest other) : this() {
+      source_ = other.source_;
+      database_ = other.database_;
+      languages_ = other.languages_;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public DatabaseRequest Clone() {
+      return new DatabaseRequest(this);
+    }
+
+    /// <summary>Field number for the "source" field.</summary>
+    public const int SourceFieldNumber = 1;
+    private string source_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string Source {
+      get { return source_; }
+      set {
+        source_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+
+    /// <summary>Field number for the "database" field.</summary>
+    public const int DatabaseFieldNumber = 2;
+    private readonly static string DatabaseDefaultValue = "";
+
+    private string database_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string Database {
+      get { return database_ ?? DatabaseDefaultValue; }
+      set {
+        database_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+    /// <summary>Gets whether the "database" field is set</summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool HasDatabase {
+      get { return database_ != null; }
+    }
+    /// <summary>Clears the value of the "database" field</summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void ClearDatabase() {
+      database_ = null;
+    }
+
+    /// <summary>Field number for the "languages" field.</summary>
+    public const int LanguagesFieldNumber = 3;
+    private readonly static string LanguagesDefaultValue = "";
+
+    private string languages_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string Languages {
+      get { return languages_ ?? LanguagesDefaultValue; }
+      set {
+        languages_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+    /// <summary>Gets whether the "languages" field is set</summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool HasLanguages {
+      get { return languages_ != null; }
+    }
+    /// <summary>Clears the value of the "languages" field</summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void ClearLanguages() {
+      languages_ = null;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override bool Equals(object other) {
+      return Equals(other as DatabaseRequest);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool Equals(DatabaseRequest other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (Source != other.Source) return false;
+      if (Database != other.Database) return false;
+      if (Languages != other.Languages) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (Source.Length != 0) hash ^= Source.GetHashCode();
+      if (HasDatabase) hash ^= Database.GetHashCode();
+      if (HasLanguages) hash ^= Languages.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (Source.Length != 0) {
+        output.WriteRawTag(10);
+        output.WriteString(Source);
+      }
+      if (HasDatabase) {
+        output.WriteRawTag(18);
+        output.WriteString(Database);
+      }
+      if (HasLanguages) {
+        output.WriteRawTag(26);
+        output.WriteString(Languages);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (Source.Length != 0) {
+        output.WriteRawTag(10);
+        output.WriteString(Source);
+      }
+      if (HasDatabase) {
+        output.WriteRawTag(18);
+        output.WriteString(Database);
+      }
+      if (HasLanguages) {
+        output.WriteRawTag(26);
+        output.WriteString(Languages);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int CalculateSize() {
+      int size = 0;
+      if (Source.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Source);
+      }
+      if (HasDatabase) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Database);
+      }
+      if (HasLanguages) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Languages);
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(DatabaseRequest other) {
+      if (other == null) {
+        return;
+      }
+      if (other.Source.Length != 0) {
+        Source = other.Source;
+      }
+      if (other.HasDatabase) {
+        Database = other.Database;
+      }
+      if (other.HasLanguages) {
+        Languages = other.Languages;
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+      if ((tag & 7) == 4) {
+        // Abort on any end group tag.
+        return;
+      }
+      switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 10: {
+            Source = input.ReadString();
+            break;
+          }
+          case 18: {
+            Database = input.ReadString();
+            break;
+          }
+          case 26: {
+            Languages = input.ReadString();
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+      if ((tag & 7) == 4) {
+        // Abort on any end group tag.
+        return;
+      }
+      switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 10: {
+            Source = input.ReadString();
+            break;
+          }
+          case 18: {
+            Database = input.ReadString();
+            break;
+          }
+          case 26: {
+            Languages = input.ReadString();
+            break;
+          }
         }
       }
     }
@@ -431,7 +790,7 @@ namespace Sdmxdl.Grpc {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Sdmxdl.Grpc.SdmxdlGrpcReflection.Descriptor.MessageTypes[2]; }
+      get { return global::Sdmxdl.Grpc.SdmxdlGrpcReflection.Descriptor.MessageTypes[3]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -453,6 +812,8 @@ namespace Sdmxdl.Grpc {
     public FlowRequest(FlowRequest other) : this() {
       source_ = other.source_;
       flow_ = other.flow_;
+      database_ = other.database_;
+      languages_ = other.languages_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -486,6 +847,58 @@ namespace Sdmxdl.Grpc {
       }
     }
 
+    /// <summary>Field number for the "database" field.</summary>
+    public const int DatabaseFieldNumber = 3;
+    private readonly static string DatabaseDefaultValue = "";
+
+    private string database_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string Database {
+      get { return database_ ?? DatabaseDefaultValue; }
+      set {
+        database_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+    /// <summary>Gets whether the "database" field is set</summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool HasDatabase {
+      get { return database_ != null; }
+    }
+    /// <summary>Clears the value of the "database" field</summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void ClearDatabase() {
+      database_ = null;
+    }
+
+    /// <summary>Field number for the "languages" field.</summary>
+    public const int LanguagesFieldNumber = 4;
+    private readonly static string LanguagesDefaultValue = "";
+
+    private string languages_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string Languages {
+      get { return languages_ ?? LanguagesDefaultValue; }
+      set {
+        languages_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+    /// <summary>Gets whether the "languages" field is set</summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool HasLanguages {
+      get { return languages_ != null; }
+    }
+    /// <summary>Clears the value of the "languages" field</summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void ClearLanguages() {
+      languages_ = null;
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
@@ -503,6 +916,8 @@ namespace Sdmxdl.Grpc {
       }
       if (Source != other.Source) return false;
       if (Flow != other.Flow) return false;
+      if (Database != other.Database) return false;
+      if (Languages != other.Languages) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -512,6 +927,8 @@ namespace Sdmxdl.Grpc {
       int hash = 1;
       if (Source.Length != 0) hash ^= Source.GetHashCode();
       if (Flow.Length != 0) hash ^= Flow.GetHashCode();
+      if (HasDatabase) hash ^= Database.GetHashCode();
+      if (HasLanguages) hash ^= Languages.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -538,6 +955,14 @@ namespace Sdmxdl.Grpc {
         output.WriteRawTag(18);
         output.WriteString(Flow);
       }
+      if (HasDatabase) {
+        output.WriteRawTag(26);
+        output.WriteString(Database);
+      }
+      if (HasLanguages) {
+        output.WriteRawTag(34);
+        output.WriteString(Languages);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -556,6 +981,14 @@ namespace Sdmxdl.Grpc {
         output.WriteRawTag(18);
         output.WriteString(Flow);
       }
+      if (HasDatabase) {
+        output.WriteRawTag(26);
+        output.WriteString(Database);
+      }
+      if (HasLanguages) {
+        output.WriteRawTag(34);
+        output.WriteString(Languages);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -571,6 +1004,12 @@ namespace Sdmxdl.Grpc {
       }
       if (Flow.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(Flow);
+      }
+      if (HasDatabase) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Database);
+      }
+      if (HasLanguages) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Languages);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -589,6 +1028,12 @@ namespace Sdmxdl.Grpc {
       }
       if (other.Flow.Length != 0) {
         Flow = other.Flow;
+      }
+      if (other.HasDatabase) {
+        Database = other.Database;
+      }
+      if (other.HasLanguages) {
+        Languages = other.Languages;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -615,6 +1060,14 @@ namespace Sdmxdl.Grpc {
           }
           case 18: {
             Flow = input.ReadString();
+            break;
+          }
+          case 26: {
+            Database = input.ReadString();
+            break;
+          }
+          case 34: {
+            Languages = input.ReadString();
             break;
           }
         }
@@ -644,6 +1097,14 @@ namespace Sdmxdl.Grpc {
             Flow = input.ReadString();
             break;
           }
+          case 26: {
+            Database = input.ReadString();
+            break;
+          }
+          case 34: {
+            Languages = input.ReadString();
+            break;
+          }
         }
       }
     }
@@ -666,7 +1127,7 @@ namespace Sdmxdl.Grpc {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Sdmxdl.Grpc.SdmxdlGrpcReflection.Descriptor.MessageTypes[3]; }
+      get { return global::Sdmxdl.Grpc.SdmxdlGrpcReflection.Descriptor.MessageTypes[4]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -689,6 +1150,8 @@ namespace Sdmxdl.Grpc {
       source_ = other.source_;
       flow_ = other.flow_;
       key_ = other.key_;
+      database_ = other.database_;
+      languages_ = other.languages_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -734,6 +1197,58 @@ namespace Sdmxdl.Grpc {
       }
     }
 
+    /// <summary>Field number for the "database" field.</summary>
+    public const int DatabaseFieldNumber = 4;
+    private readonly static string DatabaseDefaultValue = "";
+
+    private string database_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string Database {
+      get { return database_ ?? DatabaseDefaultValue; }
+      set {
+        database_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+    /// <summary>Gets whether the "database" field is set</summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool HasDatabase {
+      get { return database_ != null; }
+    }
+    /// <summary>Clears the value of the "database" field</summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void ClearDatabase() {
+      database_ = null;
+    }
+
+    /// <summary>Field number for the "languages" field.</summary>
+    public const int LanguagesFieldNumber = 5;
+    private readonly static string LanguagesDefaultValue = "";
+
+    private string languages_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public string Languages {
+      get { return languages_ ?? LanguagesDefaultValue; }
+      set {
+        languages_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
+    /// <summary>Gets whether the "languages" field is set</summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool HasLanguages {
+      get { return languages_ != null; }
+    }
+    /// <summary>Clears the value of the "languages" field</summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void ClearLanguages() {
+      languages_ = null;
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
@@ -752,6 +1267,8 @@ namespace Sdmxdl.Grpc {
       if (Source != other.Source) return false;
       if (Flow != other.Flow) return false;
       if (Key != other.Key) return false;
+      if (Database != other.Database) return false;
+      if (Languages != other.Languages) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -762,6 +1279,8 @@ namespace Sdmxdl.Grpc {
       if (Source.Length != 0) hash ^= Source.GetHashCode();
       if (Flow.Length != 0) hash ^= Flow.GetHashCode();
       if (Key.Length != 0) hash ^= Key.GetHashCode();
+      if (HasDatabase) hash ^= Database.GetHashCode();
+      if (HasLanguages) hash ^= Languages.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -792,6 +1311,14 @@ namespace Sdmxdl.Grpc {
         output.WriteRawTag(26);
         output.WriteString(Key);
       }
+      if (HasDatabase) {
+        output.WriteRawTag(34);
+        output.WriteString(Database);
+      }
+      if (HasLanguages) {
+        output.WriteRawTag(42);
+        output.WriteString(Languages);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -814,6 +1341,14 @@ namespace Sdmxdl.Grpc {
         output.WriteRawTag(26);
         output.WriteString(Key);
       }
+      if (HasDatabase) {
+        output.WriteRawTag(34);
+        output.WriteString(Database);
+      }
+      if (HasLanguages) {
+        output.WriteRawTag(42);
+        output.WriteString(Languages);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -832,6 +1367,12 @@ namespace Sdmxdl.Grpc {
       }
       if (Key.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(Key);
+      }
+      if (HasDatabase) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Database);
+      }
+      if (HasLanguages) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Languages);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -853,6 +1394,12 @@ namespace Sdmxdl.Grpc {
       }
       if (other.Key.Length != 0) {
         Key = other.Key;
+      }
+      if (other.HasDatabase) {
+        Database = other.Database;
+      }
+      if (other.HasLanguages) {
+        Languages = other.Languages;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -885,6 +1432,14 @@ namespace Sdmxdl.Grpc {
             Key = input.ReadString();
             break;
           }
+          case 34: {
+            Database = input.ReadString();
+            break;
+          }
+          case 42: {
+            Languages = input.ReadString();
+            break;
+          }
         }
       }
     #endif
@@ -914,6 +1469,14 @@ namespace Sdmxdl.Grpc {
           }
           case 26: {
             Key = input.ReadString();
+            break;
+          }
+          case 34: {
+            Database = input.ReadString();
+            break;
+          }
+          case 42: {
+            Languages = input.ReadString();
             break;
           }
         }

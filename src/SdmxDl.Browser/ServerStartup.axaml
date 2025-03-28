@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:u="https://irihi.tech/ursa"
              xmlns:viewModels="clr-namespace:SdmxDl.Browser.ViewModels"
+             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              mc:Ignorable="d"
              Width="800"
              x:Class="SdmxDl.Browser.ServerStartup"
@@ -39,6 +40,7 @@
                         <Grid ColumnDefinitions="*,auto">
                             <TextBox Text="{Binding Path=JavaPath}" />
                             <Button Command="{Binding Path=PickJavaPath}" 
+                                    Content="{materialIcons:MaterialIconExt Kind=FolderOpen}"
                                     Margin="5 0 0 0" 
                                     Grid.Column="1" />
                         </Grid>
@@ -48,6 +50,7 @@
                         <Grid ColumnDefinitions="*,auto">
                             <TextBox Text="{Binding Path=JarPath}" />
                             <Button Command="{Binding Path=PickJarPath}" 
+                                    Content="{materialIcons:MaterialIconExt Kind=FolderOpen}"
                                     Margin="5 0 0 0" Grid.Column="1" />
                         </Grid>
                     </u:FormItem>
@@ -68,10 +71,11 @@
                 CANCEL
             </Button>
             <Button Command="{Binding Path=Connect}"
+                    Content="{materialIcons:MaterialIconTextExt Kind=Connection, Text=CONNECT}"
                     Classes="Primary"
                     Theme="{DynamicResource SolidButton}"
                     Margin="5">
-                CONNECT
+                
             </Button>
         </StackPanel>
     </Grid>

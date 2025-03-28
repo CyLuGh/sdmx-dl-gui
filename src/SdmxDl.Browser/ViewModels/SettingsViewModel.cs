@@ -2,10 +2,9 @@ using System;
 using System.IO;
 using System.Reactive.Linq;
 using Irihi.Avalonia.Shared.Contracts;
-using Irihi.Avalonia.Shared.Helpers;
 using Jot;
 using ReactiveUI;
-using SdmxDl.Engine;
+using SdmxDl.Client.Models;
 
 namespace SdmxDl.Browser.ViewModels;
 
@@ -26,7 +25,7 @@ public partial class SettingsViewModel : BaseViewModel, IDialogContext
 
     public SettingsViewModel(Tracker tracker)
     {
-        ServerUri = "http://localhost:4567";
+        ServerUri = "http://localhost:4557";
         tracker.Track(this);
 
         Connect = CreateCommandConnect();
@@ -92,7 +91,13 @@ public partial class SettingsViewModel : BaseViewModel, IDialogContext
             })
             .ObserveOn(RxApp.MainThreadScheduler);
 
-        return ReactiveCommand.Create(() => Close(Settings), canConnect);
+        return ReactiveCommand.Create(
+            () =>
+            {
+                Close(Settings);
+            },
+            canConnect
+        );
     }
 
     public Settings Settings =>

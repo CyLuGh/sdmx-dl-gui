@@ -7,13 +7,14 @@
     </PropertyGroup>
     
     <ItemGroup>
-        <PackageReference Include="CliWrap" Version="3.7.1" />
-        <PackageReference Include="Google.Protobuf" Version="3.29.3" />
-        <PackageReference Include="Grpc.Net.Client" Version="2.67.0" />
-        <PackageReference Include="Grpc.Tools" Version="2.69.0">
+        <PackageReference Include="CliWrap" Version="3.8.2" />
+        <PackageReference Include="Google.Protobuf" Version="3.30.1" />
+        <PackageReference Include="Grpc.Net.Client" Version="2.70.0" />
+        <PackageReference Include="Grpc.Tools" Version="2.71.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="LanguageExt.Core" Version="4.4.9" />
     </ItemGroup>
     
     <ItemGroup>
@@ -23,13 +24,9 @@
 
     <!-- https://blog.markvincze.com/include-multi-file-protobuf-package-in-dotnet/ -->
     <ItemGroup>
-        <Protobuf Include="..\..\..\sdmx-dl\sdmx-dl-format-protobuf\src\main\proto\sdmxdl_monitor.proto" AdditionalImportDirs="..\..\..\sdmx-dl\sdmx-dl-format-protobuf\src\main\proto" OutputDir="sdmxdl\format\protobuf\" CompileOutputs="false" GrpcServices="None" />
-        <Protobuf Include="..\..\..\sdmx-dl\sdmx-dl-format-protobuf\src\main\proto\sdmxdl_repository.proto" AdditionalImportDirs="..\..\..\sdmx-dl\sdmx-dl-format-protobuf\src\main\proto" OutputDir="sdmxdl\format\protobuf\" CompileOutputs="false" GrpcServices="None" />
-        <Protobuf Include="..\..\..\sdmx-dl\sdmx-dl-format-protobuf\src\main\proto\sdmxdl_source.proto" AdditionalImportDirs="..\..\..\sdmx-dl\sdmx-dl-format-protobuf\src\main\proto" OutputDir="sdmxdl\format\protobuf\" CompileOutputs="false" GrpcServices="None" />
+        <Protobuf Include="..\..\..\sdmx-dl\sdmx-dl-format-protobuf\src\main\proto\sdmxdl_api.proto" AdditionalImportDirs="..\..\..\sdmx-dl\sdmx-dl-format-protobuf\src\main\proto" OutputDir="sdmxdl\format\protobuf\" CompileOutputs="false" GrpcServices="None" />
+        <Protobuf Include="..\..\..\sdmx-dl\sdmx-dl-format-protobuf\src\main\proto\sdmxdl_web.proto" AdditionalImportDirs="..\..\..\sdmx-dl\sdmx-dl-format-protobuf\src\main\proto" OutputDir="sdmxdl\format\protobuf\" CompileOutputs="false" GrpcServices="None" />
         <Protobuf Include="..\..\..\sdmx-dl\sdmx-dl-grpc\src\main\proto\sdmxdl_grpc.proto" AdditionalImportDirs="..\..\..\sdmx-dl\sdmx-dl-format-protobuf\src\main\proto" OutputDir="sdmxdl\grpc\" CompileOutputs="false" GrpcServices="Client" />
-    </ItemGroup>
-    <ItemGroup>
-      <ProjectReference Include="..\SdmxDl.Engine\SdmxDl.Engine.csproj" />
     </ItemGroup>
 
 </Project>

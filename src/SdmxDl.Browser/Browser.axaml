@@ -14,30 +14,39 @@
     </UserControl.Resources>
     <Grid RowDefinitions="Auto,*,Auto" Margin="5">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition MinWidth="300" Width="500" />
+            <ColumnDefinition MinWidth="300" Width="500" MaxWidth="1000" />
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        
-        <Label Content="SDMX-DL GUI" 
-                   HorizontalAlignment="Center" 
-                   Classes="H4"
-                   Theme="{StaticResource TitleLabel}"
-                   Grid.ColumnSpan="3"/>
 
-        <Grid RowDefinitions="Auto,Auto,Auto,*"
+        <Label Content="SDMX-DL GUI"
+               HorizontalAlignment="Center"
+               Classes="H4"
+               Theme="{StaticResource TitleLabel}"
+               Grid.ColumnSpan="3" />
+
+        <Grid RowDefinitions="Auto,Auto,*"
               Grid.Row="1">
-            <Rectangle Height="200"></Rectangle>
-            
-            <u:Form HorizontalAlignment="Stretch" 
+
+            <u:Form HorizontalAlignment="Stretch"
                     Margin="10"
                     Grid.Row="1">
-                    <browser:SourceSelector ViewModel="{x:Static browser:ViewModelLocator.SourceSelectorViewModel}"
-                                            u:FormItem.Label="Source"/>     
-                <browser:DataFlowSelector ViewModel="{x:Static browser:ViewModelLocator.DataFlowSelectorViewModel}"  
-                                          u:FormItem.Label="Flow"></browser:DataFlowSelector>
+                <browser:SourceSelector ViewModel="{x:Static browser:ViewModelLocator.SourceSelectorViewModel}"
+                                        u:FormItem.Label="Source" />
+                <browser:DataFlowSelector ViewModel="{x:Static browser:ViewModelLocator.DataFlowSelectorViewModel}"
+                                          u:FormItem.Label="Flow"/>
+            </u:Form>
+            
+            <u:Form VerticalAlignment="Stretch" 
+                    HorizontalAlignment="Stretch"
+                    Margin="10"
+                    Grid.Row="2">
+                <browser:DimensionsBrowser ViewModel="{x:Static browser:ViewModelLocator.DimensionsSelectorViewModel}" 
+                                           u:FormItem.Label="Dimensions"/>
             </u:Form>
         </Grid>
+        
+       
 
         <GridSplitter ResizeBehavior="PreviousAndNext"
                       ResizeDirection="Columns"

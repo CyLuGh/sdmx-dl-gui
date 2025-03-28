@@ -3,13 +3,15 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:SdmxDl.Browser.ViewModels"
-             xmlns:models="clr-namespace:SdmxDl.Browser.Models"
              xmlns:converters="clr-namespace:SdmxDl.Browser.Infrastructure.Converters"
+             xmlns:models="clr-namespace:SdmxDl.Client.Models;assembly=SdmxDl.Client"
+             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SdmxDl.Browser.SourceSelector"
              x:DataType="viewModels:SourceSelectorViewModel">
     <UserControl.Resources>
         <converters:SelectorToggleTextConverter x:Key="SelectorToggleTextConverter" />
+        <converters:SdmxWebSourceConverter x:Key="SdmxWebSourceConverter"/>
     </UserControl.Resources>
     <Grid>
         <ToggleButton Name="ToggleSearch"
@@ -51,7 +53,12 @@
                                          PassEventArgsToCommand="True" />
                 </EventTriggerBehavior>
             </Interaction.Behaviors>
-            <Border Classes="Shadow" Theme="{StaticResource CardBorder}" Width="400" MaxHeight="600">
+            <Border Classes="Shadow" 
+                    Theme="{StaticResource CardBorder}" 
+                    MinWidth="400" 
+                    MaxWidth="800" 
+                    MinHeight="500"
+                    MaxHeight="700">
                 <Grid RowDefinitions="*,Auto">
                     <ListBox SelectedItem="{Binding CurrentSelection}"
                              ItemsSource="{Binding CurrentSources}">
@@ -63,7 +70,7 @@
                         <ListBox.DataTemplates>
                             <DataTemplate DataType="models:SdmxWebSource">
                                 <Grid>
-                                    <TextBlock Text="{Binding Id}"></TextBlock>
+                                    <TextBlock Text="{Binding .,Converter={StaticResource SdmxWebSourceConverter}}"/>
                                 </Grid>
                             </DataTemplate>
                         </ListBox.DataTemplates>
@@ -74,10 +81,12 @@
                                  Rows="1"
                                  Grid.Row="1">
                         <Button Command="{Binding CancelSelection}"
+                                Content="{materialIcons:MaterialIconTextExt Kind=Cancel, Text=CANCEL}"
                                 Classes="Tertiary"
                                 Theme="{DynamicResource BorderlessButton}">
                         </Button>
                         <Button Command="{Binding ValidateSelection}"
+                                Content="{materialIcons:MaterialIconTextExt Kind=CheckboxMarkedCircleOutline, Text=USE SOURCE}"
                                 Classes="Primary"
                                 Theme="{DynamicResource SolidButton}"
                                 Margin="5 0 0 0">

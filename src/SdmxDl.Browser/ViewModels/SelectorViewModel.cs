@@ -1,17 +1,18 @@
 using System;
 using System.Diagnostics.Contracts;
 using System.Reactive.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Input;
 using DynamicData;
 using LanguageExt;
+using Polly;
 using ReactiveUI;
-using SdmxDl.Browser.Models;
 using SdmxDl.Client;
 
 namespace SdmxDl.Browser.ViewModels;
 
-public abstract partial class SelectorViewModel<TData, TInput> : BaseViewModel
+public abstract partial class SelectorViewModel<TData, TInput> : CancellableBaseViewModel
 {
     [Pure]
     protected abstract Seq<TData> Filter(Seq<TData> all, string? input);
@@ -42,9 +43,9 @@ public abstract partial class SelectorViewModel<TData, TInput> : BaseViewModel
     public RxCommand ValidateSelection { get; }
     public RxCommand CancelSelection { get; }
 
-    protected SelectorViewModel(ClientFactory clientFactory)
+    protected SelectorViewModel(ClientFactory clientFactory, ResiliencePipeline pipeline)
     {
-        RetrieveData = CreateCommandRetrieveData(clientFactory);
+        RetrieveData = CreateCommandRetrieveData(clientFactory, pipeline);
 
         ValidateSelection = CreateCommandValidateSelection();
         CancelSelection = ReactiveCommand.Create(() =>
@@ -52,6 +53,13 @@ public abstract partial class SelectorViewModel<TData, TInput> : BaseViewModel
             IsSearching = false;
         });
         CheckTextBoxInput = CreateCommandCheckTextBoxInput();
+
+        this.WhenAnyValue(x => x.AllData)
+            .ObserveOn(RxApp.MainThreadScheduler)
+            .Subscribe(_ =>
+            {
+                Selection = Option<TData>.None;
+            });
 
         this.WhenAnyValue(x => x.AllData)
             .CombineLatest(this.WhenAnyValue(x => x.CurrentInput))
@@ -77,12 +85,17 @@ public abstract partial class SelectorViewModel<TData, TInput> : BaseViewModel
     }
 
     private ReactiveCommand<TInput, Seq<TData>> CreateCommandRetrieveData(
-        ClientFactory clientFactory
+        ClientFactory clientFactory,
+        ResiliencePipeline pipeline
     )
     {
-        var command = ReactiveCommand.CreateFromTask<TInput, Seq<TData>>(input =>
-            RetrieveDataImpl(input, clientFactory)
-        );
+        var command = ReactiveCommand.CreateFromTask<TInput, Seq<TData>>(async input =>
+        {
+            return await pipeline.ExecuteAsync<Seq<TData>>(
+                async token => await RetrieveDataImpl(input, clientFactory),
+                CancellationToken.None
+            );
+        });
         command.ToProperty(
             this,
             x => x.AllData,

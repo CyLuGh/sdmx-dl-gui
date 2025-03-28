@@ -20,7 +20,7 @@ public partial class App : Application
             desktop.MainWindow = new MainWindow();
             desktop.Exit += (_, __) =>
             {
-                Locator.Current.GetService<ClientFactory>().StopServer();
+                Locator.Current.GetService<ClientFactory>()?.StopServer();
             };
         }
 

@@ -4,6 +4,7 @@ using System.Reactive.Linq;
 using System.Threading;
 using Polly;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using SdmxDl.Browser.Infrastructure;
 using SdmxDl.Browser.Models;
 using SdmxDl.Client;
@@ -12,32 +13,49 @@ using Sdmxdl.Grpc;
 
 namespace SdmxDl.Browser.ViewModels;
 
-public partial class BrowserViewModel : BaseViewModel
+public class BrowserViewModel : BaseViewModel
 {
     /// <summary>
     /// Indicates if a server is available.
     /// </summary>
-    [ObservableAsProperty]
-    public partial bool ServerIsRunning { get; }
+    public bool ServerIsRunning
+    {
+        [ObservableAsProperty]
+        get;
+    }
 
     /// <summary>
     /// Indicates server status.
     /// </summary>
-    [ObservableAsProperty]
-    public partial BrowserStatus Status { get; }
-
-    [ObservableAsProperty]
-    public partial Settings Settings { get; }
+    public BrowserStatus Status
+    {
+        [ObservableAsProperty]
+        get;
+    }
 
     /// <summary>
     /// Running SDMX-DL server version.
     /// </summary>
-    [ObservableAsProperty]
-    public partial string? Version { get; }
+    public string? Version
+    {
+        [ObservableAsProperty]
+        get;
+    }
 
-    public ReactiveCommand<RxUnit, Settings> LaunchServer { get; }
-    public Interaction<RxUnit, Settings> LaunchServerInteraction { get; } =
-        new(RxApp.MainThreadScheduler);
+    public bool IsBusy
+    {
+        [ObservableAsProperty]
+        get;
+    }
+
+    public string? BusyMessage
+    {
+        [ObservableAsProperty]
+        get;
+    }
+
+    public RxCommand LaunchServer { get; }
+    public RxInteraction LaunchServerInteraction { get; } = new(RxApp.MainThreadScheduler);
 
     /// <summary>
     /// Ask server to provide its version.
@@ -61,7 +79,10 @@ public partial class BrowserViewModel : BaseViewModel
         HostServer = CreateCommandHostServer(clientFactory);
         LaunchServer = CreateCommandLaunchServer();
 
-        this.WhenAnyValue(x => x.Settings).Where(x => x.IsHosting).InvokeCommand(HostServer);
+        ViewModelLocator
+            .SettingsViewModel.WhenAnyValue(x => x.CurrentSettings)
+            .Where(x => x.IsHosting)
+            .InvokeCommand(HostServer);
 
         UpdateServerHostingStatus();
         UpdateServerRunningStatus();
@@ -91,7 +112,39 @@ public partial class BrowserViewModel : BaseViewModel
                 dimensionsSelectorViewModel,
                 disposables
             );
+
+            ManageBusyStatus(sourceSelectorViewModel, dataFlowSelectorViewModel, disposables);
         });
+    }
+
+    private void ManageBusyStatus(
+        SourceSelectorViewModel sourceSelectorViewModel,
+        DataFlowSelectorViewModel dataFlowSelectorViewModel,
+        CompositeDisposable disposables
+    )
+    {
+        sourceSelectorViewModel
+            .RetrieveData.IsExecuting.CombineLatest(
+                dataFlowSelectorViewModel.RetrieveData.IsExecuting
+            )
+            .Select(t =>
+            {
+                var (isRetrievingSources, isRetrievingFlows) = t;
+                return isRetrievingSources || isRetrievingFlows;
+            })
+            .ToPropertyEx(this, x => x.IsBusy, scheduler: RxApp.MainThreadScheduler)
+            .DisposeWith(disposables);
+
+        sourceSelectorViewModel
+            .RetrieveData.IsExecuting.Where(x => x)
+            .Select(_ => "Retrieving sources...")
+            .Merge(
+                dataFlowSelectorViewModel
+                    .RetrieveData.IsExecuting.Where(x => x)
+                    .Select(_ => "Retrieving data flows...")
+            )
+            .ToPropertyEx(this, x => x.BusyMessage, scheduler: RxApp.MainThreadScheduler)
+            .DisposeWith(disposables);
     }
 
     private void PromptServerSettings(CompositeDisposable disposables)
@@ -164,7 +217,8 @@ public partial class BrowserViewModel : BaseViewModel
     /// </summary>
     private void UpdateServerHostingStatus()
     {
-        this.WhenAnyValue(x => x.Settings)
+        ViewModelLocator
+            .SettingsViewModel.WhenAnyValue(x => x.CurrentSettings)
             .WhereNotNull()
             .Select(settings =>
             {
@@ -174,10 +228,9 @@ public partial class BrowserViewModel : BaseViewModel
                 return settings.IsHosting ? BrowserStatus.Hosting : BrowserStatus.Connected;
             })
             .Merge(HostServer.ThrownExceptions.Select(_ => BrowserStatus.Offline))
-            .ToProperty(
+            .ToPropertyEx(
                 this,
                 x => x.Status,
-                out _statusHelper,
                 initialValue: BrowserStatus.Offline,
                 scheduler: RxApp.MainThreadScheduler
             );
@@ -204,27 +257,18 @@ public partial class BrowserViewModel : BaseViewModel
     {
         this.WhenAnyValue(x => x.Status)
             .Select(s => s != BrowserStatus.Offline)
-            .ToProperty(
+            .ToPropertyEx(
                 this,
                 x => x.ServerIsRunning,
-                out _serverIsRunningHelper,
                 initialValue: false,
                 scheduler: RxApp.MainThreadScheduler
             );
     }
 
-    private ReactiveCommand<RxUnit, Settings> CreateCommandLaunchServer()
+    private RxCommand CreateCommandLaunchServer()
     {
         var cmd = ReactiveCommand.CreateFromObservable(
             () => LaunchServerInteraction.Handle(RxUnit.Default)
-        );
-
-        cmd.ToProperty(
-            this,
-            x => x.Settings,
-            out _settingsHelper,
-            initialValue: Settings.None,
-            scheduler: RxApp.MainThreadScheduler
         );
 
         return cmd;
@@ -244,10 +288,9 @@ public partial class BrowserViewModel : BaseViewModel
             return $"{about.Name} {about.Version}";
         });
 
-        command.ToProperty(
+        command.ToPropertyEx(
             this,
             x => x.Version,
-            out _versionHelper,
             initialValue: string.Empty,
             scheduler: RxApp.MainThreadScheduler
         );

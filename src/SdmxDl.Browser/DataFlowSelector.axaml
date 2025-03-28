@@ -2,7 +2,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:u="https://irihi.tech/ursa"
+             xmlns:suki="https://github.com/kikipoulet/SukiUI"
+             xmlns:system="clr-namespace:System;assembly=System.Runtime"
              xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:viewModels="clr-namespace:SdmxDl.Browser.ViewModels"
              xmlns:converters="clr-namespace:SdmxDl.Browser.Infrastructure.Converters"
@@ -13,89 +14,87 @@
     <UserControl.Resources>
         <converters:SelectorToggleTextConverter x:Key="SelectorToggleTextConverter" />
     </UserControl.Resources>
-    <u:DisableContainer>
-        <Grid IsEnabled="{Binding !AllData.IsEmpty}">
-            <ToggleButton Name="ToggleSearch"
-                          Content="{Binding Selection,Converter={StaticResource SelectorToggleTextConverter}}"
-                          IsChecked="{Binding IsSearching}"
-                          IsVisible="{Binding !IsSearching}"
-                          HorizontalAlignment="Stretch">
-                <Interaction.Behaviors>
-                    <ButtonClickEventTriggerBehavior>
-                        <FocusControlAction TargetControl="TextBoxSource" />
-                    </ButtonClickEventTriggerBehavior>
-                </Interaction.Behaviors>
-            </ToggleButton>
 
-            <TextBox Name="TextBoxSource"
-                     Text="{Binding CurrentInput}"
-                     Watermark="Flow"
-                     Classes="clearButton"
-                     IsVisible="{Binding #ToggleSearch.IsChecked}">
-                <Interaction.Behaviors>
-                    <EventTriggerBehavior EventName="KeyDown">
-                        <InvokeCommandAction Command="{Binding CheckTextBoxInput}"
-                                             PassEventArgsToCommand="True" />
-                    </EventTriggerBehavior>
-                    <EventTriggerBehavior EventName="TextInput">
-                        <InvokeCommandAction Command="{Binding CheckTextBoxInput}"
-                                             PassEventArgsToCommand="True" />
-                    </EventTriggerBehavior>
-                </Interaction.Behaviors>
-            </TextBox>
-            <Popup PlacementTarget="TextBoxSource"
-                   Placement="RightEdgeAlignedTop"
-                   PlacementConstraintAdjustment="FlipX"
-                   IsOpen="{Binding IsSearching}">
-                <Interaction.Behaviors>
-                    <EventTriggerBehavior EventName="KeyDown">
-                        <InvokeCommandAction Command="{Binding CheckTextBoxInput}"
-                                             PassEventArgsToCommand="True" />
-                    </EventTriggerBehavior>
-                </Interaction.Behaviors>
-                <Border Classes="Shadow" 
-                        Theme="{StaticResource CardBorder}" 
-                        MinWidth="400" 
-                        MaxWidth="800" 
-                        MinHeight="500"
-                        MaxHeight="700">
-                    <Grid RowDefinitions="*,Auto">
-                        <ListBox SelectedItem="{Binding CurrentSelection}"
-                                 ItemsSource="{Binding CurrentSources}">
-                            <Interaction.Behaviors>
-                                <EventTriggerBehavior EventName="DoubleTapped">
-                                    <InvokeCommandAction Command="{Binding ValidateSelection}" />
-                                </EventTriggerBehavior>
-                            </Interaction.Behaviors>
-                            <ListBox.DataTemplates>
-                                <DataTemplate DataType="models:DataFlow">
-                                    <Grid>
-                                        <TextBlock Text="{Binding Name}"></TextBlock>
-                                    </Grid>
-                                </DataTemplate>
-                            </ListBox.DataTemplates>
-                        </ListBox>
+    <Grid IsEnabled="{Binding !AllData.IsEmpty}">
+        <ToggleButton Name="ToggleSearch"
+                      Content="{Binding Selection,Converter={StaticResource SelectorToggleTextConverter}}"
+                      IsChecked="{Binding IsSearching}"
+                      IsVisible="{Binding !IsSearching}"
+                      HorizontalAlignment="Stretch">
+            <Interaction.Behaviors>
+                <ButtonClickEventTriggerBehavior>
+                    <FocusControlAction TargetControl="TextBoxSource" />
+                </ButtonClickEventTriggerBehavior>
+            </Interaction.Behaviors>
+        </ToggleButton>
 
-                        <UniformGrid Margin="0 5 0 0"
-                                     HorizontalAlignment="Right"
-                                     Rows="1"
-                                     Grid.Row="1">
-                            <Button Command="{Binding CancelSelection}"
-                                    Content="{materialIcons:MaterialIconTextExt Kind=Cancel, Text=CANCEL}"
-                                    Classes="Tertiary" 
-                                    Theme="{DynamicResource BorderlessButton}">
-                            </Button>
-                            <Button Command="{Binding ValidateSelection}"
-                                    Content="{materialIcons:MaterialIconTextExt Kind=CheckboxMarkedCircleOutline, Text=USE DATAFLOW}"
-                                    Classes="Primary"
-                                    Theme="{DynamicResource SolidButton}"
-                                    Margin="5 0 0 0">
-                            </Button>
-                        </UniformGrid>
+        <TextBox Name="TextBoxSource"
+                 Text="{Binding CurrentInput}"
+                 Watermark="Source"
+                 suki:TextBoxExtensions.AddDeleteButton="True"
+                 IsVisible="{Binding #ToggleSearch.IsChecked}">
+            <Interaction.Behaviors>
+                <EventTriggerBehavior EventName="KeyDown">
+                    <InvokeCommandAction Command="{Binding CheckTextBoxInput}"
+                                         PassEventArgsToCommand="True" />
+                </EventTriggerBehavior>
+                <EventTriggerBehavior EventName="TextInput">
+                    <InvokeCommandAction Command="{Binding CheckTextBoxInput}"
+                                         PassEventArgsToCommand="True" />
+                </EventTriggerBehavior>
+            </Interaction.Behaviors>
+        </TextBox>
+        <Popup PlacementTarget="TextBoxSource"
+               Placement="RightEdgeAlignedTop"
+               PlacementConstraintAdjustment="FlipX"
+               IsOpen="{Binding IsSearching}">
+            <Interaction.Behaviors>
+                <EventTriggerBehavior EventName="KeyDown">
+                    <InvokeCommandAction Command="{Binding CheckTextBoxInput}"
+                                         PassEventArgsToCommand="True" />
+                </EventTriggerBehavior>
+            </Interaction.Behaviors>
+            <suki:GlassCard Classes="Standard"
+                            MinWidth="400"
+                            MaxWidth="800"
+                            MinHeight="500"
+                            MaxHeight="700">
+                <suki:GlassCard.Resources>
+                    <system:Double x:Key="GlassOpacity">0.9</system:Double>
+                </suki:GlassCard.Resources>
+                <Grid RowDefinitions="*,Auto">
+                    <ListBox SelectedItem="{Binding CurrentSelection}"
+                             ItemsSource="{Binding CurrentSources}">
+                        <Interaction.Behaviors>
+                            <EventTriggerBehavior EventName="DoubleTapped">
+                                <InvokeCommandAction Command="{Binding ValidateSelection}" />
+                            </EventTriggerBehavior>
+                        </Interaction.Behaviors>
+                        <ListBox.DataTemplates>
+                            <DataTemplate DataType="models:DataFlow">
+                                <Grid>
+                                    <TextBlock Text="{Binding Name}"></TextBlock>
+                                </Grid>
+                            </DataTemplate>
+                        </ListBox.DataTemplates>
+                    </ListBox>
 
-                    </Grid>
-                </Border>
-            </Popup>
-        </Grid>
-    </u:DisableContainer>
+                    <UniformGrid Margin="0 5 0 0"
+                                 HorizontalAlignment="Right"
+                                 Rows="1"
+                                 Grid.Row="1">
+                        <Button Command="{Binding CancelSelection}"
+                                Content="{materialIcons:MaterialIconTextExt Kind=Cancel, Text=CANCEL}">
+                        </Button>
+                        <Button Command="{Binding ValidateSelection}"
+                                Content="{materialIcons:MaterialIconTextExt Kind=CheckboxMarkedCircleOutline, Text=USE SOURCE}"
+                                Classes="Flat"
+                                Margin="5 0 0 0">
+                        </Button>
+                    </UniformGrid>
+
+                </Grid>
+            </suki:GlassCard>
+        </Popup>
+    </Grid>
 </UserControl>

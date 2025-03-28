@@ -1,35 +1,58 @@
 using System;
 using System.IO;
 using System.Reactive.Linq;
-using Irihi.Avalonia.Shared.Contracts;
 using Jot;
+using LanguageExt;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using SdmxDl.Client.Models;
 
 namespace SdmxDl.Browser.ViewModels;
 
-[Reactive]
-public partial class SettingsViewModel : BaseViewModel, IDialogContext
+public class SettingsViewModel : BaseViewModel
 {
-    public partial string? JavaPath { get; set; }
-    public partial string? JarPath { get; set; }
-    public partial string? ServerUri { get; set; }
-    public partial bool UseRunningServer { get; set; }
+    public Settings CurrentSettings
+    {
+        [ObservableAsProperty]
+        get;
+    }
 
-    public RxCommand Connect { get; }
-    public RxCommand Cancel { get; }
+    [Reactive]
+    public string? JavaPath { get; set; }
+
+    [Reactive]
+    public string? JarPath { get; set; }
+
+    [Reactive]
+    public string? ServerUri { get; set; }
+
+    [Reactive]
+    public bool UseRunningServer { get; set; }
+
+    public ReactiveCommand<RxUnit, Settings> Connect { get; }
+    public ReactiveCommand<RxUnit, Settings> Cancel { get; }
     public ReactiveCommand<RxUnit, string?> PickJavaPath { get; }
     public ReactiveCommand<RxUnit, string?> PickJarPath { get; }
     public Interaction<string, string?> PickPathInteraction { get; } =
         new(RxApp.MainThreadScheduler);
+
+    public RxCommand Close { get; }
+    public RxInteraction CloseInteraction { get; } = new(RxApp.MainThreadScheduler);
 
     public SettingsViewModel(Tracker tracker)
     {
         ServerUri = "http://localhost:4557";
         tracker.Track(this);
 
+        Close = ReactiveCommand.CreateFromObservable(() => CloseInteraction.Handle(RxUnit.Default));
+
         Connect = CreateCommandConnect();
-        Cancel = ReactiveCommand.Create(Close);
+        Cancel = ReactiveCommand.Create(() => Settings.None);
+
+        Connect
+            .Merge(Cancel)
+            .ToPropertyEx(this, x => x.CurrentSettings, initialValue: Settings.None);
+        Connect.Merge(Cancel).Select(_ => RxUnit.Default).InvokeCommand(Close);
 
         PickJavaPath = CreateCommandPickJavaPath();
         PickJarPath = CreateCommandPickJarPath();
@@ -69,7 +92,7 @@ public partial class SettingsViewModel : BaseViewModel, IDialogContext
         return cmd;
     }
 
-    private RxCommand CreateCommandConnect()
+    private ReactiveCommand<RxUnit, Settings> CreateCommandConnect()
     {
         var canConnect = this.WhenAnyValue(
                 x => x.UseRunningServer,
@@ -91,16 +114,10 @@ public partial class SettingsViewModel : BaseViewModel, IDialogContext
             })
             .ObserveOn(RxApp.MainThreadScheduler);
 
-        return ReactiveCommand.Create(
-            () =>
-            {
-                Close(Settings);
-            },
-            canConnect
-        );
+        return ReactiveCommand.Create(GetSettings, canConnect);
     }
 
-    public Settings Settings =>
+    public Settings GetSettings() =>
         new()
         {
             JavaPath = UseRunningServer || string.IsNullOrEmpty(JavaPath) ? string.Empty : JavaPath,
@@ -109,13 +126,4 @@ public partial class SettingsViewModel : BaseViewModel, IDialogContext
                 UseRunningServer && !string.IsNullOrEmpty(ServerUri) ? ServerUri : string.Empty,
             IsHosting = !UseRunningServer,
         };
-
-    public void Close() => Close(Settings.None);
-
-    public void Close(Settings settings)
-    {
-        RequestClose?.Invoke(this, settings);
-    }
-
-    public event EventHandler<object?>? RequestClose;
 }

@@ -4,18 +4,17 @@ using System.Reactive.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Notifications;
+using Avalonia.ReactiveUI;
 using ReactiveUI;
 using SdmxDl.Browser.ViewModels;
 using SdmxDl.Client.Models;
-using Ursa.Controls;
-using Ursa.ReactiveUIExtension;
+using SukiUI.Dialogs;
+using SukiUI.Toasts;
 
 namespace SdmxDl.Browser;
 
-public partial class Browser : ReactiveUrsaView<BrowserViewModel>
+public partial class Browser : ReactiveUserControl<BrowserViewModel>
 {
-    private WindowToastManager? _toastManager;
-
     public Browser()
     {
         InitializeComponent();
@@ -41,53 +40,35 @@ public partial class Browser : ReactiveUrsaView<BrowserViewModel>
     )
     {
         viewModel
-            .LaunchServerInteraction.RegisterHandler(async ctx =>
+            .LaunchServerInteraction.RegisterHandler(ctx =>
             {
-                var settings = await OverlayDialog.ShowCustomModal<
-                    ServerStartup,
-                    SettingsViewModel,
-                    Settings
-                >(
-                    ViewModelLocator.SettingsViewModel,
-                    options: new OverlayDialogOptions()
-                    {
-                        Buttons = DialogButton.None,
-                        Mode = DialogMode.None,
-                        IsCloseButtonVisible = false,
-                        FullScreen = false,
-                        CanDragMove = false,
-                        Title = "SDMX-DL",
-                    }
-                );
-                ctx.SetOutput(settings);
+                ViewModelLocator
+                    .DialogManager.CreateDialog()
+                    .WithContent(
+                        new ServerStartup() { ViewModel = ViewModelLocator.SettingsViewModel }
+                    )
+                    .TryShow();
+
+                ctx.SetOutput(RxUnit.Default);
             })
             .DisposeWith(disposables);
 
         viewModel
             .DisplayErrorMessageInteraction.RegisterHandler(ctx =>
             {
-                view._toastManager?.Show(
-                    new Toast(ctx.Input.Message),
-                    showIcon: true,
-                    type: NotificationType.Error,
-                    classes: ["Light"],
-                    expiration: TimeSpan.FromSeconds(10)
-                );
+                ViewModelLocator
+                    .ToastManager.CreateToast()
+                    .WithTitle(ctx.Input.Source ?? string.Empty)
+                    .WithContent(ctx.Input.Message)
+                    .OfType(NotificationType.Error)
+                    .Dismiss()
+                    .After(TimeSpan.FromSeconds(15))
+                    .Dismiss()
+                    .ByClicking()
+                    .Queue();
+
                 ctx.SetOutput(RxUnit.Default);
             })
             .DisposeWith(disposables);
-    }
-
-    protected override void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
-    {
-        base.OnAttachedToVisualTree(e);
-        var topLevel = TopLevel.GetTopLevel(this);
-        _toastManager = new(topLevel) { MaxItems = 3 };
-    }
-
-    protected override void OnDetachedFromVisualTree(VisualTreeAttachmentEventArgs e)
-    {
-        base.OnDetachedFromVisualTree(e);
-        _toastManager?.Uninstall();
     }
 }

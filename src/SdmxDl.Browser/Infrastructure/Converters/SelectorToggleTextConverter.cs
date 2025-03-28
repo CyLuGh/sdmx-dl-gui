@@ -13,9 +13,7 @@ public class SelectorToggleTextConverter : IValueConverter
         return value switch
         {
             Option<SdmxWebSource> source => source.Some(s => s.Id).None(() => "SELECT SOURCE"),
-            Option<DataFlow> dataFlow => dataFlow
-                .Some(d => d.Description)
-                .None(() => "SELECT DATAFLOW"),
+            Option<DataFlow> dataFlow => dataFlow.Some(d => d.Name).None(() => "SELECT DATAFLOW"),
             _ => "?",
         };
     }

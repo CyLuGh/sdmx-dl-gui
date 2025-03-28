@@ -1,12 +1,9 @@
-using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
+using Avalonia.ReactiveUI;
 using SdmxDl.Browser.ViewModels;
-using Ursa.ReactiveUIExtension;
 
 namespace SdmxDl.Browser;
 
-public partial class DimensionsBrowser : ReactiveUrsaView<DimensionsSelectorViewModel>
+public partial class DimensionsBrowser : ReactiveUserControl<DimensionsSelectorViewModel>
 {
     public DimensionsBrowser()
     {

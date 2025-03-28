@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:SdmxDl.Browser.ViewModels"
+             xmlns:browser="clr-namespace:SdmxDl.Browser"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SdmxDl.Browser.DimensionsBrowser"
              x:DataType="viewModels:DimensionsSelectorViewModel">
@@ -10,7 +11,16 @@
         <Grid IsEnabled="{Binding DataStructure.IsSome}">
             <TabControl>
                 <TabItem Header="Dimensions"></TabItem>    
-                <TabItem Header="Options"> </TabItem>    
+                <TabItem Header="Options">
+                    <ItemsControl ItemsSource="{Binding PositionedDimensions}">
+                        <ItemsControl.DataTemplates>
+                            <DataTemplate DataType="viewModels:PositionedDimensionViewModel">
+                                <browser:PositionedDimensionView ViewModel="{Binding .}"
+                                                                 Margin="2"/>
+                            </DataTemplate>
+                        </ItemsControl.DataTemplates>
+                    </ItemsControl>
+                </TabItem>    
             </TabControl>
             
         </Grid>

@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using LanguageExt;
@@ -18,6 +20,12 @@ public class DimensionsSelectorViewModel : BaseViewModel
         get;
     }
 
+    public Seq<PositionedDimensionViewModel> PositionedDimensions
+    {
+        [ObservableAsProperty]
+        get;
+    }
+
     public ReactiveCommand<
         (SdmxWebSource, DataFlow),
         Option<DataStructure>
@@ -32,6 +40,27 @@ public class DimensionsSelectorViewModel : BaseViewModel
         RetrieveDimensions
             .Merge(Clear)
             .ToPropertyEx(this, x => x.DataStructure, scheduler: RxApp.MainThreadScheduler);
+
+        this.WhenActivated(disposables =>
+        {
+            UpdatePositionedDimensions(disposables);
+        });
+    }
+
+    private void UpdatePositionedDimensions(CompositeDisposable disposables)
+    {
+        this.WhenAnyValue(x => x.DataStructure)
+            .Select(o =>
+            {
+                var dimensions = o.Match(ds => ds.Dimensions, () => Seq<Dimension>.Empty);
+                return dimensions
+                    .OrderBy(d => d.Position)
+                    .Select((d, i) => new PositionedDimensionViewModel(d, i, dimensions.Length))
+                    .ToSeq()
+                    .Strict();
+            })
+            .ToPropertyEx(this, x => x.PositionedDimensions, scheduler: RxApp.MainThreadScheduler)
+            .DisposeWith(disposables);
     }
 
     private ReactiveCommand<

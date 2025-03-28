@@ -3,13 +3,13 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
+using Avalonia.ReactiveUI;
 using ReactiveUI;
 using SdmxDl.Browser.ViewModels;
-using Ursa.ReactiveUIExtension;
 
 namespace SdmxDl.Browser;
 
-public partial class SourceSelector : ReactiveUrsaView<SourceSelectorViewModel>
+public partial class SourceSelector : ReactiveUserControl<SourceSelectorViewModel>
 {
     public SourceSelector()
     {

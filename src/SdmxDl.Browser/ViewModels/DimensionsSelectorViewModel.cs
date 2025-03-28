@@ -3,16 +3,20 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using LanguageExt;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using SdmxDl.Client;
 using SdmxDl.Client.Models;
 using Sdmxdl.Grpc;
 
 namespace SdmxDl.Browser.ViewModels;
 
-public partial class DimensionsSelectorViewModel : BaseViewModel
+public class DimensionsSelectorViewModel : BaseViewModel
 {
-    [ObservableAsProperty]
-    public partial Option<DataStructure> DataStructure { get; }
+    public Option<DataStructure> DataStructure
+    {
+        [ObservableAsProperty]
+        get;
+    }
 
     public ReactiveCommand<
         (SdmxWebSource, DataFlow),
@@ -27,12 +31,7 @@ public partial class DimensionsSelectorViewModel : BaseViewModel
 
         RetrieveDimensions
             .Merge(Clear)
-            .ToProperty(
-                this,
-                x => x.DataStructure,
-                out _dataStructureHelper,
-                scheduler: RxApp.MainThreadScheduler
-            );
+            .ToPropertyEx(this, x => x.DataStructure, scheduler: RxApp.MainThreadScheduler);
     }
 
     private ReactiveCommand<

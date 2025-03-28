@@ -2,8 +2,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:u="https://irihi.tech/ursa"
              xmlns:viewModels="clr-namespace:SdmxDl.Browser.ViewModels"
+             xmlns:suki="https://github.com/kikipoulet/SukiUI"
              xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              mc:Ignorable="d"
              Width="800"
@@ -19,45 +19,37 @@
                          IsChecked="{Binding Path=UseRunningServer}">
                 Connect to existing server
             </RadioButton>
-            <u:DisableContainer>
-                <u:Form Margin="30 10 30 20"
-                        IsEnabled="{Binding #RadioButtonConnect.IsChecked}"
-                        HorizontalAlignment="Stretch">
-                    <TextBox u:FormItem.Label="Server URI"
-                             Text="{Binding Path=ServerUri}" />
-                </u:Form>
-            </u:DisableContainer>
-
+            
+            <TextBox suki:TextBoxExtensions.Prefix="Server URI:" 
+                     Text="{Binding ServerUri}"
+                     IsEnabled="{Binding #RadioButtonConnect.IsChecked}"
+                     Margin="30 10 30 20"/>
+            
             <RadioButton Name="RadioButtonHost"
                          IsChecked="{Binding Path=!UseRunningServer}">
                 Host own server
             </RadioButton>
-            <u:DisableContainer>
-                <u:Form Margin="30 10 30 20"
-                        IsEnabled="{Binding #RadioButtonHost.IsChecked}"
-                        HorizontalAlignment="Stretch">
-                    <u:FormItem u:FormItem.Label="Path to Java binaries">
-                        <Grid ColumnDefinitions="*,auto">
-                            <TextBox Text="{Binding Path=JavaPath}" />
-                            <Button Command="{Binding Path=PickJavaPath}" 
-                                    Content="{materialIcons:MaterialIconExt Kind=FolderOpen}"
-                                    Margin="5 0 0 0" 
-                                    Grid.Column="1" />
-                        </Grid>
-                    </u:FormItem>
-
-                    <u:FormItem u:FormItem.Label="Path to sdmx-dl jar">
-                        <Grid ColumnDefinitions="*,auto">
-                            <TextBox Text="{Binding Path=JarPath}" />
-                            <Button Command="{Binding Path=PickJarPath}" 
-                                    Content="{materialIcons:MaterialIconExt Kind=FolderOpen}"
-                                    Margin="5 0 0 0" Grid.Column="1" />
-                        </Grid>
-                    </u:FormItem>
-                    
-                </u:Form>
-            </u:DisableContainer>
-
+            
+            <Grid IsEnabled="{Binding #RadioButtonHost.IsChecked}" 
+                  ColumnDefinitions="*,auto"
+                  RowDefinitions="Auto,Auto"
+                  Margin="30 10 30 20">
+                <TextBox suki:TextBoxExtensions.Prefix="Path to Java binaries:" 
+                         Text="{Binding JavaPath}"
+                         Grid.Column="0" Grid.Row="0"/>
+                <Button Command="{Binding Path=PickJavaPath}"
+                        Content="{materialIcons:MaterialIconExt Kind=FolderOpen}" 
+                        Classes="Icon"
+                        Grid.Column="1" Grid.Row="0"/>
+                <TextBox suki:TextBoxExtensions.Prefix="Path to sdmx-dl jar:" 
+                         Text="{Binding JarPath}"
+                         Grid.Column="0" Grid.Row="1"/>
+                <Button Command="{Binding Path=PickJarPath}"
+                        Content="{materialIcons:MaterialIconExt Kind=FolderOpen}" 
+                        Classes="Icon"
+                        Grid.Column="1" 
+                        Grid.Row="1"/>
+            </Grid>
         </StackPanel>
 
         <StackPanel Orientation="Horizontal"
@@ -65,15 +57,12 @@
                     Margin="0 20 45 20"
                     Grid.Row="1">
             <Button Command="{Binding Path=Cancel}"
-                    Classes="Tertiary"
-                    Theme="{DynamicResource BorderlessButton}"
                     Margin="5">
                 CANCEL
             </Button>
             <Button Command="{Binding Path=Connect}"
                     Content="{materialIcons:MaterialIconTextExt Kind=Connection, Text=CONNECT}"
-                    Classes="Primary"
-                    Theme="{DynamicResource SolidButton}"
+                    Classes="Flat"
                     Margin="5">
                 
             </Button>

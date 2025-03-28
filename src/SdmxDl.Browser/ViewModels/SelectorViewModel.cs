@@ -8,11 +8,12 @@ using DynamicData;
 using LanguageExt;
 using Polly;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using SdmxDl.Client;
 
 namespace SdmxDl.Browser.ViewModels;
 
-public abstract partial class SelectorViewModel<TData, TInput> : CancellableBaseViewModel
+public abstract class SelectorViewModel<TData, TInput> : CancellableBaseViewModel
 {
     [Pure]
     protected abstract Seq<TData> Filter(Seq<TData> all, string? input);
@@ -21,22 +22,28 @@ public abstract partial class SelectorViewModel<TData, TInput> : CancellableBase
     protected abstract Task<Seq<TData>> RetrieveDataImpl(TInput input, ClientFactory clientFactory);
 
     [Reactive]
-    public partial bool IsSearching { get; set; }
+    public bool IsSearching { get; set; }
 
     [Reactive]
-    public partial string? CurrentInput { get; set; }
+    public string? CurrentInput { get; set; }
 
     [Reactive]
-    public partial TData? CurrentSelection { get; set; }
+    public TData? CurrentSelection { get; set; }
 
     [Reactive]
-    public partial Option<TData> Selection { get; set; }
+    public Option<TData> Selection { get; set; }
 
-    [ObservableAsProperty]
-    public partial Seq<TData> AllData { get; }
+    public Seq<TData> AllData
+    {
+        [ObservableAsProperty]
+        get;
+    }
 
-    [ObservableAsProperty]
-    public partial Seq<TData> CurrentSources { get; }
+    public Seq<TData> CurrentSources
+    {
+        [ObservableAsProperty]
+        get;
+    }
 
     public ReactiveCommand<TInput, Seq<TData>> RetrieveData { get; }
     public ReactiveCommand<KeyEventArgs, RxUnit> CheckTextBoxInput { get; }
@@ -68,10 +75,9 @@ public abstract partial class SelectorViewModel<TData, TInput> : CancellableBase
                 var (allSources, input) = t;
                 return Filter(allSources, input);
             })
-            .ToProperty(
+            .ToPropertyEx(
                 this,
                 x => x.CurrentSources,
-                out _currentSourcesHelper,
                 scheduler: RxApp.MainThreadScheduler,
                 initialValue: Seq<TData>.Empty
             );
@@ -96,10 +102,9 @@ public abstract partial class SelectorViewModel<TData, TInput> : CancellableBase
                 CancellationToken.None
             );
         });
-        command.ToProperty(
+        command.ToPropertyEx(
             this,
             x => x.AllData,
-            out _allDataHelper,
             scheduler: RxApp.MainThreadScheduler,
             initialValue: Seq<TData>.Empty
         );

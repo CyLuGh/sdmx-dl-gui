@@ -1,19 +1,19 @@
-<u:UrsaWindow xmlns="https://github.com/avaloniaui"
+<suki:SukiWindow xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:u="https://irihi.tech/ursa"
+        xmlns:suki="https://github.com/kikipoulet/SukiUI"
         xmlns:browser="clr-namespace:SdmxDl.Browser"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="SdmxDl.Browser.MainWindow"
-        IsFullScreenButtonVisible="{OnPlatform True, macOS=False}"
-        IsManagedResizerVisible="{OnPlatform False, Linux=True}"
-        Title="SdmxDl.Browser"
+        Title="SDMX-DL GUI"
         Closing="Window_OnClosing">
-    <u:UrsaWindow.RightContent>
-        <u:ThemeToggleButton
-            IsThreeState="True"
-            Mode="Controller" />
-    </u:UrsaWindow.RightContent>
-    <browser:Browser ViewModel="{x:Static browser:ViewModelLocator.BrowserViewModel}"/>
-</u:UrsaWindow>
+    <suki:SukiWindow.Hosts>
+        <suki:SukiToastHost Manager="{x:Static browser:ViewModelLocator.ToastManager}"/>    
+        <suki:SukiDialogHost Manager="{x:Static browser:ViewModelLocator.DialogManager}"/>    
+    </suki:SukiWindow.Hosts>
+    
+    <browser:Browser ViewModel="{x:Static browser:ViewModelLocator.BrowserViewModel}"
+                     Margin="5"/>
+    <!-- <browser:BrowserDock ViewModel="{x:Static browser:ViewModelLocator.BrowserDockViewModel}"/> -->
+</suki:SukiWindow>

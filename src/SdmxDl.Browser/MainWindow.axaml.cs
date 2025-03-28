@@ -1,11 +1,11 @@
 using Avalonia.Controls;
 using Jot;
 using Splat;
-using Ursa.Controls;
+using SukiUI.Controls;
 
 namespace SdmxDl.Browser;
 
-public partial class MainWindow : UrsaWindow
+public partial class MainWindow : SukiWindow
 {
     public MainWindow()
     {

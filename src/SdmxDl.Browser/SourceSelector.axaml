@@ -2,6 +2,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:suki="https://github.com/kikipoulet/SukiUI"
+             xmlns:system="clr-namespace:System;assembly=System.Runtime"
              xmlns:viewModels="clr-namespace:SdmxDl.Browser.ViewModels"
              xmlns:converters="clr-namespace:SdmxDl.Browser.Infrastructure.Converters"
              xmlns:models="clr-namespace:SdmxDl.Client.Models;assembly=SdmxDl.Client"
@@ -11,9 +13,9 @@
              x:DataType="viewModels:SourceSelectorViewModel">
     <UserControl.Resources>
         <converters:SelectorToggleTextConverter x:Key="SelectorToggleTextConverter" />
-        <converters:SdmxWebSourceConverter x:Key="SdmxWebSourceConverter"/>
+        <converters:SdmxWebSourceConverter x:Key="SdmxWebSourceConverter" />
     </UserControl.Resources>
-    <Grid>
+    <Grid IsEnabled="{Binding !AllData.IsEmpty}">
         <ToggleButton Name="ToggleSearch"
                       Content="{Binding Selection,Converter={StaticResource SelectorToggleTextConverter}}"
                       IsChecked="{Binding IsSearching}"
@@ -21,7 +23,7 @@
                       HorizontalAlignment="Stretch">
             <Interaction.Behaviors>
                 <ButtonClickEventTriggerBehavior>
-                    <FocusControlAction TargetControl="TextBoxSource"/>
+                    <FocusControlAction TargetControl="TextBoxSource" />
                 </ButtonClickEventTriggerBehavior>
             </Interaction.Behaviors>
         </ToggleButton>
@@ -29,9 +31,8 @@
         <TextBox Name="TextBoxSource"
                  Text="{Binding CurrentInput}"
                  Watermark="Source"
-                 Classes="clearButton"
-                 IsVisible="{Binding #ToggleSearch.IsChecked}"
-                 >
+                 suki:TextBoxExtensions.AddDeleteButton="True"
+                 IsVisible="{Binding #ToggleSearch.IsChecked}">
             <Interaction.Behaviors>
                 <EventTriggerBehavior EventName="KeyDown">
                     <InvokeCommandAction Command="{Binding CheckTextBoxInput}"
@@ -53,12 +54,14 @@
                                          PassEventArgsToCommand="True" />
                 </EventTriggerBehavior>
             </Interaction.Behaviors>
-            <Border Classes="Shadow" 
-                    Theme="{StaticResource CardBorder}" 
-                    MinWidth="400" 
-                    MaxWidth="800" 
-                    MinHeight="500"
-                    MaxHeight="700">
+            <suki:GlassCard Classes="Standard"
+                            MinWidth="400"
+                            MaxWidth="800"
+                            MinHeight="500"
+                            MaxHeight="700">
+                <suki:GlassCard.Resources>
+                    <system:Double x:Key="GlassOpacity">0.9</system:Double>
+                </suki:GlassCard.Resources>
                 <Grid RowDefinitions="*,Auto">
                     <ListBox SelectedItem="{Binding CurrentSelection}"
                              ItemsSource="{Binding CurrentSources}">
@@ -70,7 +73,7 @@
                         <ListBox.DataTemplates>
                             <DataTemplate DataType="models:SdmxWebSource">
                                 <Grid>
-                                    <TextBlock Text="{Binding .,Converter={StaticResource SdmxWebSourceConverter}}"/>
+                                    <TextBlock Text="{Binding .,Converter={StaticResource SdmxWebSourceConverter}}" />
                                 </Grid>
                             </DataTemplate>
                         </ListBox.DataTemplates>
@@ -81,20 +84,17 @@
                                  Rows="1"
                                  Grid.Row="1">
                         <Button Command="{Binding CancelSelection}"
-                                Content="{materialIcons:MaterialIconTextExt Kind=Cancel, Text=CANCEL}"
-                                Classes="Tertiary"
-                                Theme="{DynamicResource BorderlessButton}">
+                                Content="{materialIcons:MaterialIconTextExt Kind=Cancel, Text=CANCEL}">
                         </Button>
                         <Button Command="{Binding ValidateSelection}"
                                 Content="{materialIcons:MaterialIconTextExt Kind=CheckboxMarkedCircleOutline, Text=USE SOURCE}"
-                                Classes="Primary"
-                                Theme="{DynamicResource SolidButton}"
+                                Classes="Flat"
                                 Margin="5 0 0 0">
                         </Button>
                     </UniformGrid>
 
                 </Grid>
-            </Border>
+            </suki:GlassCard>
         </Popup>
     </Grid>
 

@@ -10,6 +10,8 @@ using SdmxDl.Browser.Infrastructure;
 using SdmxDl.Browser.ViewModels;
 using SdmxDl.Client;
 using Splat;
+using SukiUI.Dialogs;
+using SukiUI.Toasts;
 
 namespace SdmxDl.Browser;
 
@@ -53,8 +55,21 @@ public static class ViewModelLocator
         SplatRegistrations.RegisterLazySingleton<DataFlowSelectorViewModel>();
         SplatRegistrations.RegisterLazySingleton<DimensionsSelectorViewModel>();
 
+        SplatRegistrations.RegisterConstant<ISukiDialogManager>(new SukiDialogManager());
+        SplatRegistrations.RegisterConstant<ISukiToastManager>(new SukiToastManager());
+
+        var current = Locator.CurrentMutable;
+
+        current.Register(() => new SourceSelector(), typeof(IViewFor<SourceSelectorViewModel>));
+
         SplatRegistrations.SetupIOC();
     }
+
+    public static ISukiDialogManager DialogManager =>
+        Locator.Current.GetService<ISukiDialogManager>()!;
+
+    public static ISukiToastManager ToastManager =>
+        Locator.Current.GetService<ISukiToastManager>()!;
 
     public static BrowserViewModel BrowserViewModel =>
         Locator.Current.GetService<BrowserViewModel>()!;

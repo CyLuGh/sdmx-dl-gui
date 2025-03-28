@@ -38,6 +38,16 @@ public readonly record struct SdmxWebSource
 
         Confidentiality = (Confidentiality)webSource.Confidentiality;
     }
+
+    public string GetDescription(string language = "en")
+    {
+        var source = this;
+        return Names.Find(
+            language,
+            d => $"{source.Id} - {d}",
+            () => language.Equals("en") ? source.Id : source.GetDescription("en")
+        );
+    }
 }
 
 public enum Confidentiality

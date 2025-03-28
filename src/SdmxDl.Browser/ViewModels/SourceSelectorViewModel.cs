@@ -68,6 +68,8 @@ public class SourceSelectorViewModel(ClientFactory clientFactory)
         return all.Where(s =>
                 s.Id.Contains(input, StringComparison.CurrentCultureIgnoreCase)
                 || s.Aliases.Any(a => a.Contains(input, StringComparison.CurrentCultureIgnoreCase))
+                // TODO: check culture?
+                || s.GetDescription().Contains(input, StringComparison.CurrentCultureIgnoreCase)
             )
             .OrderBy(s => s.Id)
             .ToSeq()

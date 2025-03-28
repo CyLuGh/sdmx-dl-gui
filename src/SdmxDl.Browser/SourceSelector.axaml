@@ -11,6 +11,7 @@
              x:DataType="viewModels:SourceSelectorViewModel">
     <UserControl.Resources>
         <converters:SelectorToggleTextConverter x:Key="SelectorToggleTextConverter" />
+        <converters:SdmxWebSourceConverter x:Key="SdmxWebSourceConverter"/>
     </UserControl.Resources>
     <Grid>
         <ToggleButton Name="ToggleSearch"
@@ -52,7 +53,12 @@
                                          PassEventArgsToCommand="True" />
                 </EventTriggerBehavior>
             </Interaction.Behaviors>
-            <Border Classes="Shadow" Theme="{StaticResource CardBorder}" Width="400" MaxHeight="600">
+            <Border Classes="Shadow" 
+                    Theme="{StaticResource CardBorder}" 
+                    MinWidth="400" 
+                    MaxWidth="800" 
+                    MinHeight="500"
+                    MaxHeight="700">
                 <Grid RowDefinitions="*,Auto">
                     <ListBox SelectedItem="{Binding CurrentSelection}"
                              ItemsSource="{Binding CurrentSources}">
@@ -64,7 +70,7 @@
                         <ListBox.DataTemplates>
                             <DataTemplate DataType="models:SdmxWebSource">
                                 <Grid>
-                                    <TextBlock Text="{Binding Id}"></TextBlock>
+                                    <TextBlock Text="{Binding .,Converter={StaticResource SdmxWebSourceConverter}}"/>
                                 </Grid>
                             </DataTemplate>
                         </ListBox.DataTemplates>

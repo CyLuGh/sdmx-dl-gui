@@ -70,7 +70,8 @@ public partial class Browser : ReactiveUrsaView<BrowserViewModel>
                     new Toast(ctx.Input.Message),
                     showIcon: true,
                     type: NotificationType.Error,
-                    classes: ["Light"]
+                    classes: ["Light"],
+                    expiration: TimeSpan.FromSeconds(10)
                 );
                 ctx.SetOutput(RxUnit.Default);
             })

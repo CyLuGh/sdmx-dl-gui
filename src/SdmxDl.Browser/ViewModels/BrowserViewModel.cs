@@ -57,15 +57,7 @@ public partial class BrowserViewModel : BaseViewModel
     )
     {
         HostServer = CreateCommandHostServer(clientFactory);
-
         LaunchServer = CreateCommandLaunchServer();
-        LaunchServer.ToProperty(
-            this,
-            x => x.Settings,
-            out _settingsHelper,
-            initialValue: Settings.None,
-            scheduler: RxApp.MainThreadScheduler
-        );
 
         this.WhenAnyValue(x => x.Settings).Where(x => x.IsHosting).InvokeCommand(HostServer);
 
@@ -76,55 +68,90 @@ public partial class BrowserViewModel : BaseViewModel
 
         this.WhenActivated(disposables =>
         {
-            Observable
-                .Return(RxUnit.Default)
-                .Delay(TimeSpan.FromSeconds(1))
-                .InvokeCommand(LaunchServer)
-                .DisposeWith(disposables);
+            PromptServerSettings(disposables);
 
-            exceptionHandler.Alerts.Subscribe(async ex =>
-            {
-                await DisplayErrorMessageInteraction.Handle(ex);
-            });
+            exceptionHandler
+                .Alerts.Subscribe(async ex =>
+                {
+                    await DisplayErrorMessageInteraction.Handle(ex);
+                })
+                .DisposeWith(disposables);
 
             FetchSourcesOnServerStartup(sourceSelectorViewModel, disposables);
-
-            sourceSelectorViewModel
-                .WhenAnyValue(x => x.Selection)
-                .Do(async _ => await dataFlowSelectorViewModel.Reset())
-                .Select(o => o.Some(Observable.Return).None(Observable.Empty<SdmxWebSource>))
-                .Switch()
-                .InvokeCommand(dataFlowSelectorViewModel, x => x.RetrieveData)
-                .DisposeWith(disposables);
-
-            sourceSelectorViewModel
-                .WhenAnyValue(x => x.Selection)
-                .Do(_ =>
-                    Observable
-                        .Return(RxUnit.Default)
-                        .InvokeCommand(dimensionsSelectorViewModel, x => x.Clear)
-                )
-                .CombineLatest(
-                    dataFlowSelectorViewModel
-                        .WhenAnyValue(x => x.Selection)
-                        .Do(_ =>
-                            Observable
-                                .Return(RxUnit.Default)
-                                .InvokeCommand(dimensionsSelectorViewModel, x => x.Clear)
-                        )
-                )
-                .Throttle(TimeSpan.FromMilliseconds(50))
-                .Select(t =>
-                {
-                    var (source, flow) = t;
-                    var o = from s in source from f in flow select (s, f);
-                    return o.Some(Observable.Return)
-                        .None(Observable.Empty<(SdmxWebSource, DataFlow)>);
-                })
-                .Switch()
-                .InvokeCommand(dimensionsSelectorViewModel, x => x.RetrieveDimensions)
-                .DisposeWith(disposables);
+            FetchDataFlowsOnSourceSelection(
+                sourceSelectorViewModel,
+                dataFlowSelectorViewModel,
+                disposables
+            );
+            FetchDimensionsOnSourceAndFlowSelection(
+                sourceSelectorViewModel,
+                dataFlowSelectorViewModel,
+                dimensionsSelectorViewModel,
+                disposables
+            );
         });
+    }
+
+    private void PromptServerSettings(CompositeDisposable disposables)
+    {
+        Observable
+            .Return(RxUnit.Default)
+            .Delay(TimeSpan.FromSeconds(1))
+            .InvokeCommand(LaunchServer)
+            .DisposeWith(disposables);
+    }
+
+    private static void FetchDimensionsOnSourceAndFlowSelection(
+        SourceSelectorViewModel sourceSelectorViewModel,
+        DataFlowSelectorViewModel dataFlowSelectorViewModel,
+        DimensionsSelectorViewModel dimensionsSelectorViewModel,
+        CompositeDisposable disposables
+    )
+    {
+        sourceSelectorViewModel
+            .WhenAnyValue(x => x.Selection)
+            .Do(_ =>
+                Observable
+                    .Return(RxUnit.Default)
+                    .InvokeCommand(dimensionsSelectorViewModel, x => x.Clear)
+            )
+            .CombineLatest(
+                dataFlowSelectorViewModel
+                    .WhenAnyValue(x => x.Selection)
+                    .Do(_ =>
+                        Observable
+                            .Return(RxUnit.Default)
+                            .InvokeCommand(dimensionsSelectorViewModel, x => x.Clear)
+                    )
+            )
+            .Throttle(TimeSpan.FromMilliseconds(50))
+            .Select(t =>
+            {
+                var (source, flow) = t;
+                var o = from s in source from f in flow select (s, f);
+                return o.Some(Observable.Return).None(Observable.Empty<(SdmxWebSource, DataFlow)>);
+            })
+            .Switch()
+            .InvokeCommand(dimensionsSelectorViewModel, x => x.RetrieveDimensions)
+            .DisposeWith(disposables);
+    }
+
+    /// <summary>
+    /// Clear dataflows on source selection and trigger retrieval if source has selection.
+    /// </summary>
+    private static void FetchDataFlowsOnSourceSelection(
+        SourceSelectorViewModel sourceSelectorViewModel,
+        DataFlowSelectorViewModel dataFlowSelectorViewModel,
+        CompositeDisposable disposables
+    )
+    {
+        sourceSelectorViewModel
+            .WhenAnyValue(x => x.Selection)
+            .Do(async _ => await dataFlowSelectorViewModel.Reset())
+            .Select(o => o.Some(Observable.Return).None(Observable.Empty<SdmxWebSource>))
+            .Switch()
+            .InvokeCommand(dataFlowSelectorViewModel, x => x.RetrieveData)
+            .DisposeWith(disposables);
     }
 
     /// <summary>
@@ -155,7 +182,7 @@ public partial class BrowserViewModel : BaseViewModel
     }
 
     /// <summary>
-    /// Trigger sources retrieval on server startup
+    /// Trigger sources retrieval on server startup: server is flagged as running and version is defined.
     /// </summary>
     private void FetchSourcesOnServerStartup(
         SourceSelectorViewModel sourceSelectorViewModel,
@@ -186,9 +213,19 @@ public partial class BrowserViewModel : BaseViewModel
 
     private ReactiveCommand<RxUnit, Settings> CreateCommandLaunchServer()
     {
-        return ReactiveCommand.CreateFromObservable(
+        var cmd = ReactiveCommand.CreateFromObservable(
             () => LaunchServerInteraction.Handle(RxUnit.Default)
         );
+
+        cmd.ToProperty(
+            this,
+            x => x.Settings,
+            out _settingsHelper,
+            initialValue: Settings.None,
+            scheduler: RxApp.MainThreadScheduler
+        );
+
+        return cmd;
     }
 
     /// <summary>

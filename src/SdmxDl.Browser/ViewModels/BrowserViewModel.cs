@@ -2,6 +2,7 @@ using System;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading;
+using Polly;
 using ReactiveUI;
 using SdmxDl.Browser.Infrastructure;
 using SdmxDl.Browser.Models;
@@ -53,7 +54,8 @@ public partial class BrowserViewModel : BaseViewModel
         SourceSelectorViewModel sourceSelectorViewModel,
         DataFlowSelectorViewModel dataFlowSelectorViewModel,
         DimensionsSelectorViewModel dimensionsSelectorViewModel,
-        ExceptionHandler exceptionHandler
+        ExceptionHandler exceptionHandler,
+        ResiliencePipeline pipeline
     )
     {
         HostServer = CreateCommandHostServer(clientFactory);
@@ -64,7 +66,7 @@ public partial class BrowserViewModel : BaseViewModel
         UpdateServerHostingStatus();
         UpdateServerRunningStatus();
 
-        RetrieveVersion = CreateCommandRetrieveVersion(clientFactory);
+        RetrieveVersion = CreateCommandRetrieveVersion(clientFactory, pipeline);
 
         this.WhenActivated(disposables =>
         {
@@ -232,12 +234,13 @@ public partial class BrowserViewModel : BaseViewModel
     /// Once server is running, app will try to fetch version after 1 second then every 5 minutes.
     /// </summary>
     private ReactiveCommand<RxUnit, string> CreateCommandRetrieveVersion(
-        ClientFactory clientFactory
+        ClientFactory clientFactory,
+        ResiliencePipeline pipeline
     )
     {
         var command = ReactiveCommand.CreateRunInBackground(() =>
         {
-            var about = clientFactory.GetClient().GetAbout(new Empty());
+            var about = pipeline.Execute(() => clientFactory.GetClient().GetAbout(new Empty()));
             return $"{about.Name} {about.Version}";
         });
 

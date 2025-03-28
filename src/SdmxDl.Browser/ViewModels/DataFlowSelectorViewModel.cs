@@ -4,6 +4,7 @@ using System.Diagnostics.Contracts;
 using System.Threading;
 using System.Threading.Tasks;
 using LanguageExt;
+using Polly;
 using ReactiveUI;
 using SdmxDl.Client;
 using SdmxDl.Client.Models;
@@ -11,8 +12,8 @@ using Sdmxdl.Grpc;
 
 namespace SdmxDl.Browser.ViewModels;
 
-public class DataFlowSelectorViewModel(ClientFactory clientFactory)
-    : SelectorViewModel<DataFlow, SdmxWebSource>(clientFactory)
+public class DataFlowSelectorViewModel(ClientFactory clientFactory, ResiliencePipeline pipeline)
+    : SelectorViewModel<DataFlow, SdmxWebSource>(clientFactory, pipeline)
 {
     [Pure]
     protected override Seq<DataFlow> Filter(Seq<DataFlow> all, string? input)
@@ -35,30 +36,6 @@ public class DataFlowSelectorViewModel(ClientFactory clientFactory)
         ClientFactory clientFactory
     )
     {
-        // return Seq.create(
-        //     new DataFlow()
-        //     {
-        //         Name = $"{input.Id} AAA",
-        //         Description = "Desc AAA",
-        //         Ref = "",
-        //         StructureRef = "",
-        //     },
-        //     new DataFlow()
-        //     {
-        //         Name = $"{input.Id} BBB",
-        //         Description = "Desc BBB",
-        //         Ref = "",
-        //         StructureRef = "",
-        //     },
-        //     new DataFlow()
-        //     {
-        //         Name = $"{input.Id} CCC",
-        //         Description = "Desc CCC",
-        //         Ref = "",
-        //         StructureRef = "",
-        //     }
-        // );
-
         var rawFlows = new List<Sdmxdl.Format.Protobuf.Flow>();
         using var response = clientFactory
             .GetClient()

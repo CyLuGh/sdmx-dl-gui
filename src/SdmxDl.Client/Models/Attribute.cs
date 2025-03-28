@@ -16,8 +16,9 @@ public readonly record struct Attribute
         Id = attribute.Id;
         Name = attribute.Name;
 
-        // Check why optional isn't showing
-        CodeList = new CodeList(attribute.Codelist);
+        // TODO: Check why optional isn't showing
+        if (attribute.Codelist is not null)
+            CodeList = new CodeList(attribute.Codelist);
 
         Relationship = (AttributeRelationship)attribute.Relationship;
     }

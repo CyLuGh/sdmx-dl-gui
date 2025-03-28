@@ -60,7 +60,7 @@ public class DimensionsSelectorViewModel : BaseViewModel
         var client = clientFactory.GetClient();
 
         var dataStructure = await client.GetStructureAsync(
-            new FlowRequest() { Source = source.Id, Flow = dataFlow.Name }
+            new FlowRequest() { Source = source.Id, Flow = dataFlow.Ref }
         );
 
         return new DataStructure(dataStructure);

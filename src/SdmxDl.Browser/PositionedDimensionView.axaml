@@ -13,6 +13,7 @@
                    HorizontalAlignment="Center"
                    Margin="5 0"/>
         <TextBlock Text="{Binding Name,FallbackValue=A_dimension_name}"
+                   TextTrimming="CharacterEllipsis"
                    VerticalAlignment="Center"
                    Margin="5 0"
                    Grid.Column="1" />

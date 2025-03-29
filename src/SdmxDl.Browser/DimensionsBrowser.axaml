@@ -7,21 +7,31 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SdmxDl.Browser.DimensionsBrowser"
              x:DataType="viewModels:DimensionsSelectorViewModel">
-    
-        <Grid IsEnabled="{Binding DataStructure.IsSome}">
-            <TabControl>
-                <TabItem Header="Dimensions"></TabItem>    
-                <TabItem Header="Options">
+
+    <Grid IsEnabled="{Binding DataStructure.IsSome}">
+        <TabControl>
+            <TabItem Header="Dimensions">
+                <TreeView ItemsSource="{Binding HierarchicalDimensions}">
+                    <TreeView.ItemTemplate>
+                        <TreeDataTemplate ItemsSource="{Binding Children}">
+                            <TextBlock Text="{Binding Description}"></TextBlock>
+                        </TreeDataTemplate>
+                    </TreeView.ItemTemplate>
+                </TreeView>
+            </TabItem>
+            <TabItem Header="Options">
+                <ScrollViewer>
                     <ItemsControl ItemsSource="{Binding PositionedDimensions}">
                         <ItemsControl.DataTemplates>
                             <DataTemplate DataType="viewModels:PositionedDimensionViewModel">
                                 <browser:PositionedDimensionView ViewModel="{Binding .}"
-                                                                 Margin="2"/>
+                                                                 Margin="2" />
                             </DataTemplate>
                         </ItemsControl.DataTemplates>
                     </ItemsControl>
-                </TabItem>    
-            </TabControl>
-            
-        </Grid>
+                </ScrollViewer>
+            </TabItem>
+        </TabControl>
+
+    </Grid>
 </UserControl>

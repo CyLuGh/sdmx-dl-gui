@@ -1,4 +1,5 @@
 ﻿using System.Reactive.Linq;
+using LanguageExt;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using SdmxDl.Client.Models;
@@ -7,17 +8,22 @@ namespace SdmxDl.Browser.ViewModels;
 
 public class PositionedDimensionViewModel : BaseViewModel
 {
-    [Reactive]
-    public int CurrentPosition { get; set; }
+    public int CurrentPosition { get; }
 
-    public string Name { get; }
+    [Reactive]
+    public Option<int> DesiredPosition { get; private set; }
+
+    public int ShiftSign => DesiredPosition.Match(p => p - CurrentPosition, () => 0);
+
+    public Dimension Dimension { get; }
+    public string Name => Dimension.Name;
 
     public RxCommand MoveForward { get; }
     public RxCommand MoveBackward { get; }
 
     public PositionedDimensionViewModel(Dimension dimension, int position, int dimensionCount)
     {
-        Name = dimension.Name;
+        Dimension = dimension;
         CurrentPosition = position;
         MoveForward = CreateMoveForwardCommand();
         MoveBackward = CreateMoveBackwardCommand(dimensionCount);
@@ -31,7 +37,7 @@ public class PositionedDimensionViewModel : BaseViewModel
         return ReactiveCommand.Create(
             () =>
             {
-                CurrentPosition--;
+                DesiredPosition = CurrentPosition - 1;
             },
             canMoveForward
         );
@@ -45,7 +51,7 @@ public class PositionedDimensionViewModel : BaseViewModel
         return ReactiveCommand.Create(
             () =>
             {
-                CurrentPosition++;
+                DesiredPosition = CurrentPosition + 1;
             },
             canMoveBackward
         );

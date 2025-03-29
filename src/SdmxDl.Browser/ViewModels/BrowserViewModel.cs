@@ -2,6 +2,7 @@ using System;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading;
+using LanguageExt;
 using Polly;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -191,7 +192,7 @@ public class BrowserViewModel : BaseViewModel
                             .InvokeCommand(dimensionsSelectorViewModel, x => x.Clear)
                     )
             )
-            .Throttle(TimeSpan.FromMilliseconds(50))
+            .Throttle(TimeSpan.FromMilliseconds(200))
             .Select(t =>
             {
                 var (source, flow) = t;
@@ -214,7 +215,11 @@ public class BrowserViewModel : BaseViewModel
     {
         sourceSelectorViewModel
             .WhenAnyValue(x => x.Selection)
-            .Do(async _ => await dataFlowSelectorViewModel.Reset())
+            .Do(async _ =>
+            {
+                dataFlowSelectorViewModel.Selection = Option<DataFlow>.None;
+                await dataFlowSelectorViewModel.Reset();
+            })
             .Select(o => o.Some(Observable.Return).None(Observable.Empty<SdmxWebSource>))
             .Switch()
             .InvokeCommand(dataFlowSelectorViewModel, x => x.RetrieveData)

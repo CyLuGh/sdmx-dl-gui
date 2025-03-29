@@ -23,26 +23,24 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
+                    <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,*">
 
-                    <Grid RowDefinitions="Auto,*">
+                        <TextBlock Text="Source:" Classes="h4" Grid.Row="0" />
+                        <browser:SourceSelector
+                            ViewModel="{x:Static browser:ViewModelLocator.SourceSelectorViewModel}"
+                            Margin="10 5 10 10"
+                            Grid.Row="1" />
+                        
+                        <TextBlock Text="Flow:" Classes="h4" Grid.Row="2" />
+                        <browser:DataFlowSelector
+                            ViewModel="{x:Static browser:ViewModelLocator.DataFlowSelectorViewModel}"
+                            Margin="10 5 10 10"
+                            Grid.Row="3" />
 
-                        <StackPanel
-                            Grid.Row="0">
-                            <TextBlock Text="Source:" Classes="h4" />
-                            <browser:SourceSelector
-                                ViewModel="{x:Static browser:ViewModelLocator.SourceSelectorViewModel}"
-                                Margin="10 5 10 10" />
-                            <TextBlock Text="Flow:" Classes="h4" />
-                            <browser:DataFlowSelector
-                                ViewModel="{x:Static browser:ViewModelLocator.DataFlowSelectorViewModel}"
-                                Margin="10 5 10 10" />
-                        </StackPanel>
-
-                        <StackPanel Grid.Row="1">
-                            <TextBlock Text="Dimensions:" Classes="h4" />
-                            <browser:DimensionsBrowser
-                                ViewModel="{x:Static browser:ViewModelLocator.DimensionsSelectorViewModel}" />
-                        </StackPanel>
+                        <TextBlock Text="Dimensions:" Classes="h4" Grid.Row="4" />
+                        <browser:DimensionsBrowser
+                            ViewModel="{x:Static browser:ViewModelLocator.DimensionsSelectorViewModel}"
+                            Grid.Row="5" />
                     </Grid>
 
                     <GridSplitter ResizeBehavior="PreviousAndNext"

@@ -1,0 +1,29 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewModels="clr-namespace:SdmxDl.Browser.ViewModels"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             mc:Ignorable="d" 
+             x:Class="SdmxDl.Browser.PositionedDimensionView"
+             x:DataType="viewModels:PositionedDimensionViewModel">
+    <Grid ColumnDefinitions="25,*,Auto,Auto">
+        <TextBlock Text="{Binding CurrentPosition, FallbackValue=0}"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Center"
+                   Margin="5 0"/>
+        <TextBlock Text="{Binding Name,FallbackValue=A_dimension_name}"
+                   TextTrimming="CharacterEllipsis"
+                   VerticalAlignment="Center"
+                   Margin="5 0"
+                   Grid.Column="1" />
+        <Button Command="{Binding Path=MoveForward}"
+                Content="{avalonia:MaterialIconExt Kind=ArrowUpward}" 
+                Classes="Icon"
+                Grid.Column="2"/>
+        <Button Command="{Binding Path=MoveBackward}"
+                Content="{avalonia:MaterialIconExt Kind=ArrowDownward}" 
+                Classes="Icon"
+                Grid.Column="3"/>
+    </Grid>
+</UserControl>

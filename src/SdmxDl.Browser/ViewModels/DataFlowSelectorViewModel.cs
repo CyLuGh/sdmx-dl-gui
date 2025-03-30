@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using System.Threading;
 using System.Threading.Tasks;
 using LanguageExt;
 using Polly;
-using ReactiveUI;
 using SdmxDl.Client;
 using SdmxDl.Client.Models;
 using Sdmxdl.Grpc;

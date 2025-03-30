@@ -47,6 +47,8 @@ public static class ViewModelLocator
         var exceptionHandler = new ExceptionHandler();
         RxApp.DefaultExceptionHandler = exceptionHandler;
         SplatRegistrations.RegisterConstant(exceptionHandler);
+        SplatRegistrations.RegisterConstant<ISukiDialogManager>(new SukiDialogManager());
+        SplatRegistrations.RegisterConstant<ISukiToastManager>(new SukiToastManager());
 
         SplatRegistrations.RegisterLazySingleton<SettingsViewModel>();
         SplatRegistrations.RegisterLazySingleton<ClientFactory>();
@@ -55,12 +57,12 @@ public static class ViewModelLocator
         SplatRegistrations.RegisterLazySingleton<DataFlowSelectorViewModel>();
         SplatRegistrations.RegisterLazySingleton<DimensionsSelectorViewModel>();
 
-        SplatRegistrations.RegisterConstant<ISukiDialogManager>(new SukiDialogManager());
-        SplatRegistrations.RegisterConstant<ISukiToastManager>(new SukiToastManager());
+        SplatRegistrations.Register<DataViewModel>();
 
         var current = Locator.CurrentMutable;
 
         current.Register(() => new SourceSelector(), typeof(IViewFor<SourceSelectorViewModel>));
+        current.Register(() => new DataView(), typeof(IViewFor<DataViewModel>));
 
         SplatRegistrations.SetupIOC();
     }

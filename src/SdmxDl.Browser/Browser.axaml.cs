@@ -1,13 +1,12 @@
 using System;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Notifications;
 using Avalonia.ReactiveUI;
 using ReactiveUI;
 using SdmxDl.Browser.ViewModels;
-using SdmxDl.Client.Models;
+using Splat;
 using SukiUI.Dialogs;
 using SukiUI.Toasts;
 
@@ -67,6 +66,27 @@ public partial class Browser : ReactiveUserControl<BrowserViewModel>
                     .ByClicking()
                     .Queue();
 
+                ctx.SetOutput(RxUnit.Default);
+            })
+            .DisposeWith(disposables);
+
+        viewModel
+            .ShowResultsInteraction.RegisterHandler(ctx =>
+            {
+                var (source, flow, key) = ctx.Input;
+
+                var dvm = Locator.Current.GetService<DataViewModel>();
+                dvm.Source = source;
+                dvm.Flow = flow;
+                dvm.Key = key;
+
+                view.TabControlResults.Items.Add(
+                    new TabItem()
+                    {
+                        Header = DataViewModel.BuildTitle(source, flow, key),
+                        Content = new DataView() { ViewModel = dvm },
+                    }
+                );
                 ctx.SetOutput(RxUnit.Default);
             })
             .DisposeWith(disposables);

@@ -1,7 +1,10 @@
 using System;
+using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading;
+using LanguageExt;
+using LanguageExt.UnsafeValueAccess;
 using Polly;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -54,6 +57,12 @@ public class BrowserViewModel : BaseViewModel
         get;
     }
 
+    public string SelectionKey
+    {
+        [ObservableAsProperty]
+        get;
+    }
+
     public RxCommand LaunchServer { get; }
     public RxInteraction LaunchServerInteraction { get; } = new(RxApp.MainThreadScheduler);
 
@@ -62,10 +71,19 @@ public class BrowserViewModel : BaseViewModel
     /// </summary>
     public ReactiveCommand<RxUnit, string> RetrieveVersion { get; }
 
+    public ReactiveCommand<
+        (Seq<PositionedDimensionViewModel>, HierarchicalDimensionViewModel?),
+        string
+    > BuildSelectionKey { get; }
+
     public Interaction<Exception, RxUnit> DisplayErrorMessageInteraction { get; } =
         new(RxApp.MainThreadScheduler);
 
     public ReactiveCommand<Settings, RxUnit> HostServer { get; }
+
+    public RxCommand ShowResults { get; }
+    public Interaction<(SdmxWebSource, DataFlow, string), RxUnit> ShowResultsInteraction { get; } =
+        new(RxApp.MainThreadScheduler);
 
     public BrowserViewModel(
         ClientFactory clientFactory,
@@ -79,6 +97,8 @@ public class BrowserViewModel : BaseViewModel
         HostServer = CreateCommandHostServer(clientFactory);
         LaunchServer = CreateCommandLaunchServer();
 
+        BuildSelectionKey = CreateCommandBuildSelectionKey();
+
         ViewModelLocator
             .SettingsViewModel.WhenAnyValue(x => x.CurrentSettings)
             .Where(x => x.IsHosting)
@@ -88,6 +108,8 @@ public class BrowserViewModel : BaseViewModel
         UpdateServerRunningStatus();
 
         RetrieveVersion = CreateCommandRetrieveVersion(clientFactory, pipeline);
+
+        ShowResults = CreateCommandShowResults(sourceSelectorViewModel, dataFlowSelectorViewModel);
 
         this.WhenActivated(disposables =>
         {
@@ -113,24 +135,70 @@ public class BrowserViewModel : BaseViewModel
                 disposables
             );
 
-            ManageBusyStatus(sourceSelectorViewModel, dataFlowSelectorViewModel, disposables);
+            ManageBusyStatus(
+                sourceSelectorViewModel,
+                dataFlowSelectorViewModel,
+                dimensionsSelectorViewModel,
+                disposables
+            );
+
+            dimensionsSelectorViewModel
+                .WhenAnyValue(x => x.PositionedDimensions, x => x.SelectedDimension)
+                .InvokeCommand(BuildSelectionKey)
+                .DisposeWith(disposables);
         });
+    }
+
+    private RxCommand CreateCommandShowResults(
+        SourceSelectorViewModel sourceSelectorViewModel,
+        DataFlowSelectorViewModel dataFlowSelectorViewModel
+    )
+    {
+        var canShowResults = sourceSelectorViewModel
+            .WhenAnyValue(x => x.Selection)
+            .Select(x => x.IsSome)
+            .CombineLatest(
+                dataFlowSelectorViewModel.WhenAnyValue(x => x.Selection).Select(x => x.IsSome),
+                this.WhenAnyValue(x => x.SelectionKey).Select(s => !string.IsNullOrEmpty(s))
+            )
+            .Select(t =>
+            {
+                var (source, flow, key) = t;
+                return source && flow && key;
+            })
+            .ObserveOn(RxApp.MainThreadScheduler);
+
+        var showResults = ReactiveCommand.CreateFromObservable(
+            () =>
+                ShowResultsInteraction.Handle(
+                    (
+                        sourceSelectorViewModel.Selection.ValueUnsafe(),
+                        dataFlowSelectorViewModel.Selection.ValueUnsafe(),
+                        SelectionKey
+                    )
+                ),
+            canShowResults
+        );
+
+        return showResults;
     }
 
     private void ManageBusyStatus(
         SourceSelectorViewModel sourceSelectorViewModel,
         DataFlowSelectorViewModel dataFlowSelectorViewModel,
+        DimensionsSelectorViewModel dimensionsSelectorViewModel,
         CompositeDisposable disposables
     )
     {
         sourceSelectorViewModel
             .RetrieveData.IsExecuting.CombineLatest(
-                dataFlowSelectorViewModel.RetrieveData.IsExecuting
+                dataFlowSelectorViewModel.RetrieveData.IsExecuting,
+                dimensionsSelectorViewModel.RetrieveDimensions.IsExecuting
             )
             .Select(t =>
             {
-                var (isRetrievingSources, isRetrievingFlows) = t;
-                return isRetrievingSources || isRetrievingFlows;
+                var (isRetrievingSources, isRetrievingFlows, isRetrievingDimensions) = t;
+                return isRetrievingSources || isRetrievingFlows || isRetrievingDimensions;
             })
             .ToPropertyEx(this, x => x.IsBusy, scheduler: RxApp.MainThreadScheduler)
             .DisposeWith(disposables);
@@ -142,6 +210,11 @@ public class BrowserViewModel : BaseViewModel
                 dataFlowSelectorViewModel
                     .RetrieveData.IsExecuting.Where(x => x)
                     .Select(_ => "Retrieving data flows...")
+            )
+            .Merge(
+                dimensionsSelectorViewModel
+                    .RetrieveDimensions.IsExecuting.Where(x => x)
+                    .Select(_ => "Retrieving dimensions...")
             )
             .ToPropertyEx(this, x => x.BusyMessage, scheduler: RxApp.MainThreadScheduler)
             .DisposeWith(disposables);
@@ -179,7 +252,7 @@ public class BrowserViewModel : BaseViewModel
                             .InvokeCommand(dimensionsSelectorViewModel, x => x.Clear)
                     )
             )
-            .Throttle(TimeSpan.FromMilliseconds(50))
+            .Throttle(TimeSpan.FromMilliseconds(200))
             .Select(t =>
             {
                 var (source, flow) = t;
@@ -202,7 +275,11 @@ public class BrowserViewModel : BaseViewModel
     {
         sourceSelectorViewModel
             .WhenAnyValue(x => x.Selection)
-            .Do(async _ => await dataFlowSelectorViewModel.Reset())
+            .Do(async _ =>
+            {
+                dataFlowSelectorViewModel.Selection = Option<DataFlow>.None;
+                await dataFlowSelectorViewModel.Reset();
+            })
             .Select(o => o.Some(Observable.Return).None(Observable.Empty<SdmxWebSource>))
             .Switch()
             .InvokeCommand(dataFlowSelectorViewModel, x => x.RetrieveData)
@@ -325,6 +402,40 @@ public class BrowserViewModel : BaseViewModel
         );
 
         cmd.ThrownExceptions.Subscribe(async ex => await DisplayErrorMessageInteraction.Handle(ex));
+        return cmd;
+    }
+
+    private ReactiveCommand<
+        (Seq<PositionedDimensionViewModel>, HierarchicalDimensionViewModel?),
+        string
+    > CreateCommandBuildSelectionKey()
+    {
+        var cmd = ReactiveCommand.CreateRunInBackground(
+            ((Seq<PositionedDimensionViewModel>, HierarchicalDimensionViewModel?) t) =>
+            {
+                var (dimensions, selection) = t;
+
+                if (dimensions.IsEmpty || selection is null)
+                    return string.Empty;
+
+                return string.Join(
+                    ":",
+                    dimensions
+                        .OrderBy(d => d.Dimension.Position)
+                        .Select(d =>
+                            selection.Keys.Find(d.Dimension.Position, k => k, () => string.Empty)
+                        )
+                );
+            }
+        );
+
+        cmd.ToPropertyEx(
+            this,
+            x => x.SelectionKey,
+            scheduler: RxApp.MainThreadScheduler,
+            initialValue: string.Empty
+        );
+
         return cmd;
     }
 }

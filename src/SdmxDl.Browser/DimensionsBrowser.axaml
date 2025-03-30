@@ -8,7 +8,8 @@
              x:Class="SdmxDl.Browser.DimensionsBrowser"
              x:DataType="viewModels:DimensionsSelectorViewModel">
 
-    <Grid IsEnabled="{Binding DataStructure.IsSome}">
+    <Grid IsEnabled="{Binding DataStructure.IsSome}"
+          RowDefinitions="*,Auto">
         <TabControl>
             <TabItem Header="Dimensions">
                 <TreeView ItemsSource="{Binding HierarchicalDimensions}"
@@ -39,6 +40,5 @@
                 </ScrollViewer>
             </TabItem>
         </TabControl>
-
     </Grid>
 </UserControl>

@@ -6,7 +6,7 @@
              xmlns:viewModels="clr-namespace:SdmxDl.Browser.ViewModels"
              xmlns:converters="clr-namespace:SdmxDl.Browser.Infrastructure.Converters"
              xmlns:browser="clr-namespace:SdmxDl.Browser"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="1500" d:DesignHeight="850"
              x:Class="SdmxDl.Browser.Browser"
              x:DataType="viewModels:BrowserViewModel">
     <UserControl.Resources>
@@ -14,7 +14,6 @@
     </UserControl.Resources>
     <Grid RowDefinitions="*,Auto">
         <suki:GlassCard IsAnimated="False">
-
             <Grid Margin="5">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition MinWidth="300" Width="500" MaxWidth="1000" />
@@ -24,7 +23,7 @@
 
                 <suki:BusyArea IsBusy="{Binding IsBusy}"
                                BusyText="{Binding BusyMessage}">
-                    <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,*">
+                    <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,*,Auto">
 
                         <TextBlock Text="Source:" Classes="h4" Grid.Row="0" />
                         <browser:SourceSelector
@@ -42,6 +41,13 @@
                         <browser:DimensionsBrowser
                             ViewModel="{x:Static browser:ViewModelLocator.DimensionsSelectorViewModel}"
                             Grid.Row="5" />
+                        
+                        <Button Content="{Binding SelectionKey,FallbackValue=KEY:KEY:KEY:KEY}"
+                                IsVisible="{Binding SelectionKey,Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                                Command="{Binding ShowResults}"
+                                Margin="5" 
+                                Classes="Rounded Outlined"
+                                Grid.Row="6" ></Button>
                     </Grid>
                 </suki:BusyArea>
 
@@ -49,6 +55,11 @@
                               ResizeDirection="Columns"
                               Width="3"
                               Grid.Column="1" />
+                
+                <TabControl x:Name="TabControlResults" 
+                            Grid.Column="2">
+                    
+                </TabControl>
             </Grid>
         </suki:GlassCard>
         <StackPanel HorizontalAlignment="Right"

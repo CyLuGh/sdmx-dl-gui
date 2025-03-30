@@ -56,15 +56,15 @@ public class DimensionsSelectorViewModel : BaseViewModel
         {
             UpdatePositionedDimensions(disposables);
             UpdateHierarchy(disposables);
-
-            this.WhenAnyValue(x => x.SelectedDimension)
-                .WhereNotNull()
-                .Subscribe(sel =>
-                {
-                    var map = sel.Keys;
-                })
-                .DisposeWith(disposables);
+            ClearSelectionOnSort(disposables);
         });
+    }
+
+    private void ClearSelectionOnSort(CompositeDisposable disposables)
+    {
+        this.WhenAnyValue(x => x.PositionedDimensions)
+            .Subscribe(_ => SelectedDimension = null)
+            .DisposeWith(disposables);
     }
 
     private void UpdatePositionedDimensions(CompositeDisposable disposables)

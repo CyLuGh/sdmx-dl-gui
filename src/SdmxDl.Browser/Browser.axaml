@@ -14,15 +14,16 @@
     </UserControl.Resources>
     <Grid RowDefinitions="*,Auto">
         <suki:GlassCard IsAnimated="False">
-            <suki:BusyArea IsBusy="{Binding IsBusy}"
-                           BusyText="{Binding BusyMessage}">
-                <Grid Margin="5">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition MinWidth="300" Width="500" MaxWidth="1000" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                    </Grid.ColumnDefinitions>
 
+            <Grid Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition MinWidth="300" Width="500" MaxWidth="1000" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <suki:BusyArea IsBusy="{Binding IsBusy}"
+                               BusyText="{Binding BusyMessage}">
                     <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,*">
 
                         <TextBlock Text="Source:" Classes="h4" Grid.Row="0" />
@@ -30,7 +31,7 @@
                             ViewModel="{x:Static browser:ViewModelLocator.SourceSelectorViewModel}"
                             Margin="10 5 10 10"
                             Grid.Row="1" />
-                        
+
                         <TextBlock Text="Flow:" Classes="h4" Grid.Row="2" />
                         <browser:DataFlowSelector
                             ViewModel="{x:Static browser:ViewModelLocator.DataFlowSelectorViewModel}"
@@ -42,13 +43,13 @@
                             ViewModel="{x:Static browser:ViewModelLocator.DimensionsSelectorViewModel}"
                             Grid.Row="5" />
                     </Grid>
+                </suki:BusyArea>
 
-                    <GridSplitter ResizeBehavior="PreviousAndNext"
-                                  ResizeDirection="Columns"
-                                  Width="3"
-                                  Grid.Column="1" />
-                </Grid>
-            </suki:BusyArea>
+                <GridSplitter ResizeBehavior="PreviousAndNext"
+                              ResizeDirection="Columns"
+                              Width="3"
+                              Grid.Column="1" />
+            </Grid>
         </suki:GlassCard>
         <StackPanel HorizontalAlignment="Right"
                     Margin="5 10 5 5"

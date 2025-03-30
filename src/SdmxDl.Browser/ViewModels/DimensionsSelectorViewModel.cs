@@ -16,6 +16,9 @@ namespace SdmxDl.Browser.ViewModels;
 
 public class DimensionsSelectorViewModel : BaseViewModel
 {
+    [Reactive]
+    public HierarchicalDimensionViewModel? SelectedDimension { get; set; }
+
     public Option<DataStructure> DataStructure
     {
         [ObservableAsProperty]
@@ -53,6 +56,14 @@ public class DimensionsSelectorViewModel : BaseViewModel
         {
             UpdatePositionedDimensions(disposables);
             UpdateHierarchy(disposables);
+
+            this.WhenAnyValue(x => x.SelectedDimension)
+                .WhereNotNull()
+                .Subscribe(sel =>
+                {
+                    var map = sel.Keys;
+                })
+                .DisposeWith(disposables);
         });
     }
 
@@ -85,32 +96,12 @@ public class DimensionsSelectorViewModel : BaseViewModel
         this.WhenAnyValue(x => x.PositionedDimensions)
             .Throttle(TimeSpan.FromMilliseconds(150))
             .Select(seq =>
-                seq.Length == 0 ? Seq<HierarchicalDimensionViewModel>.Empty : BuildHierarchy(seq)
+                seq.Length == 0
+                    ? Seq<HierarchicalDimensionViewModel>.Empty
+                    : HierarchicalDimensionViewModel.BuildHierarchy(seq, HashMap<int, string>.Empty)
             )
             .ToPropertyEx(this, x => x.HierarchicalDimensions, scheduler: RxApp.MainThreadScheduler)
             .DisposeWith(disposables);
-    }
-
-    [Pure]
-    private static Seq<HierarchicalDimensionViewModel> BuildHierarchy(
-        Seq<PositionedDimensionViewModel> positionedDimensions,
-        int level = 0
-    )
-    {
-        var children =
-            level < positionedDimensions.Length - 1
-                ? BuildHierarchy(positionedDimensions, level + 1)
-                : Seq<HierarchicalDimensionViewModel>.Empty;
-
-        return positionedDimensions[level]
-            .Dimension.CodeList.Codes.Select(t => new HierarchicalDimensionViewModel(
-                t.Key,
-                t.Value,
-                children
-            ))
-            .OrderBy(x => x.Key)
-            .ToSeq()
-            .Strict();
     }
 
     [Pure]

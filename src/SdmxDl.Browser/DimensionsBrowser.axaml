@@ -11,11 +11,18 @@
     <Grid IsEnabled="{Binding DataStructure.IsSome}">
         <TabControl>
             <TabItem Header="Dimensions">
-                <TreeView ItemsSource="{Binding HierarchicalDimensions}">
+                <TreeView ItemsSource="{Binding HierarchicalDimensions}"
+                          SelectionMode="Single"
+                          SelectedItem="{Binding SelectedDimension}">
+                    <TreeView.Styles>
+                        <Style Selector="TreeViewItem">
+                            <Setter Property="IsExpanded" Value="{Binding (viewModels:HierarchicalDimensionViewModel).IsExpanded}"></Setter>
+                        </Style>
+                    </TreeView.Styles>
                     <TreeView.ItemTemplate>
                         <TreeDataTemplate ItemsSource="{Binding Children}">
                             <TextBlock Text="{Binding Description}"></TextBlock>
-                        </TreeDataTemplate>
+                        </TreeDataTemplate> 
                     </TreeView.ItemTemplate>
                 </TreeView>
             </TabItem>

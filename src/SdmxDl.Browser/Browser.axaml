@@ -3,10 +3,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:suki="https://github.com/kikipoulet/SukiUI"
+             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:viewModels="clr-namespace:SdmxDl.Browser.ViewModels"
              xmlns:converters="clr-namespace:SdmxDl.Browser.Infrastructure.Converters"
              xmlns:browser="clr-namespace:SdmxDl.Browser"
-             mc:Ignorable="d" d:DesignWidth="1500" d:DesignHeight="850"
+             mc:Ignorable="d" d:DesignWidth="1500" d:DesignHeight="450"
              x:Class="SdmxDl.Browser.Browser"
              x:DataType="viewModels:BrowserViewModel">
     <UserControl.Resources>
@@ -42,12 +43,14 @@
                             ViewModel="{x:Static browser:ViewModelLocator.DimensionsSelectorViewModel}"
                             Grid.Row="5" />
                         
-                        <Button Content="{Binding SelectionKey,FallbackValue=KEY:KEY:KEY:KEY}"
-                                IsVisible="{Binding SelectionKey,Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
-                                Command="{Binding ShowResults}"
-                                Margin="5" 
-                                Classes="Rounded Outlined"
-                                Grid.Row="6" ></Button>
+                        <DockPanel Grid.Row="6">
+                            <Button Command="{Binding ShowResults}"
+                                    Content="{materialIcons:MaterialIconExt Kind=Download}" 
+                                    Classes="Flat Icon"
+                                    Margin="5 2"
+                                    DockPanel.Dock="Right"/>
+                            <TextBox Text="{Binding SelectionKey,FallbackValue=KEY.KEY.KEY.KEY}" DockPanel.Dock="Left"/>
+                        </DockPanel>
                     </Grid>
                 </suki:BusyArea>
 

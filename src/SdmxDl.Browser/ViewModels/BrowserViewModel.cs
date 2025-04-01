@@ -57,11 +57,8 @@ public class BrowserViewModel : BaseViewModel
         get;
     }
 
-    public string SelectionKey
-    {
-        [ObservableAsProperty]
-        get;
-    }
+    [Reactive]
+    public string SelectionKey { get; set; }
 
     public RxCommand LaunchServer { get; }
     public RxInteraction LaunchServerInteraction { get; } = new(RxApp.MainThreadScheduler);
@@ -109,7 +106,11 @@ public class BrowserViewModel : BaseViewModel
 
         RetrieveVersion = CreateCommandRetrieveVersion(clientFactory, pipeline);
 
-        ShowResults = CreateCommandShowResults(sourceSelectorViewModel, dataFlowSelectorViewModel);
+        ShowResults = CreateCommandShowResults(
+            sourceSelectorViewModel,
+            dataFlowSelectorViewModel,
+            dimensionsSelectorViewModel
+        );
 
         this.WhenActivated(disposables =>
         {
@@ -147,11 +148,14 @@ public class BrowserViewModel : BaseViewModel
                 .InvokeCommand(BuildSelectionKey)
                 .DisposeWith(disposables);
         });
+
+        SelectionKey = string.Empty;
     }
 
     private RxCommand CreateCommandShowResults(
         SourceSelectorViewModel sourceSelectorViewModel,
-        DataFlowSelectorViewModel dataFlowSelectorViewModel
+        DataFlowSelectorViewModel dataFlowSelectorViewModel,
+        DimensionsSelectorViewModel dimensionsSelectorViewModel
     )
     {
         var canShowResults = sourceSelectorViewModel
@@ -159,12 +163,23 @@ public class BrowserViewModel : BaseViewModel
             .Select(x => x.IsSome)
             .CombineLatest(
                 dataFlowSelectorViewModel.WhenAnyValue(x => x.Selection).Select(x => x.IsSome),
-                this.WhenAnyValue(x => x.SelectionKey).Select(s => !string.IsNullOrEmpty(s))
+                dimensionsSelectorViewModel.WhenAnyValue(x => x.DataStructure),
+                this.WhenAnyValue(x => x.SelectionKey)
             )
             .Select(t =>
             {
-                var (source, flow, key) = t;
-                return source && flow && key;
+                var (source, flow, dataStructure, key) = t;
+
+                var dimensions = dataStructure.Match(
+                    ds => ds.Dimensions,
+                    () => Seq<Dimension>.Empty
+                );
+
+                return source
+                    && flow
+                    && !string.IsNullOrWhiteSpace(key)
+                    && key.Split('.').Length == dimensions.Length
+                    && dimensions.CheckComponents(key);
             })
             .ObserveOn(RxApp.MainThreadScheduler);
 
@@ -429,12 +444,7 @@ public class BrowserViewModel : BaseViewModel
             }
         );
 
-        cmd.ToPropertyEx(
-            this,
-            x => x.SelectionKey,
-            scheduler: RxApp.MainThreadScheduler,
-            initialValue: string.Empty
-        );
+        cmd.Subscribe(s => SelectionKey = s);
 
         return cmd;
     }

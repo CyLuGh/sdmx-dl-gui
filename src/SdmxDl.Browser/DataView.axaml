@@ -8,15 +8,20 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SdmxDl.Browser.DataView"
              x:DataType="viewModels:DataViewModel">
-    <suki:GlassCard IsVisible="{Binding IsBusy}">
-        <StackPanel VerticalAlignment="Center"
-                    HorizontalAlignment="Center">
-            <suki:WaveProgress Value="45"
-                               IsTextVisible="False"/>
-            <TextBlock Text="{Binding Path=BusyMessage,FallbackValue=FILLER_TEXT}"
-                       Classes="h3"
-                       FontStretch="Condensed"
-                       HorizontalAlignment="Center"/>
-        </StackPanel>
-    </suki:GlassCard>
+    <Grid>
+        <suki:GlassCard IsVisible="{Binding DataSet.IsNone}">
+            <TextBlock Text="No available data"/>
+        </suki:GlassCard>
+        <suki:GlassCard IsVisible="{Binding IsBusy}">
+            <StackPanel VerticalAlignment="Center"
+                        HorizontalAlignment="Center">
+                <suki:WaveProgress Value="45"
+                                   IsTextVisible="False"/>
+                <TextBlock Text="{Binding Path=BusyMessage,FallbackValue=FILLER_TEXT}"
+                           Classes="h3"
+                           FontStretch="Condensed"
+                           HorizontalAlignment="Center"/>
+            </StackPanel>
+        </suki:GlassCard>
+    </Grid>
 </UserControl>

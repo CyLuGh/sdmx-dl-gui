@@ -419,7 +419,7 @@ public class BrowserViewModel : BaseViewModel
                     return string.Empty;
 
                 return string.Join(
-                    ":",
+                    ".",
                     dimensions
                         .OrderBy(d => d.Dimension.Position)
                         .Select(d =>

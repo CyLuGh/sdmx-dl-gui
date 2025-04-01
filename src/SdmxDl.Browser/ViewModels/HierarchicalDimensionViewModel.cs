@@ -75,25 +75,5 @@ public class HierarchicalDimensionViewModel : BaseViewModel
             .OrderBy(x => x.Description)
             .ToSeq()
             .Strict();
-
-        // var children =
-        //     level < positionedDimensions.Length - 1
-        //         ? BuildHierarchy(positionedDimensions, level + 1)
-        //         : Seq<HierarchicalDimensionViewModel>.Empty;
-        //
-        // return positionedDimensions[level]
-        //     .Dimension.CodeList.Codes.Select(t => new HierarchicalDimensionViewModel(
-        //         level,
-        //         t.Key,
-        //         t.Value,
-        //         children.Map(c =>
-        //         {
-        //             c.AddKey(level, t.Key);
-        //             return c;
-        //         })
-        //     ))
-        //     .OrderBy(x => x.Description)
-        //     .ToSeq()
-        //     .Strict();
     }
 }

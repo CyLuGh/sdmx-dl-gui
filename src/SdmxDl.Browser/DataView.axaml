@@ -2,7 +2,21 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:suki="https://github.com/kikipoulet/SukiUI"
+             xmlns:viewModels="clr-namespace:SdmxDl.Browser.ViewModels"
+
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="SdmxDl.Browser.DataView">
-    <Border Background="Aquamarine"></Border>
+             x:Class="SdmxDl.Browser.DataView"
+             x:DataType="viewModels:DataViewModel">
+    <suki:GlassCard IsVisible="{Binding IsBusy}">
+        <StackPanel VerticalAlignment="Center"
+                    HorizontalAlignment="Center">
+            <suki:WaveProgress Value="45"
+                               IsTextVisible="False"/>
+            <TextBlock Text="{Binding Path=BusyMessage,FallbackValue=FILLER_TEXT}"
+                       Classes="h3"
+                       FontStretch="Condensed"
+                       HorizontalAlignment="Center"/>
+        </StackPanel>
+    </suki:GlassCard>
 </UserControl>

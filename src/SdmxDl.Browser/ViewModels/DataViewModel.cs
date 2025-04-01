@@ -21,6 +21,24 @@ public class DataViewModel : BaseViewModel
     [Reactive]
     public Option<string> Key { get; set; }
 
+    public Option<DataSet> DataSet
+    {
+        [ObservableAsProperty]
+        get;
+    }
+
+    public bool IsBusy
+    {
+        [ObservableAsProperty]
+        get;
+    }
+
+    public string BusyMessage
+    {
+        [ObservableAsProperty]
+        get;
+    }
+
     public static string BuildTitle(SdmxWebSource source, DataFlow flow, string key) =>
         $"{source.Id} {flow.Ref} {key}";
 
@@ -30,24 +48,36 @@ public class DataViewModel : BaseViewModel
     {
         RetrieveData = CreateCommandRetrieveData(clientFactory, pipeline);
 
+        this.WhenAnyValue(x => x.Source)
+            .CombineLatest(this.WhenAnyValue(x => x.Flow), this.WhenAnyValue(x => x.Key))
+            .Select(t =>
+            {
+                var (source, flow, key) = t;
+                var tuple = from s in source from f in flow from k in key select (s, f, k);
+
+                return tuple.Match(
+                    Observable.Return,
+                    Observable.Empty<(SdmxWebSource, DataFlow, string)>
+                );
+            })
+            .Switch()
+            .InvokeCommand(RetrieveData);
+
         this.WhenActivated(disposables =>
         {
-            this.WhenAnyValue(x => x.Source)
-                .CombineLatest(this.WhenAnyValue(x => x.Flow), this.WhenAnyValue(x => x.Key))
-                .Select(t =>
-                {
-                    var (source, flow, key) = t;
-                    var tuple = from s in source from f in flow from k in key select (s, f, k);
-
-                    return tuple.Match(
-                        Observable.Return,
-                        Observable.Empty<(SdmxWebSource, DataFlow, string)>
-                    );
-                })
-                .Switch()
-                .InvokeCommand(RetrieveData)
-                .DisposeWith(disposables);
+            ManageBusyState(disposables);
         });
+    }
+
+    private void ManageBusyState(CompositeDisposable disposables)
+    {
+        RetrieveData.IsExecuting.ToPropertyEx(this, x => x.IsBusy).DisposeWith(disposables);
+
+        RetrieveData
+            .IsExecuting.Where(x => x)
+            .Select(_ => "Retrieving data")
+            .ToPropertyEx(this, x => x.BusyMessage, scheduler: RxApp.MainThreadScheduler)
+            .DisposeWith(disposables);
     }
 
     private ReactiveCommand<
@@ -63,9 +93,9 @@ public class DataViewModel : BaseViewModel
             var (source, flow, key) = t;
 
             var rawSeries = new System.Collections.Generic.List<Sdmxdl.Format.Protobuf.Series>();
-            using var response = clientFactory
+            var dataSet = await clientFactory
                 .GetClient()
-                .GetDataStream(
+                .GetDataAsync(
                     new()
                     {
                         Source = source.Id,
@@ -74,14 +104,10 @@ public class DataViewModel : BaseViewModel
                     }
                 );
 
-            while (await response.ResponseStream.MoveNext(CancellationToken.None))
-            {
-                var series = response.ResponseStream.Current;
-                rawSeries.Add(series);
-            }
-
-            return Option<DataSet>.None;
+            return dataSet.ToModel();
         });
+
+        cmd.ToPropertyEx(this, x => x.DataSet, scheduler: RxApp.MainThreadScheduler);
 
         return cmd;
     }

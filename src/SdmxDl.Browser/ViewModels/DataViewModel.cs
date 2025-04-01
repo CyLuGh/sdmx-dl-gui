@@ -5,6 +5,7 @@ using LanguageExt;
 using Polly;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using SdmxDl.Browser.Models;
 using SdmxDl.Client;
 using SdmxDl.Client.Models;
 
@@ -39,6 +40,12 @@ public class DataViewModel : BaseViewModel
         get;
     }
 
+    public Seq<ChartSeries> ChartSeries
+    {
+        [ObservableAsProperty]
+        get;
+    }
+
     public static string BuildTitle(SdmxWebSource source, DataFlow flow, string key) =>
         $"{source.Id} {flow.Ref} {key}";
 
@@ -62,6 +69,12 @@ public class DataViewModel : BaseViewModel
             })
             .Switch()
             .InvokeCommand(RetrieveData);
+
+        this.WhenAnyValue(x => x.DataSet)
+            .Select(d => d.Match(Observable.Return, Observable.Empty<DataSet>))
+            .Switch()
+            .Select(d => d.Data.Map(s => new ChartSeries(s)))
+            .ToPropertyEx(this, x => x.ChartSeries, scheduler: RxApp.MainThreadScheduler);
 
         this.WhenActivated(disposables =>
         {

@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:suki="https://github.com/kikipoulet/SukiUI"
              xmlns:viewModels="clr-namespace:SdmxDl.Browser.ViewModels"
-
+             xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.Avalonia;assembly=LiveChartsCore.SkiaSharpView.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SdmxDl.Browser.DataView"
              x:DataType="viewModels:DataViewModel">
@@ -12,6 +12,11 @@
         <suki:GlassCard IsVisible="{Binding DataSet.IsNone}">
             <TextBlock Text="No available data"/>
         </suki:GlassCard>
+        
+        <suki:GlassCard IsVisible="{Binding DataSet.IsSome}">
+            <lvc:CartesianChart/>
+        </suki:GlassCard>
+        
         <suki:GlassCard IsVisible="{Binding IsBusy}">
             <StackPanel VerticalAlignment="Center"
                         HorizontalAlignment="Center">

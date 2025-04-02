@@ -5,26 +5,46 @@
              xmlns:suki="https://github.com/kikipoulet/SukiUI"
              xmlns:viewModels="clr-namespace:SdmxDl.Browser.ViewModels"
              xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.Avalonia;assembly=LiveChartsCore.SkiaSharpView.Avalonia"
+             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:browser="clr-namespace:SdmxDl.Browser"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SdmxDl.Browser.DataView"
              x:DataType="viewModels:DataViewModel">
     <Grid Margin="0 5 0 0">
-        <suki:GlassCard IsVisible="{Binding HasNoData}"
+        <suki:GlassCard IsVisible="{Binding HasNoData,FallbackValue=False}"
                         Classes="Accent"
                         IsAnimated="False">
-            <TextBlock Text="No available data" 
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center"/>
+            <Grid>
+                <TextBlock Text="No available data" 
+                           Classes="h2"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"/>
+                <Button Command="{Binding Close, Source={x:Static browser:ViewModelLocator.BrowserViewModel}}"
+                        CommandParameter="{Binding Title}"
+                        Content="{materialIcons:MaterialIconExt Kind=CloseBold}" 
+                        Classes="Icon"
+                        VerticalAlignment="Top"
+                        HorizontalAlignment="Right"/>
+            </Grid>
+            
         </suki:GlassCard>
         
-        <suki:GlassCard IsVisible="{Binding DataSet.IsSome}"
+        <suki:GlassCard IsVisible="{Binding ChartSeries.Count,FallbackValue=True}"
                         IsAnimated="False">
-            <lvc:CartesianChart Series="{Binding LineSeries}"
-                                XAxes="{Binding XAxes}"
-                                LegendPosition="Bottom"/>
+            <Grid>
+                <lvc:CartesianChart Series="{Binding LineSeries}"
+                                    XAxes="{Binding XAxes}"
+                                    LegendPosition="Bottom"/>    
+                <Button Command="{Binding Close, Source={x:Static browser:ViewModelLocator.BrowserViewModel}}"
+                        CommandParameter="{Binding Title}"
+                        Content="{materialIcons:MaterialIconExt Kind=CloseBold}" 
+                        Classes="Icon"
+                        VerticalAlignment="Top"
+                        HorizontalAlignment="Right"/>
+            </Grid>
         </suki:GlassCard>
         
-        <suki:GlassCard IsVisible="{Binding IsBusy}" 
+        <suki:GlassCard IsVisible="{Binding IsBusy,FallbackValue=False}" 
                         IsAnimated="False"
                         IsOpaque="True">
             <StackPanel VerticalAlignment="Center"

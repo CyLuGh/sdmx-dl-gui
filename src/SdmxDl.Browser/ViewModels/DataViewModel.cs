@@ -11,6 +11,7 @@ using ReactiveUI.Fody.Helpers;
 using SdmxDl.Browser.Models;
 using SdmxDl.Client;
 using SdmxDl.Client.Models;
+using SukiUI.Locale;
 
 namespace SdmxDl.Browser.ViewModels;
 
@@ -71,6 +72,12 @@ public class DataViewModel : BaseViewModel
 
     public static string BuildTitle(SdmxWebSource source, DataFlow flow, string key) =>
         $"{source.Id} {flow.Ref} {key}";
+
+    public string Title =>
+        (from s in Source from f in Flow from k in Key select BuildTitle(s, f, k)).Match(
+            s => s,
+            () => string.Empty
+        );
 
     public ReactiveCommand<(SdmxWebSource, DataFlow, string), Option<DataSet>> RetrieveData { get; }
     public ReactiveCommand<DataSet, Seq<ChartSeries>> TransformData { get; }
@@ -135,8 +142,9 @@ public class DataViewModel : BaseViewModel
     private void ManageBusyState(CompositeDisposable disposables)
     {
         RetrieveData
-            .IsExecuting.Merge(TransformData.IsExecuting)
+            .IsExecuting.CombineLatest(TransformData.IsExecuting)
             .Throttle(TimeSpan.FromMilliseconds(25))
+            .Select(t => t.First || t.Second)
             .ToPropertyEx(this, x => x.IsBusy, scheduler: RxApp.MainThreadScheduler)
             .DisposeWith(disposables);
 

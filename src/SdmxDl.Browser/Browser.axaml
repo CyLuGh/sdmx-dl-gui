@@ -6,7 +6,7 @@
              xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:viewModels="clr-namespace:SdmxDl.Browser.ViewModels"
              xmlns:converters="clr-namespace:SdmxDl.Browser.Infrastructure.Converters"
-             xmlns:svg="clr-namespace:Avalonia.Svg.Skia;assembly=Avalonia.Svg.Skia"
+             xmlns:X="clr-namespace:SukiUI.Helpers.ConditionalXAML;assembly=SukiUI"
              xmlns:browser="clr-namespace:SdmxDl.Browser"
              mc:Ignorable="d" d:DesignWidth="1500" d:DesignHeight="450"
              x:Class="SdmxDl.Browser.Browser"
@@ -141,6 +141,7 @@
 
         <Image Source="{SvgImage /assets/SDMX_logo.svg}"  
                MaxWidth="800"
+               IsVisible="{Binding !ItemCount, ElementName=TabControlResults}"
                Grid.Row="0" 
                Grid.Column="2"/>
         

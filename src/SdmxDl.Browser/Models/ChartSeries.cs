@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using LanguageExt;
 using LiveChartsCore.Defaults;
@@ -19,7 +18,7 @@ public class ChartSeries
     public ChartSeries(Series series)
     {
         var format = series.Meta.Find("TIME_FORMAT", s => s, () => string.Empty);
-        Title = $"{series.Meta.Find("TITLE", s => s, () => series.Key)} ({series.Key})";
+        Title = series.Meta.Find("TITLE", s => $"{s} ({series.Key})", () => series.Key);
 
         Values = series
             .Obs.Map(o => new ChartItem(DateTime.Parse(o.Period.Split('/')[0]), o.Value))

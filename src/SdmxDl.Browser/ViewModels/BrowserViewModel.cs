@@ -85,6 +85,9 @@ public class BrowserViewModel : BaseViewModel
 
     public ReactiveCommand<KeyEventArgs, RxUnit> CheckKeyTextBox { get; }
 
+    public ReactiveCommand<string, RxUnit> Close { get; }
+    public Interaction<string, RxUnit> CloseInteraction { get; } = new(RxApp.MainThreadScheduler);
+
     public BrowserViewModel(
         ClientFactory clientFactory,
         SourceSelectorViewModel sourceSelectorViewModel,
@@ -115,6 +118,8 @@ public class BrowserViewModel : BaseViewModel
             dimensionsSelectorViewModel
         );
         CheckKeyTextBox = CreateCommandCheckKeyTextBoxInput();
+
+        Close = ReactiveCommand.CreateFromObservable((string s) => CloseInteraction.Handle(s));
 
         this.WhenActivated(disposables =>
         {

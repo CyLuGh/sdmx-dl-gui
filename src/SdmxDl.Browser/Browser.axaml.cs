@@ -104,5 +104,21 @@ public partial class Browser : ReactiveUserControl<BrowserViewModel>
                 ctx.SetOutput(RxUnit.Default);
             })
             .DisposeWith(disposables);
+
+        viewModel
+            .CloseInteraction.RegisterHandler(ctx =>
+            {
+                var existingTab = view
+                    .TabControlResults.Items.OfType<TabItem>()
+                    .FirstOrDefault(x => x.Header?.ToString()?.Equals(ctx.Input) == true);
+
+                if (existingTab is not null)
+                {
+                    view.TabControlResults.Items.Remove(existingTab);
+                }
+
+                ctx.SetOutput(RxUnit.Default);
+            })
+            .DisposeWith(disposables);
     }
 }

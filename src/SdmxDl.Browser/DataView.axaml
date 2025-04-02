@@ -6,6 +6,7 @@
              xmlns:viewModels="clr-namespace:SdmxDl.Browser.ViewModels"
              xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.Avalonia;assembly=LiveChartsCore.SkiaSharpView.Avalonia"
              xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:hierarchyGrid="using:HierarchyGrid.Avalonia"
              xmlns:browser="clr-namespace:SdmxDl.Browser"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SdmxDl.Browser.DataView"
@@ -32,9 +33,18 @@
         <suki:GlassCard IsVisible="{Binding ChartSeries.Count,FallbackValue=True}"
                         IsAnimated="False">
             <Grid>
-                <lvc:CartesianChart Series="{Binding LineSeries}"
-                                    XAxes="{Binding XAxes}"
-                                    LegendPosition="Bottom"/>    
+                <TabControl TabStripPlacement="Bottom">
+                    <TabItem Header="Chart" >
+                        <lvc:CartesianChart Series="{Binding LineSeries}"
+                                            XAxes="{Binding XAxes}"
+                                            LegendPosition="Bottom"/>    
+                    </TabItem>
+                    
+                    <TabItem Header="Grid">
+                        <hierarchyGrid:Grid/>
+                    </TabItem>
+                </TabControl>
+                
                 <Button Command="{Binding Close, Source={x:Static browser:ViewModelLocator.BrowserViewModel}}"
                         CommandParameter="{Binding Title}"
                         Content="{materialIcons:MaterialIconExt Kind=CloseBold}" 

@@ -8,16 +8,25 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SdmxDl.Browser.DataView"
              x:DataType="viewModels:DataViewModel">
-    <Grid>
-        <suki:GlassCard IsVisible="{Binding DataSet.IsNone}">
-            <TextBlock Text="No available data"/>
+    <Grid Margin="0 5 0 0">
+        <suki:GlassCard IsVisible="{Binding HasNoData}"
+                        Classes="Accent"
+                        IsAnimated="False">
+            <TextBlock Text="No available data" 
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"/>
         </suki:GlassCard>
         
-        <suki:GlassCard IsVisible="{Binding DataSet.IsSome}">
-            <lvc:CartesianChart/>
+        <suki:GlassCard IsVisible="{Binding DataSet.IsSome}"
+                        IsAnimated="False">
+            <lvc:CartesianChart Series="{Binding LineSeries}"
+                                XAxes="{Binding XAxes}"
+                                LegendPosition="Bottom"/>
         </suki:GlassCard>
         
-        <suki:GlassCard IsVisible="{Binding IsBusy}">
+        <suki:GlassCard IsVisible="{Binding IsBusy}" 
+                        IsAnimated="False"
+                        IsOpaque="True">
             <StackPanel VerticalAlignment="Center"
                         HorizontalAlignment="Center">
                 <suki:WaveProgress Value="45"

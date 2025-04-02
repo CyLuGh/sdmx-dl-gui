@@ -13,63 +13,73 @@
     <UserControl.Resources>
         <converters:BrowserStatusConverter x:Key="BrowserStatusConverter" />
     </UserControl.Resources>
-    <Grid RowDefinitions="*,Auto">
+    <Grid RowDefinitions="*,Auto" Margin="5">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition MinWidth="300" Width="500" MaxWidth="1000" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        
+        <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="3" Margin="-5" Background="Transparent"/>
         <suki:GlassCard IsAnimated="False">
-            <Grid Margin="5">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition MinWidth="300" Width="500" MaxWidth="1000" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
 
-                <suki:BusyArea IsBusy="{Binding IsBusy}"
-                               BusyText="{Binding BusyMessage}">
-                    <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,*,Auto">
 
-                        <TextBlock Text="Source:" Classes="h4" Grid.Row="0" />
-                        <browser:SourceSelector
-                            ViewModel="{x:Static browser:ViewModelLocator.SourceSelectorViewModel}"
-                            Margin="10 5 10 10"
-                            Grid.Row="1" />
+            <suki:BusyArea IsBusy="{Binding IsBusy}"
+                           BusyText="{Binding BusyMessage}">
+                <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,*,Auto">
 
-                        <TextBlock Text="Flow:" Classes="h4" Grid.Row="2" />
-                        <browser:DataFlowSelector
-                            ViewModel="{x:Static browser:ViewModelLocator.DataFlowSelectorViewModel}"
-                            Margin="10 5 10 10"
-                            Grid.Row="3" />
+                    <TextBlock Text="Source:" Classes="h4" Grid.Row="0" />
+                    <browser:SourceSelector
+                        ViewModel="{x:Static browser:ViewModelLocator.SourceSelectorViewModel}"
+                        Margin="10 5 10 10"
+                        Grid.Row="1" />
 
-                        <TextBlock Text="Dimensions:" Classes="h4" Grid.Row="4" />
-                        <browser:DimensionsBrowser
-                            ViewModel="{x:Static browser:ViewModelLocator.DimensionsSelectorViewModel}"
-                            Grid.Row="5" />
-                        
-                        <DockPanel Grid.Row="6">
-                            <Button Command="{Binding ShowResults}"
-                                    Content="{materialIcons:MaterialIconExt Kind=Download}" 
-                                    Classes="Flat Icon"
-                                    Margin="5 2"
-                                    DockPanel.Dock="Right"/>
-                            <TextBox Text="{Binding SelectionKey,FallbackValue=KEY.KEY.KEY.KEY}" DockPanel.Dock="Left"/>
-                        </DockPanel>
-                    </Grid>
-                </suki:BusyArea>
+                    <TextBlock Text="Flow:" Classes="h4" Grid.Row="2" />
+                    <browser:DataFlowSelector
+                        ViewModel="{x:Static browser:ViewModelLocator.DataFlowSelectorViewModel}"
+                        Margin="10 5 10 10"
+                        Grid.Row="3" />
 
-                <GridSplitter ResizeBehavior="PreviousAndNext"
-                              ResizeDirection="Columns"
-                              Width="3"
-                              Grid.Column="1" />
-                
-                <TabControl x:Name="TabControlResults" 
-                            Grid.Column="2">
-                    
-                </TabControl>
-            </Grid>
+                    <TextBlock Text="Dimensions:" Classes="h4" Grid.Row="4" />
+                    <browser:DimensionsBrowser
+                        ViewModel="{x:Static browser:ViewModelLocator.DimensionsSelectorViewModel}"
+                        Grid.Row="5" />
+
+                    <DockPanel Grid.Row="6">
+                        <Button Command="{Binding ShowResults}"
+                                Content="{materialIcons:MaterialIconExt Kind=Download}"
+                                Classes="Outlined Icon"
+                                Margin="5 2"
+                                DockPanel.Dock="Right" />
+                        <TextBox Text="{Binding SelectionKey,FallbackValue=KEY.KEY.KEY.KEY}" DockPanel.Dock="Left">
+                            <Interaction.Behaviors>
+                                <EventTriggerBehavior EventName="KeyDown">
+                                    <InvokeCommandAction Command="{Binding CheckKeyTextBox}"
+                                                         PassEventArgsToCommand="True" />
+                                </EventTriggerBehavior>
+                            </Interaction.Behaviors>
+                        </TextBox>
+                    </DockPanel>
+                </Grid>
+            </suki:BusyArea>
         </suki:GlassCard>
+
+        <GridSplitter ResizeBehavior="PreviousAndNext"
+                      ResizeDirection="Columns"
+                      Width="5"
+                      Margin="5 10"
+                      Grid.Column="1" />
+
+        <TabControl x:Name="TabControlResults"
+                    Grid.Column="2">
+
+        </TabControl>
+
         <StackPanel HorizontalAlignment="Right"
                     Margin="5 10 5 5"
                     Orientation="Horizontal"
                     Grid.Row="1"
-                    Grid.Column="0">
+                    Grid.Column="2">
             <TextBlock
                 Text="{Binding Path=Status, Converter={StaticResource BrowserStatusConverter},FallbackValue=STATUS}"
                 Classes="Accent"

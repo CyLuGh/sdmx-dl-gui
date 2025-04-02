@@ -3,6 +3,7 @@ using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading;
+using Avalonia.Input;
 using LanguageExt;
 using LanguageExt.UnsafeValueAccess;
 using Polly;
@@ -82,6 +83,8 @@ public class BrowserViewModel : BaseViewModel
     public Interaction<(SdmxWebSource, DataFlow, string), RxUnit> ShowResultsInteraction { get; } =
         new(RxApp.MainThreadScheduler);
 
+    public ReactiveCommand<KeyEventArgs, RxUnit> CheckKeyTextBox { get; }
+
     public BrowserViewModel(
         ClientFactory clientFactory,
         SourceSelectorViewModel sourceSelectorViewModel,
@@ -111,6 +114,7 @@ public class BrowserViewModel : BaseViewModel
             dataFlowSelectorViewModel,
             dimensionsSelectorViewModel
         );
+        CheckKeyTextBox = CreateCommandCheckKeyTextBoxInput();
 
         this.WhenActivated(disposables =>
         {
@@ -447,5 +451,20 @@ public class BrowserViewModel : BaseViewModel
         cmd.Subscribe(s => SelectionKey = s);
 
         return cmd;
+    }
+
+    private ReactiveCommand<KeyEventArgs, RxUnit> CreateCommandCheckKeyTextBoxInput()
+    {
+        return ReactiveCommand.Create(
+            (KeyEventArgs args) =>
+            {
+                switch (args.Key)
+                {
+                    case Key.Return:
+                        Observable.Return(RxUnit.Default).InvokeCommand(ShowResults);
+                        break;
+                }
+            }
+        );
     }
 }

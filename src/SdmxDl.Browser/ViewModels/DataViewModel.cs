@@ -1,7 +1,10 @@
-﻿using System.Reactive.Disposables;
+﻿using System;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using System.Threading;
 using LanguageExt;
+using LiveChartsCore.Defaults;
+using LiveChartsCore.Kernel.Sketches;
+using LiveChartsCore.SkiaSharpView;
 using Polly;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -34,7 +37,7 @@ public class DataViewModel : BaseViewModel
         get;
     }
 
-    public string BusyMessage
+    public string? BusyMessage
     {
         [ObservableAsProperty]
         get;
@@ -46,14 +49,36 @@ public class DataViewModel : BaseViewModel
         get;
     }
 
+    public Seq<LineSeries<DateTimePoint>> LineSeries
+    {
+        [ObservableAsProperty]
+        get;
+    }
+
+    public ICartesianAxis[] XAxes
+    {
+        [ObservableAsProperty]
+        get;
+    }
+
+    public LiveChartsCore.Measure.Margin Margins { get; } = new(10, 50);
+
+    public bool HasNoData
+    {
+        [ObservableAsProperty]
+        get;
+    }
+
     public static string BuildTitle(SdmxWebSource source, DataFlow flow, string key) =>
         $"{source.Id} {flow.Ref} {key}";
 
     public ReactiveCommand<(SdmxWebSource, DataFlow, string), Option<DataSet>> RetrieveData { get; }
+    public ReactiveCommand<DataSet, Seq<ChartSeries>> TransformData { get; }
 
     public DataViewModel(ClientFactory clientFactory, ResiliencePipeline pipeline)
     {
         RetrieveData = CreateCommandRetrieveData(clientFactory, pipeline);
+        TransformData = CreateCommandTransformData();
 
         this.WhenAnyValue(x => x.Source)
             .CombineLatest(this.WhenAnyValue(x => x.Flow), this.WhenAnyValue(x => x.Key))
@@ -73,24 +98,65 @@ public class DataViewModel : BaseViewModel
         this.WhenAnyValue(x => x.DataSet)
             .Select(d => d.Match(Observable.Return, Observable.Empty<DataSet>))
             .Switch()
-            .Select(d => d.Data.Map(s => new ChartSeries(s)))
-            .ToPropertyEx(this, x => x.ChartSeries, scheduler: RxApp.MainThreadScheduler);
+            .InvokeCommand(TransformData);
+
+        this.WhenAnyValue(x => x.ChartSeries)
+            .Select(x => x.ToLineSeries())
+            .ToPropertyEx(this, x => x.LineSeries, scheduler: RxApp.MainThreadScheduler);
+
+        this.WhenAnyValue(x => x.ChartSeries)
+            .Select(series =>
+                new[]
+                {
+                    new DateTimeAxis(TimeSpan.FromDays(30.5), date => date.ToString("yyyy-MM"))
+                    {
+                        // UnitWidth = TimeSpan.FromDays(30.5).Ticks,
+                        // MinStep = TimeSpan.FromDays(30.5).Ticks,
+                    },
+                }
+            )
+            .ToPropertyEx(this, x => x.XAxes, scheduler: RxApp.MainThreadScheduler);
 
         this.WhenActivated(disposables =>
         {
             ManageBusyState(disposables);
+
+            this.WhenAnyValue(x => x.DataSet, x => x.ChartSeries)
+                .Select(t =>
+                {
+                    var (ods, css) = t;
+                    return ods.IsSome && css.IsEmpty;
+                })
+                .ToPropertyEx(this, x => x.HasNoData, scheduler: RxApp.MainThreadScheduler)
+                .DisposeWith(disposables);
         });
     }
 
     private void ManageBusyState(CompositeDisposable disposables)
     {
-        RetrieveData.IsExecuting.ToPropertyEx(this, x => x.IsBusy).DisposeWith(disposables);
+        RetrieveData
+            .IsExecuting.Merge(TransformData.IsExecuting)
+            .Throttle(TimeSpan.FromMilliseconds(25))
+            .ToPropertyEx(this, x => x.IsBusy, scheduler: RxApp.MainThreadScheduler)
+            .DisposeWith(disposables);
 
         RetrieveData
             .IsExecuting.Where(x => x)
             .Select(_ => "Retrieving data")
+            .Merge(TransformData.IsExecuting.Where(x => x).Select(_ => "Parsing results"))
             .ToPropertyEx(this, x => x.BusyMessage, scheduler: RxApp.MainThreadScheduler)
             .DisposeWith(disposables);
+    }
+
+    private ReactiveCommand<DataSet, Seq<ChartSeries>> CreateCommandTransformData()
+    {
+        var cmd = ReactiveCommand.CreateRunInBackground(
+            (DataSet ds) => ds.Data.Map(s => new ChartSeries(s))
+        );
+
+        cmd.ToPropertyEx(this, x => x.ChartSeries, scheduler: RxApp.MainThreadScheduler);
+
+        return cmd;
     }
 
     private ReactiveCommand<
@@ -105,7 +171,6 @@ public class DataViewModel : BaseViewModel
         {
             var (source, flow, key) = t;
 
-            var rawSeries = new System.Collections.Generic.List<Sdmxdl.Format.Protobuf.Series>();
             var dataSet = await clientFactory
                 .GetClient()
                 .GetDataAsync(

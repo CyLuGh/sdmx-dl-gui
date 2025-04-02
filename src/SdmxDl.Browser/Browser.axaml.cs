@@ -79,7 +79,7 @@ public partial class Browser : ReactiveUserControl<BrowserViewModel>
 
                 var existingTab = view
                     .TabControlResults.Items.OfType<TabItem>()
-                    .FirstOrDefault(x => x.Header.ToString().Equals(title));
+                    .FirstOrDefault(x => x.Header?.ToString()?.Equals(title) == true);
 
                 if (existingTab is not null)
                 {
@@ -87,7 +87,7 @@ public partial class Browser : ReactiveUserControl<BrowserViewModel>
                 }
                 else
                 {
-                    var dvm = Locator.Current.GetService<DataViewModel>();
+                    var dvm = Locator.Current.GetService<DataViewModel>()!;
                     dvm.Source = source;
                     dvm.Flow = flow;
                     dvm.Key = key;

@@ -6,6 +6,7 @@
              xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:viewModels="clr-namespace:SdmxDl.Browser.ViewModels"
              xmlns:converters="clr-namespace:SdmxDl.Browser.Infrastructure.Converters"
+             xmlns:svg="clr-namespace:Avalonia.Svg.Skia;assembly=Avalonia.Svg.Skia"
              xmlns:browser="clr-namespace:SdmxDl.Browser"
              mc:Ignorable="d" d:DesignWidth="1500" d:DesignHeight="450"
              x:Class="SdmxDl.Browser.Browser"
@@ -23,7 +24,8 @@
         <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="3" Margin="-5" Background="Transparent" />
 
         <suki:BusyArea IsBusy="{Binding IsBusy}"
-                       BusyText="{Binding BusyMessage}">
+                       BusyText="{Binding BusyMessage}"
+                       Grid.Column="0" Grid.Row="0" Grid.RowSpan="2">
             <Grid RowDefinitions="Auto,Auto,*,Auto">
                 <suki:GlassCard Margin="20, 20, 0, 10" 
                                 IsAnimated="False"
@@ -91,22 +93,41 @@
                                FontWeight="DemiBold" />
                 </Border>
 
-
-                <DockPanel Grid.Row="6">
-                    <Button Command="{Binding ShowResults}"
-                            Content="{materialIcons:MaterialIconExt Kind=Download}"
-                            Classes="Flat Icon"
-                            Margin="5 2"
-                            DockPanel.Dock="Right" />
-                    <TextBox Text="{Binding SelectionKey,FallbackValue=KEY.KEY.KEY.KEY}" DockPanel.Dock="Left">
-                        <Interaction.Behaviors>
-                            <EventTriggerBehavior EventName="KeyDown">
-                                <InvokeCommandAction Command="{Binding CheckKeyTextBox}"
-                                                     PassEventArgsToCommand="True" />
-                            </EventTriggerBehavior>
-                        </Interaction.Behaviors>
-                    </TextBox>
-                </DockPanel>
+                <suki:GlassCard Grid.Row="3"
+                                IsVisible="{Binding Source={x:Static browser:ViewModelLocator.DataFlowSelectorViewModel}, Path=Selection.IsSome}"
+                                Margin="20, 20, 0, 15"  
+                                IsAnimated="False">
+                        <TextBox Text="{Binding SelectionKey,FallbackValue=KEY.KEY.KEY.KEY}" DockPanel.Dock="Left">
+                            <Interaction.Behaviors>
+                                <EventTriggerBehavior EventName="KeyDown">
+                                    <InvokeCommandAction Command="{Binding CheckKeyTextBox}"
+                                                         PassEventArgsToCommand="True" />
+                                </EventTriggerBehavior>
+                            </Interaction.Behaviors>
+                        </TextBox>
+                </suki:GlassCard>
+                
+                <Button Command="{Binding ShowResults}" 
+                        Content="{materialIcons:MaterialIconTextExt Kind=Download, Text=RETRIEVE SERIES}"
+                        Classes="Rounded Flat"
+                        IsVisible="{Binding Source={x:Static browser:ViewModelLocator.DataFlowSelectorViewModel}, Path=Selection.IsSome}"
+                        VerticalAlignment="Bottom"
+                        HorizontalAlignment="Center"
+                        Grid.Row="3" />
+                
+                <Border Background="{DynamicResource SukiPrimaryColor75}" 
+                        IsVisible="{Binding Source={x:Static browser:ViewModelLocator.DataFlowSelectorViewModel}, Path=Selection.IsSome}"
+                        CornerRadius="5"
+                        Padding="10"
+                        VerticalAlignment="Top"
+                        HorizontalAlignment="Left"
+                        Grid.Row="3">
+                    <TextBlock Text="Key"
+                               Foreground="{DynamicResource SukiStrongBackground}"
+                               FontSize="18"
+                               FontWeight="DemiBold" />
+                </Border>
+                
             </Grid>
         </suki:BusyArea>
 
@@ -114,8 +135,15 @@
                       ResizeDirection="Columns"
                       Width="5"
                       Margin="5 10"
-                      Grid.Column="1" />
+                      Grid.Column="1"
+                      Grid.Row="0"
+                      Grid.RowSpan="2"/>
 
+        <Image Source="{SvgImage /assets/SDMX_logo.svg}"  
+               MaxWidth="800"
+               Grid.Row="0" 
+               Grid.Column="2"/>
+        
         <TabControl x:Name="TabControlResults"
                     Grid.Column="2">
 

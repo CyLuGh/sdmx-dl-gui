@@ -5,13 +5,14 @@
              xmlns:viewModels="clr-namespace:SdmxDl.Browser.ViewModels"
              xmlns:suki="https://github.com/kikipoulet/SukiUI"
              xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+             xmlns:browser="clr-namespace:SdmxDl.Browser"
              mc:Ignorable="d"
              Width="800"
              x:Class="SdmxDl.Browser.ServerStartup"
              x:DataType="viewModels:SettingsViewModel">
     <Grid RowDefinitions="*,auto">
         <StackPanel Margin="20">
-            <TextBlock Margin="0,0,0, 25">
+            <TextBlock Margin="0,0,0, 25" Classes="h4">
                 Please choose SDMX-DL instance.
             </TextBlock>
 
@@ -20,7 +21,8 @@
                 Connect to existing server
             </RadioButton>
             
-            <TextBox suki:TextBoxExtensions.Prefix="Server URI:" 
+            <TextBox Watermark="Server URI" 
+                     UseFloatingWatermark="True"
                      Text="{Binding ServerUri}"
                      IsEnabled="{Binding #RadioButtonConnect.IsChecked}"
                      Margin="30 10 30 20"/>
@@ -34,14 +36,16 @@
                   ColumnDefinitions="*,auto"
                   RowDefinitions="Auto,Auto"
                   Margin="30 10 30 20">
-                <TextBox suki:TextBoxExtensions.Prefix="Path to Java binaries:" 
+                <TextBox Watermark="Path to Java binaries"
+                         UseFloatingWatermark="True"
                          Text="{Binding JavaPath}"
                          Grid.Column="0" Grid.Row="0"/>
                 <Button Command="{Binding Path=PickJavaPath}"
                         Content="{materialIcons:MaterialIconExt Kind=FolderOpen}" 
                         Classes="Icon"
                         Grid.Column="1" Grid.Row="0"/>
-                <TextBox suki:TextBoxExtensions.Prefix="Path to sdmx-dl jar:" 
+                <TextBox Watermark="Path to sdmx-dl jar" 
+                         UseFloatingWatermark="True"
                          Text="{Binding JarPath}"
                          Grid.Column="0" Grid.Row="1"/>
                 <Button Command="{Binding Path=PickJarPath}"
@@ -57,6 +61,7 @@
                     Margin="0 20 45 20"
                     Grid.Row="1">
             <Button Command="{Binding Path=Cancel}"
+                    IsVisible="{Binding ServerIsRunning, Source={x:Static browser:ViewModelLocator.BrowserViewModel}}"
                     Margin="5">
                 CANCEL
             </Button>

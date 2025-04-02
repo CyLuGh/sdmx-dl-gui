@@ -8,11 +8,12 @@ public static class DimensionExtensions
     {
         var split = key.Split('.');
         return split.Any(s => !string.IsNullOrWhiteSpace(s))
-               && split
-                   .Select(
-                       (s, idx) =>
-                           string.IsNullOrEmpty(s) || dimensions[idx].CodeList.Codes.ContainsKey(s)
-                   )
-                   .All(x => x);
+            && split
+                .Select(
+                    (s, idx) =>
+                        string.IsNullOrEmpty(s)
+                        || s.Split('+').All(x => dimensions[idx].CodeList.Codes.ContainsKey(x))
+                )
+                .All(x => x);
     }
 }

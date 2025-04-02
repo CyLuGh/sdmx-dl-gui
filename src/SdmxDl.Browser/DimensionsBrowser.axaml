@@ -11,7 +11,7 @@
     <Grid IsEnabled="{Binding DataStructure.IsSome}"
           RowDefinitions="*,Auto">
         <TabControl>
-            <TabItem Header="Dimensions">
+            <TabItem Header="Hierarchy">
                 <TreeView ItemsSource="{Binding HierarchicalDimensions}"
                           SelectionMode="Single"
                           SelectedItem="{Binding SelectedDimension}">

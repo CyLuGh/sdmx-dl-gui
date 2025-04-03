@@ -18,7 +18,7 @@ public enum Frequency
     HalfYearly = 2,
     Quarterly = 3,
     Monthly = 12,
-    Daily = 365
+    Daily = 365,
 }
 
 public static class FrequencyExtensions
@@ -27,7 +27,32 @@ public static class FrequencyExtensions
         format switch
         {
             "P1M" => Frequency.Monthly,
-            _ => Frequency.Unknown
+            "P1Y" => Frequency.Yearly,
+            "P1D" => Frequency.Daily,
+            "P3M" => Frequency.Quarterly,
+            _ => Frequency.Unknown,
+        };
+
+    public static Func<DateTime, DateTime> GetIncrement(this Frequency frequency) =>
+        frequency switch
+        {
+            Frequency.Monthly => x => x.AddMonths(1),
+            Frequency.Yearly => x => x.AddYears(1),
+            Frequency.Daily => x => x.AddDays(1),
+            Frequency.Quarterly => x => x.AddMonths(3),
+            Frequency.HalfYearly => x => x.AddMonths(6),
+            _ => throw new ArgumentOutOfRangeException(nameof(frequency), frequency, null),
+        };
+
+    public static Func<DateTime, string> GetFormatter(this Frequency frequency) =>
+        frequency switch
+        {
+            Frequency.Monthly => x => x.ToString("yyyy-MM"),
+            Frequency.Yearly => x => x.ToString("yyyy"),
+            Frequency.Daily => x => x.ToString("yyyy-MM-dd"),
+            Frequency.Quarterly => x => x.ToString("yyyy-MM"),
+            Frequency.HalfYearly => x => x.ToString("yyyy-MM"),
+            _ => throw new ArgumentOutOfRangeException(nameof(frequency), frequency, null),
         };
 }
 
@@ -39,7 +64,6 @@ public class ChartSeries
 
     public ChartSeries(Series series)
     {
-        // P1M / P3M / P1Y / P1D
         Frequency = series.Meta.Find("TIME_FORMAT", s => s, () => string.Empty).ToFrequency();
         Title = series.Meta.Find("TITLE", s => $"{s} ({series.Key})", () => series.Key);
 
@@ -54,9 +78,12 @@ public class ChartSeries
 
         var map = data.Map(x => (x.Date, x.Value)).ToHashMap();
 
-        Values = GetDates(start, end, d => d.AddMonths(1))
-            .Select(d => (d, map.Find(d)))
-            .ToHashMap();
+        Values =
+            Frequency != Frequency.Unknown
+                ? GetDates(start, end, Frequency.GetIncrement())
+                    .Select(d => (d, map.Find(d)))
+                    .ToHashMap()
+                : map.Map(x => (x.Key, Option<double>.Some(x.Value))).ToHashMap();
     }
 
     private IEnumerable<DateTime> GetDates(

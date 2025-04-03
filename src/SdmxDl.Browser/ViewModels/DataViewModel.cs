@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using HierarchyGrid.Definitions;
 using LanguageExt;
 using LiveChartsCore.Defaults;
 using LiveChartsCore.Kernel.Sketches;
@@ -70,6 +72,8 @@ public class DataViewModel : BaseViewModel
         get;
     }
 
+    public HierarchyGridViewModel HierarchyGridViewModel { get; } = new();
+
     public static string BuildTitle(SdmxWebSource source, DataFlow flow, string key) =>
         $"{source.Id} {flow.Ref} {key}";
 
@@ -112,17 +116,35 @@ public class DataViewModel : BaseViewModel
             .ToPropertyEx(this, x => x.LineSeries, scheduler: RxApp.MainThreadScheduler);
 
         this.WhenAnyValue(x => x.ChartSeries)
+            .Where(seq => !seq.IsEmpty)
             .Select(series =>
-                new[]
-                {
-                    new DateTimeAxis(TimeSpan.FromDays(30.5), date => date.ToString("yyyy-MM"))
-                    {
-                        // UnitWidth = TimeSpan.FromDays(30.5).Ticks,
-                        // MinStep = TimeSpan.FromDays(30.5).Ticks,
-                    },
-                }
-            )
+            {
+                var highestFreq = (Frequency)ChartSeries.Max(x => (int)x.Frequency);
+                var unit = TimeSpan.FromDays(365.25 / (int)highestFreq);
+                var formatter = highestFreq.GetFormatter();
+                return new[] { new DateTimeAxis(unit, formatter) };
+            })
             .ToPropertyEx(this, x => x.XAxes, scheduler: RxApp.MainThreadScheduler);
+
+        this.WhenAnyValue(x => x.ChartSeries)
+            .Where(seq => !seq.IsEmpty)
+            .Subscribe(series =>
+            {
+                var test = series[0];
+
+                var producerDefinitions = test
+                    .Values.Keys.OrderBy(x => x)
+                    .Select(x => new ProducerDefinition() { Content = x, Producer = () => x })
+                    .ToSeq();
+
+                var consumerDefinitions = Seq.create(
+                    new ConsumerDefinition() { Content = test.Title }
+                );
+
+                HierarchyGridViewModel.Set(
+                    new HierarchyDefinitions(producerDefinitions, consumerDefinitions)
+                );
+            });
 
         this.WhenActivated(disposables =>
         {

@@ -41,7 +41,7 @@
                     </TabItem>
                     
                     <TabItem Header="Grid">
-                        <hierarchyGrid:Grid/>
+                        <hierarchyGrid:Grid ViewModel="{Binding HierarchyGridViewModel}"/>
                     </TabItem>
                 </TabControl>
                 

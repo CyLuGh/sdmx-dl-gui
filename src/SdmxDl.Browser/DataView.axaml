@@ -33,7 +33,7 @@
         <suki:GlassCard IsVisible="{Binding ChartSeries.Count,FallbackValue=True}"
                         IsAnimated="False">
             <Grid>
-                <TabControl TabStripPlacement="Bottom">
+                <TabControl TabStripPlacement="Top">
                     <TabItem Header="Chart" >
                         <lvc:CartesianChart Series="{Binding LineSeries}"
                                             XAxes="{Binding XAxes}"
@@ -45,12 +45,14 @@
                     </TabItem>
                 </TabControl>
                 
-                <Button Command="{Binding Close, Source={x:Static browser:ViewModelLocator.BrowserViewModel}}"
-                        CommandParameter="{Binding Title}"
-                        Content="{materialIcons:MaterialIconExt Kind=CloseBold}" 
-                        Classes="Icon"
-                        VerticalAlignment="Top"
-                        HorizontalAlignment="Right"/>
+                <Menu VerticalAlignment="Top" HorizontalAlignment="Right"
+                      Margin="0 -10 -10 0">
+                    <RadioButton Content="{materialIcons:MaterialIconExt Kind=Tab}" IsChecked="True"/>
+                    <RadioButton Content="{materialIcons:MaterialIconExt Kind=ViewSplitHorizontal}" />
+                    <MenuItem Header="{materialIcons:MaterialIconExt Kind=CloseBold}"
+                              Command="{Binding Close, Source={x:Static browser:ViewModelLocator.BrowserViewModel}}"
+                              CommandParameter="{Binding Title}"/>
+                </Menu>
             </Grid>
         </suki:GlassCard>
         

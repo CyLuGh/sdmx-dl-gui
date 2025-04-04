@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using HierarchyGrid.Definitions;
 
 namespace SdmxDl.Browser.Infrastructure;
@@ -6,7 +7,8 @@ public class GridTheme : ITheme
 {
     public static GridTheme Instance { get; } = new();
 
-    public ThemeColor BackgroundColor => new(0, 0, 0, 0);
+    public ThemeColor BackgroundColor =>
+        RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? ThemeColors.White : new(0, 0, 0, 0);
     public ThemeColor ForegroundColor => ThemeColors.Black;
     public ThemeColor BorderColor => ThemeColors.SlateGray;
     public ThemeColor SelectionBorderColor => ThemeColors.SlateGray;

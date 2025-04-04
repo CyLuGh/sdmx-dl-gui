@@ -51,6 +51,7 @@
                     <lvc:CartesianChart Series="{Binding LineSeries}"
                                         XAxes="{Binding XAxes}"
                                         LegendPosition="Bottom"
+                                        FindingStrategy="ExactMatch"
                                         Grid.Row="0"/>
                     <hierarchyGrid:Grid ViewModel="{Binding LinkedHierarchyGridViewModel}" 
                                         Grid.Row="2" />

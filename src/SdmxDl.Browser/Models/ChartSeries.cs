@@ -58,14 +58,18 @@ public static class FrequencyExtensions
 
 public class ChartSeries
 {
+    public string Key { get; }
     public string Title { get; }
     public HashMap<DateTime, Option<double>> Values { get; }
     public Frequency Frequency { get; }
+    public string Format { get; }
 
     public ChartSeries(Series series)
     {
+        Key = series.Key;
         Frequency = series.Meta.Find("TIME_FORMAT", s => s, () => string.Empty).ToFrequency();
         Title = series.Meta.Find("TITLE", s => $"{s} ({series.Key})", () => series.Key);
+        Format = series.Meta.Find("DECIMALS", s => $"N{s}", () => "N");
 
         var data = series
             .Obs.Map(o => new ChartItem(DateTime.Parse(o.Period.Split('/')[0]), o.Value))
@@ -86,7 +90,7 @@ public class ChartSeries
                 : map.Map(x => (x.Key, Option<double>.Some(x.Value))).ToHashMap();
     }
 
-    private IEnumerable<DateTime> GetDates(
+    internal static IEnumerable<DateTime> GetDates(
         DateTime start,
         DateTime end,
         Func<DateTime, DateTime> increment
@@ -126,4 +130,17 @@ public static class ChartSeriesExtensions
 {
     public static Seq<LineSeries<DateTimePoint>> ToLineSeries(this Seq<ChartSeries> series) =>
         series.Map(s => s.ToLineSeries()).Strict();
+
+    public static Frequency GetHighestFreq(this Seq<ChartSeries> series) =>
+        (Frequency)series.Max(x => (int)x.Frequency);
+
+    public static Seq<DateTime> GetDates(this Seq<ChartSeries> series)
+    {
+        var highestFreq = series.GetHighestFreq();
+        var dates = series.Map(s => s.Values.Keys.ToSeq()).Flatten();
+        var start = dates.Min();
+        var end = dates.Max();
+
+        return ChartSeries.GetDates(start, end, highestFreq.GetIncrement()).ToSeq();
+    }
 }

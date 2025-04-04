@@ -33,7 +33,8 @@
         <suki:GlassCard IsVisible="{Binding ChartSeries.Count,FallbackValue=True}"
                         IsAnimated="False">
             <Grid>
-                <TabControl TabStripPlacement="Top">
+                <TabControl TabStripPlacement="Top"
+                            IsVisible="{Binding !IsSplitView}">
                     <TabItem Header="Chart" >
                         <lvc:CartesianChart Series="{Binding LineSeries}"
                                             XAxes="{Binding XAxes}"
@@ -41,14 +42,29 @@
                     </TabItem>
                     
                     <TabItem Header="Grid">
-                        <hierarchyGrid:Grid ViewModel="{Binding HierarchyGridViewModel}"/>
+                        <hierarchyGrid:Grid ViewModel="{Binding StandAloneHierarchyGridViewModel}"/>
                     </TabItem>
                 </TabControl>
                 
+                <Grid RowDefinitions="2.5*,Auto,*"
+                      IsVisible="{Binding IsSplitView}">
+                    <lvc:CartesianChart Series="{Binding LineSeries}"
+                                        XAxes="{Binding XAxes}"
+                                        LegendPosition="Bottom"
+                                        Grid.Row="0"/>
+                    <hierarchyGrid:Grid ViewModel="{Binding LinkedHierarchyGridViewModel}" 
+                                        Grid.Row="2" />
+                    <GridSplitter ResizeDirection="Rows" 
+                                  ResizeBehavior="PreviousAndNext" 
+                                  Height="5"
+                                  Margin="10 5"
+                                  Grid.Row="1" />
+                </Grid>
+                
                 <Menu VerticalAlignment="Top" HorizontalAlignment="Right"
                       Margin="0 -10 -10 0">
-                    <RadioButton Content="{materialIcons:MaterialIconExt Kind=Tab}" IsChecked="True"/>
-                    <RadioButton Content="{materialIcons:MaterialIconExt Kind=ViewSplitHorizontal}" />
+                    <RadioButton Content="{materialIcons:MaterialIconExt Kind=Tab}" IsChecked="{Binding !IsSplitView}"/>
+                    <RadioButton Content="{materialIcons:MaterialIconExt Kind=ViewSplitHorizontal}" IsChecked="{Binding IsSplitView}" />
                     <MenuItem Header="{materialIcons:MaterialIconExt Kind=CloseBold}"
                               Command="{Binding Close, Source={x:Static browser:ViewModelLocator.BrowserViewModel}}"
                               CommandParameter="{Binding Title}"/>

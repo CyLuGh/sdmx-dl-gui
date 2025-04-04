@@ -10,6 +10,7 @@ using LiveChartsCore.SkiaSharpView;
 using Polly;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using SdmxDl.Browser.Infrastructure;
 using SdmxDl.Browser.Models;
 using SdmxDl.Client;
 using SdmxDl.Client.Models;
@@ -27,6 +28,9 @@ public class DataViewModel : BaseViewModel
 
     [Reactive]
     public Option<string> Key { get; set; }
+
+    [Reactive]
+    public bool IsSplitView { get; set; }
 
     public Option<DataSet> DataSet
     {
@@ -72,7 +76,21 @@ public class DataViewModel : BaseViewModel
         get;
     }
 
-    public HierarchyGridViewModel HierarchyGridViewModel { get; } = new();
+    public HierarchyGridViewModel StandAloneHierarchyGridViewModel { get; } =
+        new()
+        {
+            Theme = GridTheme.Instance,
+            DefaultColumnWidth = 250d,
+            DefaultHeaderWidth = 250d,
+        };
+
+    public HierarchyGridViewModel LinkedHierarchyGridViewModel { get; } =
+        new()
+        {
+            Theme = GridTheme.Instance,
+            DefaultColumnWidth = 150d,
+            DefaultHeaderWidth = 250d,
+        };
 
     public static string BuildTitle(SdmxWebSource source, DataFlow flow, string key) =>
         $"{source.Id} {flow.Ref} {key}";
@@ -83,13 +101,20 @@ public class DataViewModel : BaseViewModel
             () => string.Empty
         );
 
-    public ReactiveCommand<(SdmxWebSource, DataFlow, string), Option<DataSet>> RetrieveData { get; }
-    public ReactiveCommand<DataSet, Seq<ChartSeries>> TransformData { get; }
+    private ReactiveCommand<
+        (SdmxWebSource, DataFlow, string),
+        Option<DataSet>
+    > RetrieveData { get; }
+    private ReactiveCommand<DataSet, Seq<ChartSeries>> TransformData { get; }
+    private ReactiveCommand<Seq<ChartSeries>, RxUnit> BuildStandAloneGrid { get; }
+    private ReactiveCommand<Seq<ChartSeries>, RxUnit> BuildLinkedGrid { get; }
 
     public DataViewModel(ClientFactory clientFactory, ResiliencePipeline pipeline)
     {
         RetrieveData = CreateCommandRetrieveData(clientFactory, pipeline);
         TransformData = CreateCommandTransformData();
+        BuildStandAloneGrid = CreateCommandBuildStandAloneGrid();
+        BuildLinkedGrid = CreateCommandLinkedAloneGrid();
 
         this.WhenAnyValue(x => x.Source)
             .CombineLatest(this.WhenAnyValue(x => x.Flow), this.WhenAnyValue(x => x.Key))
@@ -119,7 +144,7 @@ public class DataViewModel : BaseViewModel
             .Where(seq => !seq.IsEmpty)
             .Select(series =>
             {
-                var highestFreq = (Frequency)ChartSeries.Max(x => (int)x.Frequency);
+                var highestFreq = series.GetHighestFreq();
                 var unit = TimeSpan.FromDays(365.25 / (int)highestFreq);
                 var formatter = highestFreq.GetFormatter();
                 return new[] { new DateTimeAxis(unit, formatter) };
@@ -128,23 +153,11 @@ public class DataViewModel : BaseViewModel
 
         this.WhenAnyValue(x => x.ChartSeries)
             .Where(seq => !seq.IsEmpty)
-            .Subscribe(series =>
-            {
-                var test = series[0];
+            .InvokeCommand(BuildStandAloneGrid);
 
-                var producerDefinitions = test
-                    .Values.Keys.OrderBy(x => x)
-                    .Select(x => new ProducerDefinition() { Content = x, Producer = () => x })
-                    .ToSeq();
-
-                var consumerDefinitions = Seq.create(
-                    new ConsumerDefinition() { Content = test.Title }
-                );
-
-                HierarchyGridViewModel.Set(
-                    new HierarchyDefinitions(producerDefinitions, consumerDefinitions)
-                );
-            });
+        this.WhenAnyValue(x => x.ChartSeries)
+            .Where(seq => !seq.IsEmpty)
+            .InvokeCommand(BuildLinkedGrid);
 
         this.WhenActivated(disposables =>
         {
@@ -159,6 +172,112 @@ public class DataViewModel : BaseViewModel
                 .ToPropertyEx(this, x => x.HasNoData, scheduler: RxApp.MainThreadScheduler)
                 .DisposeWith(disposables);
         });
+    }
+
+    private ReactiveCommand<Seq<ChartSeries>, RxUnit> CreateCommandBuildStandAloneGrid()
+    {
+        var cmd = ReactiveCommand.CreateRunInBackground(
+            (Seq<ChartSeries> series) => BuildStandAloneGridImpl(series)
+        );
+        return cmd;
+    }
+
+    private ReactiveCommand<Seq<ChartSeries>, RxUnit> CreateCommandLinkedAloneGrid()
+    {
+        var cmd = ReactiveCommand.CreateRunInBackground(
+            (Seq<ChartSeries> series) => BuildLinkedGridImpl(series)
+        );
+        return cmd;
+    }
+
+    private void BuildStandAloneGridImpl(Seq<ChartSeries> series)
+    {
+        var formatter = series.GetHighestFreq().GetFormatter();
+        var data = series.Map(s => (s.Key, s.Values)).ToHashMap();
+
+        var producerDefinitions = series
+            .GetDates()
+            .OrderBy(x => x)
+            .Select(x => new ProducerDefinition() { Content = formatter(x), Producer = () => x })
+            .ToSeq();
+
+        var consumerDefinitions = series.Map(s => new ConsumerDefinition()
+        {
+            Content = s.Title,
+            Consumer = o =>
+                o switch
+                {
+                    DateTime d => data.Find(s.Key, d, v => v, () => Option<double>.None),
+                    _ => Option<double>.None,
+                },
+            Formatter = o =>
+                o switch
+                {
+                    Option<double> d => d.Match(x => x.ToString(s.Format), () => string.Empty),
+                    _ => string.Empty,
+                },
+            Qualify = o =>
+                o switch
+                {
+                    Option<double> d => d.Match(
+                        x => Qualification.Normal,
+                        () => Qualification.Empty
+                    ),
+                    _ => Qualification.Empty,
+                },
+        });
+
+        StandAloneHierarchyGridViewModel.Set(
+            new HierarchyDefinitions(producerDefinitions, consumerDefinitions)
+        );
+    }
+
+    private void BuildLinkedGridImpl(Seq<ChartSeries> series)
+    {
+        var formatter = series.GetHighestFreq().GetFormatter();
+        var data = series.Map(s => (s.Key, s.Values)).ToHashMap();
+
+        var producerDefinitions = series
+            .Map(s => new ProducerDefinition() { Content = s.Title, Producer = () => s })
+            .ToSeq();
+
+        var consumerDefinitions = series
+            .GetDates()
+            .OrderBy(x => x)
+            .Map(d => new ConsumerDefinition()
+            {
+                Content = formatter(d),
+                Consumer = o =>
+                    o switch
+                    {
+                        ChartSeries s => from x in data.Find(s.Key, d)
+                        from v in x
+                        select Tuple.Create(v, s.Format),
+                        _ => Option<Tuple<double, string>>.None,
+                    },
+                Formatter = o =>
+                    o switch
+                    {
+                        Option<Tuple<double, string>> t => t.Match(
+                            x => x.Item1.ToString(x.Item2),
+                            () => string.Empty
+                        ),
+                        _ => string.Empty,
+                    },
+                Qualify = o =>
+                    o switch
+                    {
+                        Option<Tuple<double, string>> d => d.Match(
+                            x => Qualification.Normal,
+                            () => Qualification.Empty
+                        ),
+                        _ => Qualification.Empty,
+                    },
+            });
+
+        LinkedHierarchyGridViewModel.Set(
+            new HierarchyDefinitions(producerDefinitions, consumerDefinitions)
+        );
     }
 
     private void ManageBusyState(CompositeDisposable disposables)

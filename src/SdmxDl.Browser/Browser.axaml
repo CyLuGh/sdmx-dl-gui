@@ -127,7 +127,6 @@
                                FontSize="18"
                                FontWeight="DemiBold" />
                 </Border>
-                
             </Grid>
         </suki:BusyArea>
 
@@ -149,9 +148,17 @@
                     Grid.Column="2">
 
         </TabControl>
+        
+        <Button Command="{Binding ShowResults}" 
+                Content="{materialIcons:MaterialIconTextExt Kind=TagFind, Text=LOOKUP SERIES}"
+                Classes="Rounded Flat"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Bottom" 
+                Grid.Row="1"
+                Grid.Column="2"/>
 
         <StackPanel HorizontalAlignment="Right"
-                    Margin="5 10 5 5"
+                    VerticalAlignment="Bottom"
                     Orientation="Horizontal"
                     Grid.Row="1"
                     Grid.Column="2">

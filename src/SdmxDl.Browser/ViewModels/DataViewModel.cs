@@ -108,6 +108,9 @@ public class DataViewModel : BaseViewModel
     private ReactiveCommand<DataSet, Seq<ChartSeries>> TransformData { get; }
     private ReactiveCommand<Seq<ChartSeries>, RxUnit> BuildStandAloneGrid { get; }
     private ReactiveCommand<Seq<ChartSeries>, RxUnit> BuildLinkedGrid { get; }
+    public RxCommand CopyToClipboard { get; }
+    public Interaction<string, RxUnit> CopyToClipboardInteraction { get; } =
+        new(RxApp.MainThreadScheduler);
 
     public DataViewModel(ClientFactory clientFactory, ResiliencePipeline pipeline)
     {
@@ -115,6 +118,9 @@ public class DataViewModel : BaseViewModel
         TransformData = CreateCommandTransformData();
         BuildStandAloneGrid = CreateCommandBuildStandAloneGrid();
         BuildLinkedGrid = CreateCommandLinkedAloneGrid();
+        CopyToClipboard = ReactiveCommand.CreateFromObservable(
+            () => CopyToClipboardInteraction.Handle(Title)
+        );
 
         this.WhenAnyValue(x => x.Source)
             .CombineLatest(this.WhenAnyValue(x => x.Flow), this.WhenAnyValue(x => x.Key))

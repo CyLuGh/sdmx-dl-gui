@@ -56,6 +56,7 @@ public static class ViewModelLocator
         SplatRegistrations.RegisterLazySingleton<SourceSelectorViewModel>();
         SplatRegistrations.RegisterLazySingleton<DataFlowSelectorViewModel>();
         SplatRegistrations.RegisterLazySingleton<DimensionsSelectorViewModel>();
+        SplatRegistrations.RegisterLazySingleton<SeriesFinderViewModel>();
 
         SplatRegistrations.Register<DataViewModel>();
 

@@ -80,6 +80,7 @@ public class BrowserViewModel : BaseViewModel
     public ReactiveCommand<Settings, RxUnit> HostServer { get; }
 
     public RxCommand ShowResults { get; }
+    public ReactiveCommand<(SdmxWebSource, DataFlow, string), RxUnit> SendResults { get; }
     public Interaction<(SdmxWebSource, DataFlow, string), RxUnit> ShowResultsInteraction { get; } =
         new(RxApp.MainThreadScheduler);
 
@@ -116,6 +117,9 @@ public class BrowserViewModel : BaseViewModel
             sourceSelectorViewModel,
             dataFlowSelectorViewModel,
             dimensionsSelectorViewModel
+        );
+        SendResults = ReactiveCommand.CreateFromObservable(
+            ((SdmxWebSource, DataFlow, string) t) => ShowResultsInteraction.Handle(t)
         );
         CheckKeyTextBox = CreateCommandCheckKeyTextBoxInput();
 

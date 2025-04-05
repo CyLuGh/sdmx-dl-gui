@@ -64,6 +64,8 @@
                 
                 <Menu VerticalAlignment="Top" HorizontalAlignment="Right"
                       Margin="0 -10 -10 0">
+                    <MenuItem Header="{materialIcons:MaterialIconExt Kind=Clipboard}"
+                              Command="{Binding CopyToClipboard}"/>
                     <RadioButton Content="{materialIcons:MaterialIconExt Kind=Tab}" IsChecked="{Binding !IsSplitView}"/>
                     <RadioButton Content="{materialIcons:MaterialIconExt Kind=ViewSplitHorizontal}" IsChecked="{Binding IsSplitView}" />
                     <MenuItem Header="{materialIcons:MaterialIconExt Kind=CloseBold}"

@@ -54,6 +54,23 @@ public partial class Browser : ReactiveUserControl<BrowserViewModel>
             .DisposeWith(disposables);
 
         viewModel
+            .LookupSeriesInteraction.RegisterHandler(ctx =>
+            {
+                ViewModelLocator
+                    .DialogManager.CreateDialog()
+                    .WithContent(
+                        new SeriesFinderView()
+                        {
+                            ViewModel = Locator.Current.GetService<SeriesFinderViewModel>(),
+                        }
+                    )
+                    .TryShow();
+
+                ctx.SetOutput(RxUnit.Default);
+            })
+            .DisposeWith(disposables);
+
+        viewModel
             .DisplayErrorMessageInteraction.RegisterHandler(ctx =>
             {
                 ViewModelLocator

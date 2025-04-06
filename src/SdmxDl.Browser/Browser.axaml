@@ -149,7 +149,7 @@
 
         </TabControl>
         
-        <Button Command="{Binding ShowResults}" 
+        <Button Command="{Binding LookupSeries}" 
                 Content="{materialIcons:MaterialIconTextExt Kind=TagFind, Text=LOOKUP SERIES}"
                 Classes="Rounded Flat"
                 HorizontalAlignment="Left"

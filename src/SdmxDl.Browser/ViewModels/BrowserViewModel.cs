@@ -64,6 +64,9 @@ public class BrowserViewModel : BaseViewModel
     public RxCommand LaunchServer { get; }
     public RxInteraction LaunchServerInteraction { get; } = new(RxApp.MainThreadScheduler);
 
+    public RxCommand LookupSeries { get; }
+    public RxInteraction LookupSeriesInteraction { get; } = new(RxApp.MainThreadScheduler);
+
     /// <summary>
     /// Ask server to provide its version.
     /// </summary>
@@ -100,6 +103,10 @@ public class BrowserViewModel : BaseViewModel
     {
         HostServer = CreateCommandHostServer(clientFactory);
         LaunchServer = CreateCommandLaunchServer();
+
+        LookupSeries = ReactiveCommand.CreateFromObservable(
+            () => LookupSeriesInteraction.Handle(RxUnit.Default)
+        );
 
         BuildSelectionKey = CreateCommandBuildSelectionKey();
 

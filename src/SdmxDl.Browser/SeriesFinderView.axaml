@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:viewModels="clr-namespace:SdmxDl.Browser.ViewModels"
+             xmlns:suki="https://github.com/kikipoulet/SukiUI"
              MinWidth="500" MaxWidth="850"
              x:Class="SdmxDl.Browser.SeriesFinderView"
              x:DataType="viewModels:SeriesFinderViewModel">
@@ -12,10 +13,14 @@
             <InvokeCommandAction Command="{Binding CheckKeyboardInput}"
                                  PassEventArgsToCommand="True" />
         </EventTriggerBehavior>
+        <EventTriggerBehavior EventName="Loaded">
+            <FocusControlAction TargetControl="TextBoxQuery" />
+        </EventTriggerBehavior>
     </Interaction.Behaviors>
     <StackPanel Margin="20">
         <TextBlock Text="Find series" Classes="h4"/>
-        <TextBox Text="{Binding Query}"/>
+        <TextBox x:Name="TextBoxQuery" Text="{Binding Query}"
+                 suki:TextBoxExtensions.AddDeleteButton="True"/>
         <Button Content="{materialIcons:MaterialIconTextExt Kind=Download, Text=RETRIEVE SERIES}"
                 Command="{Binding ParseQuery}"
                 Classes="Rounded Flat"

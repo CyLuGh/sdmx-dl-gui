@@ -105,7 +105,8 @@ public class BrowserViewModel : BaseViewModel
         LaunchServer = CreateCommandLaunchServer();
 
         LookupSeries = ReactiveCommand.CreateFromObservable(
-            () => LookupSeriesInteraction.Handle(RxUnit.Default)
+            () => LookupSeriesInteraction.Handle(RxUnit.Default),
+            this.WhenAnyValue(x => x.ServerIsRunning).ObserveOn(RxApp.MainThreadScheduler)
         );
 
         BuildSelectionKey = CreateCommandBuildSelectionKey();

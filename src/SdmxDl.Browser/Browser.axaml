@@ -145,6 +145,8 @@
                Grid.Column="2"/>
         
         <TabControl x:Name="TabControlResults"
+                    Margin="0 0 0 10"
+                    Grid.Row="0"
                     Grid.Column="2">
 
         </TabControl>

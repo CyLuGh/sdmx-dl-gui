@@ -21,10 +21,17 @@
         <TextBlock Text="Find series" Classes="h4"/>
         <TextBox x:Name="TextBoxQuery" Text="{Binding Query}"
                  suki:TextBoxExtensions.AddDeleteButton="True"/>
-        <Button Content="{materialIcons:MaterialIconTextExt Kind=Download, Text=RETRIEVE SERIES}"
-                Command="{Binding ParseQuery}"
-                Classes="Rounded Flat"
-                Margin="5"
-                HorizontalAlignment="Right"/>
+        <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+            <Button Content="CANCEL" 
+                    Classes="Rounded" 
+                    Command="{Binding Close}"
+                    Margin="5"/>
+            <Button Content="{materialIcons:MaterialIconTextExt Kind=Download, Text=RETRIEVE SERIES}"
+                    Command="{Binding ParseQuery}"
+                    Classes="Rounded Flat"
+                    Margin="5"
+            />
+        </StackPanel>
+       
     </StackPanel>
 </UserControl>

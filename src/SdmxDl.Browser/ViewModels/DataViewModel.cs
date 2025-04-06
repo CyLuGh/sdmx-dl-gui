@@ -108,6 +108,9 @@ public class DataViewModel : BaseViewModel
     private ReactiveCommand<DataSet, Seq<ChartSeries>> TransformData { get; }
     private ReactiveCommand<Seq<ChartSeries>, RxUnit> BuildStandAloneGrid { get; }
     private ReactiveCommand<Seq<ChartSeries>, RxUnit> BuildLinkedGrid { get; }
+    public ReactiveCommand<Seq<ChartSeries>, ICartesianAxis[]> SetAxes { get; }
+
+    public ReactiveCommand<Seq<ChartSeries>, Seq<LineSeries<DateTimePoint>>> SetLinesSeries { get; }
     public RxCommand CopyToClipboard { get; }
     public Interaction<string, RxUnit> CopyToClipboardInteraction { get; } =
         new(RxApp.MainThreadScheduler);
@@ -122,48 +125,8 @@ public class DataViewModel : BaseViewModel
             () => CopyToClipboardInteraction.Handle(Title)
         );
 
-        this.WhenAnyValue(x => x.Source)
-            .CombineLatest(this.WhenAnyValue(x => x.Flow), this.WhenAnyValue(x => x.Key))
-            .Select(t =>
-            {
-                var (source, flow, key) = t;
-                var tuple = from s in source from f in flow from k in key select (s, f, k);
-
-                return tuple.Match(
-                    Observable.Return,
-                    Observable.Empty<(SdmxWebSource, DataFlow, string)>
-                );
-            })
-            .Switch()
-            .InvokeCommand(RetrieveData);
-
-        this.WhenAnyValue(x => x.DataSet)
-            .Select(d => d.Match(Observable.Return, Observable.Empty<DataSet>))
-            .Switch()
-            .InvokeCommand(TransformData);
-
-        this.WhenAnyValue(x => x.ChartSeries)
-            .Select(x => x.ToLineSeries())
-            .ToPropertyEx(this, x => x.LineSeries, scheduler: RxApp.MainThreadScheduler);
-
-        this.WhenAnyValue(x => x.ChartSeries)
-            .Where(seq => !seq.IsEmpty)
-            .Select(series =>
-            {
-                var highestFreq = series.GetHighestFreq();
-                var unit = TimeSpan.FromDays(365.25 / (int)highestFreq);
-                var formatter = highestFreq.GetFormatter();
-                return new[] { new DateTimeAxis(unit, formatter) };
-            })
-            .ToPropertyEx(this, x => x.XAxes, scheduler: RxApp.MainThreadScheduler);
-
-        this.WhenAnyValue(x => x.ChartSeries)
-            .Where(seq => !seq.IsEmpty)
-            .InvokeCommand(BuildStandAloneGrid);
-
-        this.WhenAnyValue(x => x.ChartSeries)
-            .Where(seq => !seq.IsEmpty)
-            .InvokeCommand(BuildLinkedGrid);
+        SetLinesSeries = CreateCommandSetLinesSeries();
+        SetAxes = CreateCommandSetAxes();
 
         this.WhenActivated(disposables =>
         {
@@ -180,11 +143,47 @@ public class DataViewModel : BaseViewModel
         });
     }
 
+    private ReactiveCommand<
+        Seq<ChartSeries>,
+        Seq<LineSeries<DateTimePoint>>
+    > CreateCommandSetLinesSeries()
+    {
+        var cmd = ReactiveCommand.CreateRunInBackground<
+            Seq<ChartSeries>,
+            Seq<LineSeries<DateTimePoint>>
+        >(x => x.ToLineSeries());
+
+        cmd.ToPropertyEx(this, x => x.LineSeries, scheduler: RxApp.MainThreadScheduler);
+        this.WhenAnyValue(x => x.ChartSeries).InvokeCommand(cmd);
+        return cmd;
+    }
+
+    private ReactiveCommand<Seq<ChartSeries>, ICartesianAxis[]> CreateCommandSetAxes()
+    {
+        var cmd = ReactiveCommand.CreateRunInBackground<Seq<ChartSeries>, ICartesianAxis[]>(
+            series =>
+            {
+                var highestFreq = series.GetHighestFreq();
+                var unit = TimeSpan.FromDays(365.25 / (int)highestFreq);
+                var formatter = highestFreq.GetFormatter();
+                return new[] { new DateTimeAxis(unit, formatter) };
+            }
+        );
+
+        cmd.ToPropertyEx(this, x => x.XAxes, scheduler: RxApp.MainThreadScheduler);
+        this.WhenAnyValue(x => x.ChartSeries).Where(seq => !seq.IsEmpty).InvokeCommand(cmd);
+
+        return cmd;
+    }
+
     private ReactiveCommand<Seq<ChartSeries>, RxUnit> CreateCommandBuildStandAloneGrid()
     {
         var cmd = ReactiveCommand.CreateRunInBackground(
             (Seq<ChartSeries> series) => BuildStandAloneGridImpl(series)
         );
+
+        this.WhenAnyValue(x => x.ChartSeries).Where(seq => !seq.IsEmpty).InvokeCommand(cmd);
+
         return cmd;
     }
 
@@ -193,6 +192,9 @@ public class DataViewModel : BaseViewModel
         var cmd = ReactiveCommand.CreateRunInBackground(
             (Seq<ChartSeries> series) => BuildLinkedGridImpl(series)
         );
+
+        this.WhenAnyValue(x => x.ChartSeries).Where(seq => !seq.IsEmpty).InvokeCommand(cmd);
+
         return cmd;
     }
 
@@ -311,6 +313,11 @@ public class DataViewModel : BaseViewModel
 
         cmd.ToPropertyEx(this, x => x.ChartSeries, scheduler: RxApp.MainThreadScheduler);
 
+        this.WhenAnyValue(x => x.DataSet)
+            .Select(d => d.Match(Observable.Return, Observable.Empty<DataSet>))
+            .Switch()
+            .InvokeCommand(cmd);
+
         return cmd;
     }
 
@@ -341,6 +348,21 @@ public class DataViewModel : BaseViewModel
         });
 
         cmd.ToPropertyEx(this, x => x.DataSet, scheduler: RxApp.MainThreadScheduler);
+
+        this.WhenAnyValue(x => x.Source)
+            .CombineLatest(this.WhenAnyValue(x => x.Flow), this.WhenAnyValue(x => x.Key))
+            .Select(t =>
+            {
+                var (source, flow, key) = t;
+                var tuple = from s in source from f in flow from k in key select (s, f, k);
+
+                return tuple.Match(
+                    Observable.Return,
+                    Observable.Empty<(SdmxWebSource, DataFlow, string)>
+                );
+            })
+            .Switch()
+            .InvokeCommand(cmd);
 
         return cmd;
     }

@@ -28,10 +28,9 @@
                     Margin="5"/>
             <Button Content="{materialIcons:MaterialIconTextExt Kind=Download, Text=RETRIEVE SERIES}"
                     Command="{Binding ParseQuery}"
+                    CommandParameter="{Binding Query}"
                     Classes="Rounded Flat"
-                    Margin="5"
-            />
+                    Margin="5" />
         </StackPanel>
-       
     </StackPanel>
 </UserControl>

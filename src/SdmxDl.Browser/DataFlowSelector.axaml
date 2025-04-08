@@ -17,10 +17,10 @@
 
     <Grid IsEnabled="{Binding !AllData.IsEmpty}">
         <ToggleButton Name="ToggleSearch"
-                      Content="{Binding Selection,Converter={StaticResource SelectorToggleTextConverter}}"
                       IsChecked="{Binding IsSearching}"
                       IsVisible="{Binding !IsSearching}"
                       HorizontalAlignment="Stretch">
+          <TextBlock Text="{Binding Selection,Converter={StaticResource SelectorToggleTextConverter}}"/>
             <Interaction.Behaviors>
                 <ButtonClickEventTriggerBehavior>
                     <FocusControlAction TargetControl="TextBoxSource" />

@@ -67,7 +67,23 @@ public class ChartSeries
     public ChartSeries(Series series)
     {
         Key = series.Key;
-        Frequency = series.Meta.Find("TIME_FORMAT", s => s, () => string.Empty).ToFrequency();
+
+        Frequency = series
+            .Meta.Find(
+                "TIME_FORMAT",
+                s => s,
+                () =>
+                    series
+                        .Obs.HeadOrNone()
+                        .Match(
+                            o =>
+                                Prelude
+                                    .Try(() => o.Period.Split('/')[1])
+                                    .Match(s => s, _ => string.Empty),
+                            () => string.Empty
+                        )
+            )
+            .ToFrequency();
         Title = series.Meta.Find("TITLE", s => $"{s} ({series.Key})", () => series.Key);
         Format = series.Meta.Find("DECIMALS", s => $"N{s}", () => "N");
 

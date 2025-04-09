@@ -74,11 +74,7 @@ public class SeriesFinderViewModel : BaseViewModel
     > CreateCommandParseQuery(ClientFactory clientFactory)
     {
         var canParse = this.WhenAnyValue(x => x.Query)
-            .Select(input =>
-                !string.IsNullOrWhiteSpace(input)
-                && input.Split(' ').Length == 3
-                && input.Split(' ').All(x => !string.IsNullOrWhiteSpace(x))
-            )
+            .Select(CheckInput)
             .ObserveOn(RxApp.MainThreadScheduler);
 
         var cmd = ReactiveCommand.CreateFromTask(
@@ -89,17 +85,40 @@ public class SeriesFinderViewModel : BaseViewModel
         return cmd;
     }
 
+    private static bool CheckInput(string input) =>
+        !string.IsNullOrWhiteSpace(input)
+        && (
+            (
+                input.Split(' ').Length == 3
+                && input.Split(' ').All(x => !string.IsNullOrWhiteSpace(x))
+            )
+            || (
+                input.StartsWith("sdmx-dl:/")
+                && input.Split('/').Length == 4
+                && input.Split('/').All(x => !string.IsNullOrWhiteSpace(x))
+            )
+        );
+
+    private static Seq<string> SplitInput(string input)
+    {
+        if (input.StartsWith("sdmx-dl:/"))
+        {
+            return input.Split('/').Skip(1).ToSeq();
+        }
+
+        return input.Split(' ').ToSeq();
+    }
+
     private static async Task<Option<(SdmxWebSource, DataFlow, string)>> ParseQueryImpl(
         string? input,
         ClientFactory clientFactory
     )
     {
-        /* Input must have 3 parts: source, flow and key */
-        if (string.IsNullOrWhiteSpace(input) || input.Split(' ').Length != 3)
+        if (!CheckInput(input))
             return Option<(SdmxWebSource, DataFlow, string)>.None;
 
         var client = clientFactory.GetClient();
-        var split = input.Split(' ');
+        var split = SplitInput(input);
         var source = (await client.GetSources(CancellationToken.None)).Find(s =>
             s.Id.Equals(split[0])
         );

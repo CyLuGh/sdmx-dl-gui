@@ -95,11 +95,20 @@ public class DataViewModel : BaseViewModel
     public static string BuildTitle(SdmxWebSource source, DataFlow flow, string key) =>
         $"{source.Id} {flow.Ref} {key}";
 
-    public string Title =>
-        (from s in Source from f in Flow from k in Key select BuildTitle(s, f, k)).Match(
-            s => s,
-            () => string.Empty
-        );
+    public string Title => BuildTitle(Source, Flow, Key).Match(s => s, () => string.Empty);
+    public string SourceId => Source.Match(s => s.Id, () => string.Empty);
+    public string FlowRef => Flow.Match(s => s.Ref, () => string.Empty);
+    public string FullKey => Key.Match(s => s, () => string.Empty);
+
+    public string FetchData => $"sdmx-dl fetch data \"{SourceId}\" \"{FlowRef}\" \"{FullKey}\"";
+    public string FetchMeta => $"sdmx-dl fetch meta \"{SourceId}\" \"{FlowRef}\" \"{FullKey}\"";
+    public string FetchKeys => $"sdmx-dl fetch keys \"{SourceId}\" \"{FlowRef}\" \"{FullKey}\"";
+
+    public string Uri
+    {
+        [ObservableAsProperty]
+        get;
+    }
 
     private ReactiveCommand<
         (SdmxWebSource, DataFlow, string),
@@ -111,7 +120,7 @@ public class DataViewModel : BaseViewModel
     public ReactiveCommand<Seq<ChartSeries>, ICartesianAxis[]> SetAxes { get; }
 
     public ReactiveCommand<Seq<ChartSeries>, Seq<LineSeries<DateTimePoint>>> SetLinesSeries { get; }
-    public RxCommand CopyToClipboard { get; }
+    public ReactiveCommand<string, RxUnit> CopyToClipboard { get; }
     public Interaction<string, RxUnit> CopyToClipboardInteraction { get; } =
         new(RxApp.MainThreadScheduler);
 
@@ -122,7 +131,7 @@ public class DataViewModel : BaseViewModel
         BuildStandAloneGrid = CreateCommandBuildStandAloneGrid();
         BuildLinkedGrid = CreateCommandLinkedAloneGrid();
         CopyToClipboard = ReactiveCommand.CreateFromObservable(
-            () => CopyToClipboardInteraction.Handle(Title)
+            (string s) => CopyToClipboardInteraction.Handle(s)
         );
 
         SetLinesSeries = CreateCommandSetLinesSeries();
@@ -140,6 +149,26 @@ public class DataViewModel : BaseViewModel
                 })
                 .ToPropertyEx(this, x => x.HasNoData, scheduler: RxApp.MainThreadScheduler)
                 .DisposeWith(disposables);
+
+            this.WhenAnyValue(x => x.Source, x => x.Flow, x => x.Key)
+                .Throttle(TimeSpan.FromMilliseconds(100))
+                .Select(t =>
+                {
+                    var (source, flow, key) = t;
+                    return BuildUri(source, flow, key).Match(s => s, () => string.Empty);
+                })
+                .ToPropertyEx(this, x => x.Uri, scheduler: RxApp.MainThreadScheduler)
+                .DisposeWith(disposables);
+
+            // this.WhenAnyValue(x => x.Source, x => x.Flow, x => x.Key)
+            //     .Throttle(TimeSpan.FromMilliseconds(100))
+            //     .Select(t =>
+            //     {
+            //         var (source, flow, key) = t;
+            //         return BuildTitle(source, flow, key);
+            //     })
+            //     .ToPropertyEx(this, x => x.Title, scheduler: RxApp.MainThreadScheduler)
+            //     .DisposeWith(disposables);
         });
     }
 
@@ -366,4 +395,16 @@ public class DataViewModel : BaseViewModel
 
         return cmd;
     }
+
+    private static Option<string> BuildUri(
+        Option<SdmxWebSource> source,
+        Option<DataFlow> flow,
+        Option<string> key
+    ) => from s in source from f in flow from k in key select $"sdmx-dl:/{s.Id}/{f.Ref}/{k}";
+
+    private static Option<string> BuildTitle(
+        Option<SdmxWebSource> source,
+        Option<DataFlow> flow,
+        Option<string> key
+    ) => from s in source from f in flow from k in key select BuildTitle(s, f, k);
 }

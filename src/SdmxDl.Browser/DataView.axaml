@@ -16,82 +16,178 @@
                         Classes="Accent"
                         IsAnimated="False">
             <Grid>
-                <TextBlock Text="No available data" 
+                <TextBlock Text="No available data"
                            Classes="h2"
                            HorizontalAlignment="Center"
-                           VerticalAlignment="Center"/>
+                           VerticalAlignment="Center" />
                 <Button Command="{Binding Close, Source={x:Static browser:ViewModelLocator.BrowserViewModel}}"
                         CommandParameter="{Binding Title}"
-                        Content="{materialIcons:MaterialIconExt Kind=CloseBold}" 
+                        Content="{materialIcons:MaterialIconExt Kind=CloseBold}"
                         Classes="Icon"
                         VerticalAlignment="Top"
-                        HorizontalAlignment="Right"/>
+                        HorizontalAlignment="Right" />
             </Grid>
-            
+
         </suki:GlassCard>
-        
+
         <suki:GlassCard IsVisible="{Binding ChartSeries.Count,FallbackValue=True}"
                         IsAnimated="False">
             <Grid>
                 <TabControl TabStripPlacement="Top"
                             IsVisible="{Binding !IsSplitView}">
-                    <TabItem Header="Chart" >
+                    <TabItem Header="Chart">
                         <lvc:CartesianChart Series="{Binding LineSeries}"
                                             XAxes="{Binding XAxes}"
-                                            LegendPosition="Bottom"/>    
+                                            LegendPosition="Bottom" />
                     </TabItem>
-                    
+
                     <TabItem Header="Grid">
-                        <hierarchyGrid:Grid ViewModel="{Binding StandAloneHierarchyGridViewModel}"/>
+                        <hierarchyGrid:Grid ViewModel="{Binding StandAloneHierarchyGridViewModel}" />
                     </TabItem>
                 </TabControl>
-                
+
                 <Grid RowDefinitions="2.5*,Auto,*"
                       IsVisible="{Binding IsSplitView}">
                     <lvc:CartesianChart Series="{Binding LineSeries}"
                                         XAxes="{Binding XAxes}"
                                         LegendPosition="Bottom"
                                         FindingStrategy="ExactMatch"
-                                        Grid.Row="0"/>
-                    <hierarchyGrid:Grid ViewModel="{Binding LinkedHierarchyGridViewModel}" 
+                                        Grid.Row="0" />
+                    <hierarchyGrid:Grid ViewModel="{Binding LinkedHierarchyGridViewModel}"
                                         Grid.Row="2" />
-                    <GridSplitter ResizeDirection="Rows" 
-                                  ResizeBehavior="PreviousAndNext" 
+                    <GridSplitter ResizeDirection="Rows"
+                                  ResizeBehavior="PreviousAndNext"
                                   Height="5"
                                   Margin="10 5"
                                   Grid.Row="1" />
                 </Grid>
-                
+
                 <Menu VerticalAlignment="Top" HorizontalAlignment="Right"
                       Margin="0 -10 -10 0">
-                    <MenuItem Header="{materialIcons:MaterialIconExt Kind=Clipboard}"
-                              Command="{Binding CopyToClipboard}"
-                              ToolTip.Tip="Copy source, flow and key to clipboard"/>
-                    <RadioButton Content="{materialIcons:MaterialIconExt Kind=Tab}" 
+                    <MenuItem Header="{materialIcons:MaterialIconExt Kind=Clipboard}">
+                        <!--  Copy URI sdmx-dl:/source/flow/key
+Copy Source
+Copy Flow
+Copy Key
+Copy all?
+ Separator
+Fetch data command sdmx-dl fetch data
+Fetch meta command sdmx-dl fetch meta
+Fetch keys command sdmx-dl fetch keys
+-->
+                        <MenuItem Command="{Binding Path=CopyToClipboard}"
+                                  CommandParameter="{Binding Path=Uri}"
+                                  ToolTip.Tip="Copy URI to clipboard">
+                            <MenuItem.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="SDMX-DL URI" />
+                                    <TextBlock Text="{Binding Uri}" Margin="5 0 0 0" FontWeight="Light"
+                                               FontStretch="Condensed" />
+                                </StackPanel>
+                            </MenuItem.Header>
+                        </MenuItem>
+                        <MenuItem Command="{Binding CopyToClipboard}"
+                                  CommandParameter="{Binding SourceId}"
+                                  ToolTip.Tip="Copy source to clipboard">
+                            <MenuItem.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Source" />
+                                    <TextBlock Text="{Binding SourceId}" Margin="5 0 0 0" FontWeight="Light"
+                                               FontStretch="Condensed" />
+                                </StackPanel>
+                            </MenuItem.Header>
+                        </MenuItem>
+                        <MenuItem Command="{Binding CopyToClipboard}"
+                                  CommandParameter="{Binding FlowRef}"
+                                  ToolTip.Tip="Copy flow to clipboard">
+                            <MenuItem.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Flow" />
+                                    <TextBlock Text="{Binding FlowRef}" Margin="5 0 0 0" FontWeight="Light"
+                                               FontStretch="Condensed" />
+                                </StackPanel>
+                            </MenuItem.Header>
+                        </MenuItem>
+                        <MenuItem Command="{Binding CopyToClipboard}"
+                                  CommandParameter="{Binding FullKey}"
+                                  ToolTip.Tip="Copy key to clipboard">
+                            <MenuItem.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Key" />
+                                    <TextBlock Text="{Binding FullKey}" Margin="5 0 0 0" FontWeight="Light"
+                                               FontStretch="Condensed" />
+                                </StackPanel>
+                            </MenuItem.Header>
+                        </MenuItem>
+                        <MenuItem Command="{Binding CopyToClipboard}"
+                                  CommandParameter="{Binding Title}"
+                                  ToolTip.Tip="Copy source, flow and key to clipboard">
+                            <MenuItem.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Source Flow Key" />
+                                    <TextBlock Text="{Binding Title}" Margin="5 0 0 0" FontWeight="Light"
+                                               FontStretch="Condensed" />
+                                </StackPanel>
+                            </MenuItem.Header>
+                        </MenuItem>
+                        <Separator />
+                        <MenuItem Command="{Binding CopyToClipboard}"
+                                  CommandParameter="{Binding FetchData}">
+                            <MenuItem.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Fetch data command" />
+                                    <TextBlock Text="{Binding FetchData}" Margin="5 0 0 0" FontWeight="Light"
+                                               FontStretch="Condensed" />
+                                </StackPanel>
+                            </MenuItem.Header>
+                        </MenuItem>
+                        <MenuItem Command="{Binding CopyToClipboard}"
+                                  CommandParameter="{Binding FetchMeta}">
+                            <MenuItem.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Fetch meta command" />
+                                    <TextBlock Text="{Binding FetchMeta}" Margin="5 0 0 0" FontWeight="Light"
+                                               FontStretch="Condensed" />
+                                </StackPanel>
+                            </MenuItem.Header>
+                        </MenuItem>
+                        <MenuItem Command="{Binding CopyToClipboard}"
+                                  CommandParameter="{Binding FetchKeys}">
+                            <MenuItem.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Fetch keys command" />
+                                    <TextBlock Text="{Binding FetchKeys}" Margin="5 0 0 0" FontWeight="Light"
+                                               FontStretch="Condensed" />
+                                </StackPanel>
+                            </MenuItem.Header>
+                        </MenuItem>
+                    </MenuItem>
+
+                    <RadioButton Content="{materialIcons:MaterialIconExt Kind=Tab}"
                                  IsChecked="{Binding !IsSplitView}"
-                                 ToolTip.Tip="Tabbed view"/>
-                    <RadioButton Content="{materialIcons:MaterialIconExt Kind=ViewSplitHorizontal}" 
-                                 IsChecked="{Binding IsSplitView}" 
-                                 ToolTip.Tip="Split view"/>
+                                 ToolTip.Tip="Tabbed view" />
+                    <RadioButton Content="{materialIcons:MaterialIconExt Kind=ViewSplitHorizontal}"
+                                 IsChecked="{Binding IsSplitView}"
+                                 ToolTip.Tip="Split view" />
                     <MenuItem Header="{materialIcons:MaterialIconExt Kind=CloseBold}"
                               Command="{Binding Close, Source={x:Static browser:ViewModelLocator.BrowserViewModel}}"
                               CommandParameter="{Binding Title}"
-                              ToolTip.Tip="Close"/>
+                              ToolTip.Tip="Close" />
                 </Menu>
             </Grid>
         </suki:GlassCard>
-        
-        <suki:GlassCard IsVisible="{Binding IsBusy,FallbackValue=False}" 
+
+        <suki:GlassCard IsVisible="{Binding IsBusy,FallbackValue=False}"
                         IsAnimated="False"
                         IsOpaque="True">
             <StackPanel VerticalAlignment="Center"
                         HorizontalAlignment="Center">
                 <suki:WaveProgress Value="45"
-                                   IsTextVisible="False"/>
+                                   IsTextVisible="False" />
                 <TextBlock Text="{Binding Path=BusyMessage,FallbackValue=FILLER_TEXT}"
                            Classes="h3"
                            FontStretch="Condensed"
-                           HorizontalAlignment="Center"/>
+                           HorizontalAlignment="Center" />
             </StackPanel>
         </suki:GlassCard>
     </Grid>

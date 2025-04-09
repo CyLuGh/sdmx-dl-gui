@@ -32,6 +32,12 @@ public class DataViewModel : BaseViewModel
     [Reactive]
     public bool IsSplitView { get; set; }
 
+    [Reactive]
+    public DateTime StartDate { get; set; }
+
+    [Reactive]
+    public DateTime EndDate { get; set; }
+
     public Option<DataSet> DataSet
     {
         [ObservableAsProperty]
@@ -96,6 +102,7 @@ public class DataViewModel : BaseViewModel
         $"{source.Id} {flow.Ref} {key}";
 
     public string Title => BuildTitle(Source, Flow, Key).Match(s => s, () => string.Empty);
+    public string Uri => BuildUri(Source, Flow, Key).Match(s => s, () => string.Empty);
     public string SourceId => Source.Match(s => s.Id, () => string.Empty);
     public string FlowRef => Flow.Match(s => s.Ref, () => string.Empty);
     public string FullKey => Key.Match(s => s, () => string.Empty);
@@ -103,12 +110,6 @@ public class DataViewModel : BaseViewModel
     public string FetchData => $"sdmx-dl fetch data \"{SourceId}\" \"{FlowRef}\" \"{FullKey}\"";
     public string FetchMeta => $"sdmx-dl fetch meta \"{SourceId}\" \"{FlowRef}\" \"{FullKey}\"";
     public string FetchKeys => $"sdmx-dl fetch keys \"{SourceId}\" \"{FlowRef}\" \"{FullKey}\"";
-
-    public string Uri
-    {
-        [ObservableAsProperty]
-        get;
-    }
 
     private ReactiveCommand<
         (SdmxWebSource, DataFlow, string),
@@ -149,26 +150,6 @@ public class DataViewModel : BaseViewModel
                 })
                 .ToPropertyEx(this, x => x.HasNoData, scheduler: RxApp.MainThreadScheduler)
                 .DisposeWith(disposables);
-
-            this.WhenAnyValue(x => x.Source, x => x.Flow, x => x.Key)
-                .Throttle(TimeSpan.FromMilliseconds(100))
-                .Select(t =>
-                {
-                    var (source, flow, key) = t;
-                    return BuildUri(source, flow, key).Match(s => s, () => string.Empty);
-                })
-                .ToPropertyEx(this, x => x.Uri, scheduler: RxApp.MainThreadScheduler)
-                .DisposeWith(disposables);
-
-            // this.WhenAnyValue(x => x.Source, x => x.Flow, x => x.Key)
-            //     .Throttle(TimeSpan.FromMilliseconds(100))
-            //     .Select(t =>
-            //     {
-            //         var (source, flow, key) = t;
-            //         return BuildTitle(source, flow, key);
-            //     })
-            //     .ToPropertyEx(this, x => x.Title, scheduler: RxApp.MainThreadScheduler)
-            //     .DisposeWith(disposables);
         });
     }
 

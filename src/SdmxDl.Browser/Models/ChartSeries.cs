@@ -124,6 +124,24 @@ public class ChartSeries
         }
     }
 
+    public LineSeries<DateTimePoint> ToLineSeries(DateTimeOffset start, DateTimeOffset end) =>
+        new LineSeries<DateTimePoint>()
+        {
+            Values = this
+                .Values.Where(x => x.Key >= start && x.Key <= end)
+                .OrderBy(x => x.Key)
+                .Select(x =>
+                    x.Value.Match(
+                        v => new DateTimePoint(x.Key, v),
+                        () => new DateTimePoint(x.Key, null)
+                    )
+                )
+                .ToArray(),
+            GeometrySize = 0,
+            LineSmoothness = 0,
+            Name = Title,
+        };
+
     public LineSeries<DateTimePoint> ToLineSeries() =>
         new LineSeries<DateTimePoint>()
         {
@@ -144,6 +162,12 @@ public class ChartSeries
 
 public static class ChartSeriesExtensions
 {
+    public static Seq<LineSeries<DateTimePoint>> ToLineSeries(
+        this Seq<ChartSeries> series,
+        DateTimeOffset start,
+        DateTimeOffset end
+    ) => series.Map(s => s.ToLineSeries(start, end)).Strict();
+
     public static Seq<LineSeries<DateTimePoint>> ToLineSeries(this Seq<ChartSeries> series) =>
         series.Map(s => s.ToLineSeries()).Strict();
 

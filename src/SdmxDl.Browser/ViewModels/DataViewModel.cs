@@ -33,10 +33,10 @@ public class DataViewModel : BaseViewModel
     public bool IsSplitView { get; set; }
 
     [Reactive]
-    public DateTime StartDate { get; set; }
+    public DateTimeOffset StartDate { get; set; }
 
     [Reactive]
-    public DateTime EndDate { get; set; }
+    public DateTimeOffset EndDate { get; set; }
 
     public Option<DataSet> DataSet
     {
@@ -116,17 +116,29 @@ public class DataViewModel : BaseViewModel
         Option<DataSet>
     > RetrieveData { get; }
     private ReactiveCommand<DataSet, Seq<ChartSeries>> TransformData { get; }
-    private ReactiveCommand<Seq<ChartSeries>, RxUnit> BuildStandAloneGrid { get; }
-    private ReactiveCommand<Seq<ChartSeries>, RxUnit> BuildLinkedGrid { get; }
+    private ReactiveCommand<
+        (Seq<ChartSeries>, DateTimeOffset, DateTimeOffset),
+        RxUnit
+    > BuildStandAloneGrid { get; }
+    private ReactiveCommand<
+        (Seq<ChartSeries>, DateTimeOffset, DateTimeOffset),
+        RxUnit
+    > BuildLinkedGrid { get; }
     public ReactiveCommand<Seq<ChartSeries>, ICartesianAxis[]> SetAxes { get; }
 
-    public ReactiveCommand<Seq<ChartSeries>, Seq<LineSeries<DateTimePoint>>> SetLinesSeries { get; }
+    public ReactiveCommand<
+        (Seq<ChartSeries>, DateTimeOffset, DateTimeOffset),
+        Seq<LineSeries<DateTimePoint>>
+    > SetLinesSeries { get; }
     public ReactiveCommand<string, RxUnit> CopyToClipboard { get; }
     public Interaction<string, RxUnit> CopyToClipboardInteraction { get; } =
         new(RxApp.MainThreadScheduler);
 
     public DataViewModel(ClientFactory clientFactory, ResiliencePipeline pipeline)
     {
+        StartDate = new DateTimeOffset(new DateTime(1900, 1, 1));
+        EndDate = new DateTimeOffset(new DateTime(9999, 12, 31));
+
         RetrieveData = CreateCommandRetrieveData(clientFactory, pipeline);
         TransformData = CreateCommandTransformData();
         BuildStandAloneGrid = CreateCommandBuildStandAloneGrid();
@@ -137,6 +149,22 @@ public class DataViewModel : BaseViewModel
 
         SetLinesSeries = CreateCommandSetLinesSeries();
         SetAxes = CreateCommandSetAxes();
+
+        this.WhenAnyValue(x => x.ChartSeries)
+            .Where(x => !x.IsEmpty)
+            .ObserveOn(RxApp.MainThreadScheduler)
+            .Subscribe(seq =>
+            {
+                var minDate = seq.Where(cs => !cs.Values.IsEmpty)
+                    .Map(cs => cs.Values.Keys.Min())
+                    .Min();
+                var maxDate = seq.Where(cs => !cs.Values.IsEmpty)
+                    .Map(cs => cs.Values.Keys.Max())
+                    .Max();
+
+                StartDate = minDate;
+                EndDate = maxDate;
+            });
 
         this.WhenActivated(disposables =>
         {
@@ -154,17 +182,23 @@ public class DataViewModel : BaseViewModel
     }
 
     private ReactiveCommand<
-        Seq<ChartSeries>,
+        (Seq<ChartSeries>, DateTimeOffset, DateTimeOffset),
         Seq<LineSeries<DateTimePoint>>
     > CreateCommandSetLinesSeries()
     {
         var cmd = ReactiveCommand.CreateRunInBackground<
-            Seq<ChartSeries>,
+            (Seq<ChartSeries>, DateTimeOffset, DateTimeOffset),
             Seq<LineSeries<DateTimePoint>>
-        >(x => x.ToLineSeries());
+        >(x =>
+        {
+            var (seq, startDate, endDate) = x;
+            return seq.ToLineSeries(startDate, endDate);
+        });
 
         cmd.ToPropertyEx(this, x => x.LineSeries, scheduler: RxApp.MainThreadScheduler);
-        this.WhenAnyValue(x => x.ChartSeries).InvokeCommand(cmd);
+        this.WhenAnyValue(x => x.ChartSeries, x => x.StartDate, x => x.EndDate)
+            .Throttle(TimeSpan.FromMilliseconds(50))
+            .InvokeCommand(cmd);
         return cmd;
     }
 
@@ -186,35 +220,62 @@ public class DataViewModel : BaseViewModel
         return cmd;
     }
 
-    private ReactiveCommand<Seq<ChartSeries>, RxUnit> CreateCommandBuildStandAloneGrid()
+    private ReactiveCommand<
+        (Seq<ChartSeries>, DateTimeOffset, DateTimeOffset),
+        RxUnit
+    > CreateCommandBuildStandAloneGrid()
     {
         var cmd = ReactiveCommand.CreateRunInBackground(
-            (Seq<ChartSeries> series) => BuildStandAloneGridImpl(series)
+            ((Seq<ChartSeries>, DateTimeOffset, DateTimeOffset) t) =>
+            {
+                var (series, start, end) = t;
+                BuildStandAloneGridImpl(series, start, end);
+            }
         );
 
-        this.WhenAnyValue(x => x.ChartSeries).Where(seq => !seq.IsEmpty).InvokeCommand(cmd);
+        this.WhenAnyValue(x => x.ChartSeries)
+            .Where(seq => !seq.IsEmpty)
+            .CombineLatest(this.WhenAnyValue(x => x.StartDate), this.WhenAnyValue(x => x.EndDate))
+            .Throttle(TimeSpan.FromMilliseconds(50))
+            .InvokeCommand(cmd);
 
         return cmd;
     }
 
-    private ReactiveCommand<Seq<ChartSeries>, RxUnit> CreateCommandLinkedAloneGrid()
+    private ReactiveCommand<
+        (Seq<ChartSeries>, DateTimeOffset, DateTimeOffset),
+        RxUnit
+    > CreateCommandLinkedAloneGrid()
     {
         var cmd = ReactiveCommand.CreateRunInBackground(
-            (Seq<ChartSeries> series) => BuildLinkedGridImpl(series)
+            ((Seq<ChartSeries>, DateTimeOffset, DateTimeOffset) t) =>
+            {
+                var (series, start, end) = t;
+                BuildLinkedGridImpl(series, start, end);
+            }
         );
 
-        this.WhenAnyValue(x => x.ChartSeries).Where(seq => !seq.IsEmpty).InvokeCommand(cmd);
+        this.WhenAnyValue(x => x.ChartSeries)
+            .Where(seq => !seq.IsEmpty)
+            .CombineLatest(this.WhenAnyValue(x => x.StartDate), this.WhenAnyValue(x => x.EndDate))
+            .Throttle(TimeSpan.FromMilliseconds(50))
+            .InvokeCommand(cmd);
 
         return cmd;
     }
 
-    private void BuildStandAloneGridImpl(Seq<ChartSeries> series)
+    private void BuildStandAloneGridImpl(
+        Seq<ChartSeries> series,
+        DateTimeOffset start,
+        DateTimeOffset end
+    )
     {
         var formatter = series.GetHighestFreq().GetFormatter();
         var data = series.Map(s => (s.Key, s.Values)).ToHashMap();
 
         var producerDefinitions = series
             .GetDates()
+            .Where(x => x >= start && x <= end)
             .OrderBy(x => x)
             .Select(x => new ProducerDefinition() { Content = formatter(x), Producer = () => x })
             .ToSeq();
@@ -237,10 +298,8 @@ public class DataViewModel : BaseViewModel
             Qualify = o =>
                 o switch
                 {
-                    Option<double> d => d.Match(
-                        x => Qualification.Normal,
-                        () => Qualification.Empty
-                    ),
+                    Option<double> d
+                        => d.Match(x => Qualification.Normal, () => Qualification.Empty),
                     _ => Qualification.Empty,
                 },
         });
@@ -250,7 +309,11 @@ public class DataViewModel : BaseViewModel
         );
     }
 
-    private void BuildLinkedGridImpl(Seq<ChartSeries> series)
+    private void BuildLinkedGridImpl(
+        Seq<ChartSeries> series,
+        DateTimeOffset start,
+        DateTimeOffset end
+    )
     {
         var formatter = series.GetHighestFreq().GetFormatter();
         var data = series.Map(s => (s.Key, s.Values)).ToHashMap();
@@ -261,6 +324,7 @@ public class DataViewModel : BaseViewModel
 
         var consumerDefinitions = series
             .GetDates()
+            .Where(x => x >= start && x <= end)
             .OrderBy(x => x)
             .Map(d => new ConsumerDefinition()
             {
@@ -268,27 +332,24 @@ public class DataViewModel : BaseViewModel
                 Consumer = o =>
                     o switch
                     {
-                        ChartSeries s => from x in data.Find(s.Key, d)
-                        from v in x
-                        select Tuple.Create(v, s.Format),
+                        ChartSeries s
+                            => from x in data.Find(s.Key, d)
+                            from v in x
+                            select Tuple.Create(v, s.Format),
                         _ => Option<Tuple<double, string>>.None,
                     },
                 Formatter = o =>
                     o switch
                     {
-                        Option<Tuple<double, string>> t => t.Match(
-                            x => x.Item1.ToString(x.Item2),
-                            () => string.Empty
-                        ),
+                        Option<Tuple<double, string>> t
+                            => t.Match(x => x.Item1.ToString(x.Item2), () => string.Empty),
                         _ => string.Empty,
                     },
                 Qualify = o =>
                     o switch
                     {
-                        Option<Tuple<double, string>> d => d.Match(
-                            x => Qualification.Normal,
-                            () => Qualification.Empty
-                        ),
+                        Option<Tuple<double, string>> d
+                            => d.Match(x => Qualification.Normal, () => Qualification.Empty),
                         _ => Qualification.Empty,
                     },
             });

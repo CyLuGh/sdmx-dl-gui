@@ -85,7 +85,7 @@ public class SeriesFinderViewModel : BaseViewModel
         return cmd;
     }
 
-    private static bool CheckInput(string input) =>
+    private static bool CheckInput(string? input) =>
         !string.IsNullOrWhiteSpace(input)
         && (
             (
@@ -101,12 +101,9 @@ public class SeriesFinderViewModel : BaseViewModel
 
     private static Seq<string> SplitInput(string input)
     {
-        if (input.StartsWith("sdmx-dl:/"))
-        {
-            return input.Split('/').Skip(1).ToSeq();
-        }
-
-        return input.Split(' ').ToSeq();
+        return input.StartsWith("sdmx-dl:/")
+            ? input.Split('/').Skip(1).ToSeq()
+            : input.Split(' ').ToSeq();
     }
 
     private static async Task<Option<(SdmxWebSource, DataFlow, string)>> ParseQueryImpl(
@@ -118,7 +115,7 @@ public class SeriesFinderViewModel : BaseViewModel
             return Option<(SdmxWebSource, DataFlow, string)>.None;
 
         var client = clientFactory.GetClient();
-        var split = SplitInput(input);
+        var split = SplitInput(input!);
         var source = (await client.GetSources(CancellationToken.None)).Find(s =>
             s.Id.Equals(split[0])
         );

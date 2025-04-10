@@ -86,13 +86,15 @@
                                             <UniformGrid Rows="1">
                                                 <TextBlock Text="First period:" 
                                                            VerticalAlignment="Center" />
-                                                <DatePicker Width="200" 
+                                                <DatePicker SelectedDate="{Binding StartDate}"
+                                                            Width="200" 
                                                             Margin="5"
                                                             HorizontalAlignment="Stretch"
                                                             VerticalAlignment="Center"/>
                                                 <TextBlock Text="Last period:" 
                                                            VerticalAlignment="Center" />
-                                                <DatePicker Width="200" 
+                                                <DatePicker SelectedDate="{Binding EndDate}"
+                                                            Width="200" 
                                                             Margin="5"
                                                             HorizontalAlignment="Stretch"
                                                             VerticalAlignment="Center"/>
@@ -149,7 +151,7 @@
                                 </StackPanel>
                             </MenuItem.Header>
                         </MenuItem>
-                        <MenuItem Command="{Binding CopyToClipboard}"
+                        <!--<MenuItem Command="{Binding CopyToClipboard}"
                                   CommandParameter="{Binding Title}"
                                   ToolTip.Tip="Copy source, flow and key to clipboard">
                             <MenuItem.Header>
@@ -159,7 +161,7 @@
                                                FontStretch="Condensed" />
                                 </StackPanel>
                             </MenuItem.Header>
-                        </MenuItem>
+                        </MenuItem>-->
                         <Separator />
                         <MenuItem Command="{Binding CopyToClipboard}"
                                   CommandParameter="{Binding FetchData}">

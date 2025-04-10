@@ -1,3 +1,4 @@
+using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Avalonia.Controls;
@@ -23,7 +24,7 @@ public partial class MainWindow : SukiWindow
 
     private void GitHubLinkClick(object? sender, RoutedEventArgs e)
     {
-        var url = (e.Source as HyperlinkButton).Content as string;
+        var url = (e.Source as HyperlinkButton)?.Content as string ?? string.Empty;
 
         if (string.IsNullOrEmpty(url))
             return;

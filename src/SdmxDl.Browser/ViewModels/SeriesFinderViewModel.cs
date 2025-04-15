@@ -106,7 +106,7 @@ public class SeriesFinderViewModel : BaseViewModel
             : input.Split(' ').ToSeq();
     }
 
-    private static async Task<Option<(SdmxWebSource, DataFlow, string)>> ParseQueryImpl(
+    internal static async Task<Option<(SdmxWebSource, DataFlow, string)>> ParseQueryImpl(
         string? input,
         ClientFactory clientFactory
     )

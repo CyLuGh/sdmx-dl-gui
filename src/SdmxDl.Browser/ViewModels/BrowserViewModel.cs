@@ -61,6 +61,9 @@ public class BrowserViewModel : BaseViewModel
     [Reactive]
     public string SelectionKey { get; set; }
 
+    [Reactive]
+    public string? Argument { get; set; }
+
     public RxCommand LaunchServer { get; }
     public RxInteraction LaunchServerInteraction { get; } = new(RxApp.MainThreadScheduler);
 
@@ -167,6 +170,26 @@ public class BrowserViewModel : BaseViewModel
             dimensionsSelectorViewModel
                 .WhenAnyValue(x => x.PositionedDimensions, x => x.SelectedDimension)
                 .InvokeCommand(BuildSelectionKey)
+                .DisposeWith(disposables);
+
+            this.WhenAnyValue(x => x.Argument)
+                .Where(s => !string.IsNullOrEmpty(s))
+                .CombineLatest(
+                    this.WhenAnyValue(x => x.Version).Where(s => !string.IsNullOrEmpty(s))
+                )
+                .Throttle(TimeSpan.FromMilliseconds(100))
+                .Select(t => t.First)
+                .Select(async s =>
+                {
+                    var elements = await SeriesFinderViewModel.ParseQueryImpl(s, clientFactory);
+                    return elements.Match(
+                        Observable.Return,
+                        Observable.Empty<(SdmxWebSource, DataFlow, string)>
+                    );
+                })
+                .Switch()
+                .Switch()
+                .InvokeCommand(SendResults)
                 .DisposeWith(disposables);
         });
 

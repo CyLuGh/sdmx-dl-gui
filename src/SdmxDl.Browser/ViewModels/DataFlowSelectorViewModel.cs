@@ -21,7 +21,7 @@ public class DataFlowSelectorViewModel(ClientFactory clientFactory, ResiliencePi
 
         return all.Where(s =>
                 s.Name.Contains(input, StringComparison.CurrentCultureIgnoreCase)
-                || s.Description.Contains(input, StringComparison.CurrentCultureIgnoreCase)
+                || s.Ref.Contains(input, StringComparison.CurrentCultureIgnoreCase)
             )
             .OrderBy(s => s.Name)
             .ToSeq()

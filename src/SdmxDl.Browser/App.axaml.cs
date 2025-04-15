@@ -18,6 +18,9 @@ public partial class App : Application
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             desktop.MainWindow = new MainWindow();
+            if (desktop.Args?.Length > 0)
+                ViewModelLocator.BrowserViewModel.Argument = desktop.Args[0];
+
             desktop.Exit += (_, __) =>
             {
                 Locator.Current.GetService<ClientFactory>()?.StopServer();

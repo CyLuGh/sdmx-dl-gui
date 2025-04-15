@@ -22,7 +22,8 @@
                     </TreeView.Styles>
                     <TreeView.ItemTemplate>
                         <TreeDataTemplate ItemsSource="{Binding Children}">
-                            <TextBlock Text="{Binding Description}"></TextBlock>
+                            <TextBlock Text="{Binding Description}"
+                                       TextTrimming="CharacterEllipsis"></TextBlock>
                         </TreeDataTemplate> 
                     </TreeView.ItemTemplate>
                 </TreeView>

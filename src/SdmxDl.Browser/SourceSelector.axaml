@@ -73,7 +73,7 @@
             <ListBox.DataTemplates>
               <DataTemplate DataType="models:SdmxWebSource">
                 <Grid>
-                  <TextBlock Text="{Binding .,Converter={StaticResource SdmxWebSourceConverter}}" />
+                  <TextBlock Text="{Binding .,Converter={StaticResource SdmxWebSourceConverter}}" TextTrimming="CharacterEllipsis"/>
                 </Grid>
               </DataTemplate>
             </ListBox.DataTemplates>

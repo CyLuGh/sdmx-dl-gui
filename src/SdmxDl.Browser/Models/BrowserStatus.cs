@@ -5,4 +5,6 @@ public enum BrowserStatus
     Offline,
     Connected,
     Hosting,
+    Failed,
+    Connecting,
 }

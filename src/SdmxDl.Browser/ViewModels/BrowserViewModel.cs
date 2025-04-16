@@ -4,6 +4,7 @@ using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading;
 using Avalonia.Input;
+using Jot;
 using LanguageExt;
 using LanguageExt.UnsafeValueAccess;
 using Polly;
@@ -14,6 +15,7 @@ using SdmxDl.Browser.Models;
 using SdmxDl.Client;
 using SdmxDl.Client.Models;
 using Sdmxdl.Grpc;
+using Splat;
 
 namespace SdmxDl.Browser.ViewModels;
 
@@ -64,8 +66,8 @@ public class BrowserViewModel : BaseViewModel
     [Reactive]
     public string? Argument { get; set; }
 
-    public RxCommand LaunchServer { get; }
-    public RxInteraction LaunchServerInteraction { get; } = new(RxApp.MainThreadScheduler);
+    public RxCommand ConfigureServer { get; }
+    public RxInteraction ConfigureServerInteraction { get; } = new(RxApp.MainThreadScheduler);
 
     public RxCommand LookupSeries { get; }
     public RxInteraction LookupSeriesInteraction { get; } = new(RxApp.MainThreadScheduler);
@@ -104,8 +106,9 @@ public class BrowserViewModel : BaseViewModel
         ResiliencePipeline pipeline
     )
     {
+        ConfigureServer = CreateCommandConfigureServer();
         HostServer = CreateCommandHostServer(clientFactory);
-        LaunchServer = CreateCommandLaunchServer();
+        RetrieveVersion = CreateCommandRetrieveVersion(clientFactory, pipeline);
 
         LookupSeries = ReactiveCommand.CreateFromObservable(
             () => LookupSeriesInteraction.Handle(RxUnit.Default),
@@ -122,8 +125,6 @@ public class BrowserViewModel : BaseViewModel
         UpdateServerHostingStatus();
         UpdateServerRunningStatus();
 
-        RetrieveVersion = CreateCommandRetrieveVersion(clientFactory, pipeline);
-
         ShowResults = CreateCommandShowResults(
             sourceSelectorViewModel,
             dataFlowSelectorViewModel,
@@ -138,6 +139,12 @@ public class BrowserViewModel : BaseViewModel
 
         this.WhenActivated(disposables =>
         {
+            this.WhenAnyValue(x => x.Status)
+                .Where(s => s == BrowserStatus.Failed)
+                .Select(_ => RxUnit.Default)
+                .InvokeCommand(ConfigureServer)
+                .DisposeWith(disposables);
+
             PromptServerSettings(disposables);
 
             exceptionHandler
@@ -281,10 +288,38 @@ public class BrowserViewModel : BaseViewModel
 
     private void PromptServerSettings(CompositeDisposable disposables)
     {
-        Observable
+        var oldSettings = Observable
             .Return(RxUnit.Default)
-            .Delay(TimeSpan.FromSeconds(1))
-            .InvokeCommand(LaunchServer)
+            .Delay(TimeSpan.FromMilliseconds(400))
+            .Select(_ =>
+            {
+                var tryGetConfig = Prelude.Try(() =>
+                {
+                    var tracker = Locator.Current.GetService<Tracker>();
+                    var store = tracker.Store.GetData("SettingsViewModel");
+                    var settings = new Settings()
+                    {
+                        IsHosting = (bool)store["x.UseRunningServer"],
+                        JarPath = (string)store["x.JarPath"],
+                        JavaPath = (string)store["x.JavaPath"],
+                        ServerUri = (string)store["x.ServerUri"],
+                    };
+                    return settings;
+                });
+
+                return tryGetConfig().Match(s => s, _ => Option<Settings>.None);
+            });
+
+        oldSettings
+            .Where(x => x.IsSome)
+            .Select(_ => RxUnit.Default)
+            .InvokeCommand(ViewModelLocator.SettingsViewModel, x => x.ReloadSettings)
+            .DisposeWith(disposables);
+
+        oldSettings
+            .Where(x => x.IsNone)
+            .Select(_ => RxUnit.Default)
+            .InvokeCommand(ConfigureServer)
             .DisposeWith(disposables);
     }
 
@@ -353,7 +388,13 @@ public class BrowserViewModel : BaseViewModel
     /// </summary>
     private void UpdateServerHostingStatus()
     {
-        ViewModelLocator
+        var isConnected = this.WhenAnyValue(x => x.Status)
+            .Where(x => x == BrowserStatus.Connecting)
+            .CombineLatest(this.WhenAnyValue(x => x.Version).Where(s => !string.IsNullOrEmpty(s)))
+            .Select(_ => BrowserStatus.Connected);
+        var isOffline = HostServer.ThrownExceptions.Select(_ => BrowserStatus.Offline);
+        var isFailed = RetrieveVersion.ThrownExceptions.Select(_ => BrowserStatus.Failed);
+        var startingUp = ViewModelLocator
             .SettingsViewModel.WhenAnyValue(x => x.CurrentSettings)
             .WhereNotNull()
             .Select(settings =>
@@ -361,9 +402,11 @@ public class BrowserViewModel : BaseViewModel
                 if (settings == Settings.None)
                     return BrowserStatus.Offline;
 
-                return settings.IsHosting ? BrowserStatus.Hosting : BrowserStatus.Connected;
-            })
-            .Merge(HostServer.ThrownExceptions.Select(_ => BrowserStatus.Offline))
+                return settings.IsHosting ? BrowserStatus.Hosting : BrowserStatus.Connecting;
+            });
+
+        Observable
+            .Merge(startingUp, isConnected, isOffline, isFailed)
             .ToPropertyEx(
                 this,
                 x => x.Status,
@@ -392,7 +435,7 @@ public class BrowserViewModel : BaseViewModel
     private void UpdateServerRunningStatus()
     {
         this.WhenAnyValue(x => x.Status)
-            .Select(s => s != BrowserStatus.Offline)
+            .Select(s => s is BrowserStatus.Connected or BrowserStatus.Hosting)
             .ToPropertyEx(
                 this,
                 x => x.ServerIsRunning,
@@ -401,10 +444,10 @@ public class BrowserViewModel : BaseViewModel
             );
     }
 
-    private RxCommand CreateCommandLaunchServer()
+    private RxCommand CreateCommandConfigureServer()
     {
         var cmd = ReactiveCommand.CreateFromObservable(
-            () => LaunchServerInteraction.Handle(RxUnit.Default)
+            () => ConfigureServerInteraction.Handle(RxUnit.Default)
         );
 
         return cmd;
@@ -431,11 +474,21 @@ public class BrowserViewModel : BaseViewModel
             scheduler: RxApp.MainThreadScheduler
         );
 
-        this.WhenAnyValue(x => x.ServerIsRunning)
-            .Select(b =>
+        this.WhenAnyValue(x => x.Status)
+            .Throttle(TimeSpan.FromMilliseconds(10))
+            .Select(status =>
             {
-                if (!b)
+                if (
+                    status
+                    is not (
+                        BrowserStatus.Connected
+                        or BrowserStatus.Hosting
+                        or BrowserStatus.Connecting
+                    )
+                )
+                {
                     return Observable.Empty<RxUnit>();
+                }
 
                 return Observable
                     .Timer(
@@ -461,6 +514,7 @@ public class BrowserViewModel : BaseViewModel
         );
 
         cmd.ThrownExceptions.Subscribe(async ex => await DisplayErrorMessageInteraction.Handle(ex));
+        cmd.ThrownExceptions.Select(_ => RxUnit.Default).InvokeCommand(ConfigureServer);
         return cmd;
     }
 

@@ -11,6 +11,7 @@
         ShowTitlebarBackground="False"
         ShowBottomBorder="False"
         BackgroundStyle="Bubble"
+        UseLayoutRounding="True"
         Closing="Window_OnClosing">
     <suki:SukiWindow.Hosts>
         <suki:SukiToastHost Manager="{x:Static browser:ViewModelLocator.ToastManager}"/>    

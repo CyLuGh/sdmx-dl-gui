@@ -40,7 +40,7 @@ public partial class Browser : ReactiveUserControl<BrowserViewModel>
     )
     {
         viewModel
-            .LaunchServerInteraction.RegisterHandler(ctx =>
+            .ConfigureServerInteraction.RegisterHandler(ctx =>
             {
                 ViewModelLocator
                     .DialogManager.CreateDialog()

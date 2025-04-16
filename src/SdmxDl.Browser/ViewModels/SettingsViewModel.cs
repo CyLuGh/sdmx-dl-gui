@@ -39,6 +39,8 @@ public class SettingsViewModel : BaseViewModel
     public RxCommand Close { get; }
     public RxInteraction CloseInteraction { get; } = new(RxApp.MainThreadScheduler);
 
+    public ReactiveCommand<RxUnit, Settings> ReloadSettings { get; }
+
     public SettingsViewModel(Tracker tracker)
     {
         ServerUri = "http://localhost:4557";
@@ -48,9 +50,12 @@ public class SettingsViewModel : BaseViewModel
 
         Connect = CreateCommandConnect();
         Cancel = ReactiveCommand.Create(() => Settings.None);
+        ReloadSettings = ReactiveCommand.CreateRunInBackground(GetSettings);
 
         Connect
             .Merge(Cancel)
+            .Merge(ReloadSettings)
+            .Merge(Connect.IsExecuting.Where(x => x).Select(_ => Settings.None)) // Reset settings on new connection configuration
             .ToPropertyEx(this, x => x.CurrentSettings, initialValue: Settings.None);
         Connect.Merge(Cancel).Select(_ => RxUnit.Default).InvokeCommand(Close);
 
@@ -64,13 +69,12 @@ public class SettingsViewModel : BaseViewModel
             () => PickPathInteraction.Handle("Pick Java path")
         );
 
-        ObservableExtensions.Subscribe(
-            cmd.Where(p => !string.IsNullOrWhiteSpace(p)).ObserveOn(RxApp.MainThreadScheduler),
-            path =>
+        cmd.Where(p => !string.IsNullOrWhiteSpace(p))
+            .ObserveOn(RxApp.MainThreadScheduler)
+            .Subscribe(path =>
             {
                 JavaPath = path;
-            }
-        );
+            });
 
         return cmd;
     }
@@ -81,13 +85,12 @@ public class SettingsViewModel : BaseViewModel
             () => PickPathInteraction.Handle("Pick jar path")
         );
 
-        ObservableExtensions.Subscribe(
-            cmd.Where(p => !string.IsNullOrWhiteSpace(p)).ObserveOn(RxApp.MainThreadScheduler),
-            path =>
+        cmd.Where(p => !string.IsNullOrWhiteSpace(p))
+            .ObserveOn(RxApp.MainThreadScheduler)
+            .Subscribe(path =>
             {
                 JarPath = path;
-            }
-        );
+            });
 
         return cmd;
     }

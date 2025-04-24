@@ -5,6 +5,7 @@ using System.Reactive.Linq;
 using HierarchyGrid.Definitions;
 using LanguageExt;
 using LiveChartsCore.Defaults;
+using LiveChartsCore.Kernel.Events;
 using LiveChartsCore.Kernel.Sketches;
 using LiveChartsCore.SkiaSharpView;
 using Polly;
@@ -14,7 +15,6 @@ using SdmxDl.Browser.Infrastructure;
 using SdmxDl.Browser.Models;
 using SdmxDl.Client;
 using SdmxDl.Client.Models;
-using SukiUI.Locale;
 
 namespace SdmxDl.Browser.ViewModels;
 
@@ -134,6 +134,8 @@ public class DataViewModel : BaseViewModel
     public Interaction<string, RxUnit> CopyToClipboardInteraction { get; } =
         new(RxApp.MainThreadScheduler);
 
+    public ReactiveCommand<HoverCommandArgs, RxUnit> HoveredPointsChanged { get; }
+
     public DataViewModel(ClientFactory clientFactory, ResiliencePipeline pipeline)
     {
         StartDate = new DateTimeOffset(new DateTime(1900, 1, 1));
@@ -146,6 +148,25 @@ public class DataViewModel : BaseViewModel
         CopyToClipboard = ReactiveCommand.CreateFromObservable(
             (string s) => CopyToClipboardInteraction.Handle(s)
         );
+
+        HoveredPointsChanged = ReactiveCommand.Create(
+            (HoverCommandArgs args) =>
+            {
+                if (args.NewPoints?.Count() > 0)
+                {
+                    Console.WriteLine(
+                        new DateTime((long)args.NewPoints.ToArray()[0].Coordinate.SecondaryValue)
+                    );
+                }
+            }
+        );
+
+        LinkedHierarchyGridViewModel
+            .WhenAnyValue(x => x.HoveredCell)
+            .Subscribe(ohc =>
+            {
+                var test = ohc;
+            });
 
         SetLinesSeries = CreateCommandSetLinesSeries();
         SetAxes = CreateCommandSetAxes();
@@ -298,8 +319,10 @@ public class DataViewModel : BaseViewModel
             Qualify = o =>
                 o switch
                 {
-                    Option<double> d
-                        => d.Match(x => Qualification.Normal, () => Qualification.Empty),
+                    Option<double> d => d.Match(
+                        x => Qualification.Normal,
+                        () => Qualification.Empty
+                    ),
                     _ => Qualification.Empty,
                 },
         });
@@ -332,24 +355,27 @@ public class DataViewModel : BaseViewModel
                 Consumer = o =>
                     o switch
                     {
-                        ChartSeries s
-                            => from x in data.Find(s.Key, d)
-                            from v in x
-                            select Tuple.Create(v, s.Format),
+                        ChartSeries s => from x in data.Find(s.Key, d)
+                        from v in x
+                        select Tuple.Create(v, s.Format),
                         _ => Option<Tuple<double, string>>.None,
                     },
                 Formatter = o =>
                     o switch
                     {
-                        Option<Tuple<double, string>> t
-                            => t.Match(x => x.Item1.ToString(x.Item2), () => string.Empty),
+                        Option<Tuple<double, string>> t => t.Match(
+                            x => x.Item1.ToString(x.Item2),
+                            () => string.Empty
+                        ),
                         _ => string.Empty,
                     },
                 Qualify = o =>
                     o switch
                     {
-                        Option<Tuple<double, string>> d
-                            => d.Match(x => Qualification.Normal, () => Qualification.Empty),
+                        Option<Tuple<double, string>> d => d.Match(
+                            x => Qualification.Normal,
+                            () => Qualification.Empty
+                        ),
                         _ => Qualification.Empty,
                     },
             });
@@ -392,6 +418,14 @@ public class DataViewModel : BaseViewModel
         return cmd;
     }
 
+    /// <summary>
+    /// Creates a ReactiveCommand to retrieve data asynchronously using the specified client factory and resilience pipeline.
+    /// The command operates on a tuple of <see cref="SdmxWebSource"/>, <see cref="DataFlow"/>, and a key string,
+    /// and returns an optional <see cref="DataSet"/>.
+    /// </summary>
+    /// <param name="clientFactory">An instance of <see cref="ClientFactory"/> used to create a client for fetching data.</param>
+    /// <param name="pipeline">An instance of <see cref="ResiliencePipeline"/> providing resilience strategies for the data retrieval operation.</param>
+    /// <returns>A ReactiveCommand that retrieves data from a source asynchronously returning an optional DataSet.</returns>
     private ReactiveCommand<
         (SdmxWebSource, DataFlow, string),
         Option<DataSet>

@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
+using LiveChartsCore.Kernel;
+using LiveChartsCore.Kernel.Sketches;
 using ReactiveUI;
 using SdmxDl.Browser.ViewModels;
 

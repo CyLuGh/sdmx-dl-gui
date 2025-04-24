@@ -21,7 +21,7 @@ public partial class App : Application
             if (desktop.Args?.Length > 0)
                 ViewModelLocator.BrowserViewModel.Argument = desktop.Args[0];
 
-            desktop.Exit += (_, __) =>
+            desktop.Exit += (_, _) =>
             {
                 Locator.Current.GetService<ClientFactory>()?.StopServer();
             };

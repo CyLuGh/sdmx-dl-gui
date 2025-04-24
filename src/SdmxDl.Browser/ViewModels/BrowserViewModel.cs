@@ -72,7 +72,7 @@ public class BrowserViewModel : BaseViewModel
     public RxInteraction LookupSeriesInteraction { get; } = new(RxApp.MainThreadScheduler);
 
     /// <summary>
-    /// Ask server to provide its version.
+    /// Ask the server to provide its version.
     /// </summary>
     public ReactiveCommand<RxUnit, string> RetrieveVersion { get; }
 

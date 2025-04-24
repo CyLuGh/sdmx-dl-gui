@@ -82,6 +82,9 @@ public class DataViewModel : BaseViewModel
         get;
     }
 
+    [Reactive]
+    public Option<DateTime> HighlightedPoint { get; set; }
+
     public HierarchyGridViewModel StandAloneHierarchyGridViewModel { get; } =
         new()
         {
@@ -149,14 +152,20 @@ public class DataViewModel : BaseViewModel
             (string s) => CopyToClipboardInteraction.Handle(s)
         );
 
+        HighlightGrid = ReactiveCommand.Create((Option<DateTime> o) => HighlightGridImpl(o));
+
         HoveredPointsChanged = ReactiveCommand.Create(
             (HoverCommandArgs args) =>
             {
                 if (args.NewPoints?.Count() > 0)
                 {
-                    Console.WriteLine(
-                        new DateTime((long)args.NewPoints.ToArray()[0].Coordinate.SecondaryValue)
+                    HighlightedPoint = new DateTime(
+                        (long)args.NewPoints.ToArray()[0].Coordinate.SecondaryValue
                     );
+                }
+                else
+                {
+                    HighlightedPoint = Option<DateTime>.None;
                 }
             }
         );
@@ -199,8 +208,26 @@ public class DataViewModel : BaseViewModel
                 })
                 .ToPropertyEx(this, x => x.HasNoData, scheduler: RxApp.MainThreadScheduler)
                 .DisposeWith(disposables);
+
+            this.WhenAnyValue(x => x.HighlightedPoint)
+                .DistinctUntilChanged()
+                .Throttle(TimeSpan.FromMilliseconds(20))
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .InvokeCommand(HighlightGrid)
+                .DisposeWith(disposables);
+
+            this.WhenAnyValue(x => x.HighlightedPoint)
+                .DistinctUntilChanged()
+                .CombineLatest(HighlightGrid.Where(x => x))
+                .Select(t => t.First)
+                .Throttle(TimeSpan.FromMilliseconds(20))
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .InvokeCommand(HighlightGrid)
+                .DisposeWith(disposables);
         });
     }
+
+    public ReactiveCommand<Option<DateTime>, bool> HighlightGrid { get; }
 
     private ReactiveCommand<
         (Seq<ChartSeries>, DateTimeOffset, DateTimeOffset),
@@ -319,10 +346,8 @@ public class DataViewModel : BaseViewModel
             Qualify = o =>
                 o switch
                 {
-                    Option<double> d => d.Match(
-                        x => Qualification.Normal,
-                        () => Qualification.Empty
-                    ),
+                    Option<double> d
+                        => d.Match(x => Qualification.Normal, () => Qualification.Empty),
                     _ => Qualification.Empty,
                 },
         });
@@ -355,29 +380,27 @@ public class DataViewModel : BaseViewModel
                 Consumer = o =>
                     o switch
                     {
-                        ChartSeries s => from x in data.Find(s.Key, d)
-                        from v in x
-                        select Tuple.Create(v, s.Format),
+                        ChartSeries s
+                            => from x in data.Find(s.Key, d)
+                            from v in x
+                            select Tuple.Create(v, s.Format),
                         _ => Option<Tuple<double, string>>.None,
                     },
                 Formatter = o =>
                     o switch
                     {
-                        Option<Tuple<double, string>> t => t.Match(
-                            x => x.Item1.ToString(x.Item2),
-                            () => string.Empty
-                        ),
+                        Option<Tuple<double, string>> t
+                            => t.Match(x => x.Item1.ToString(x.Item2), () => string.Empty),
                         _ => string.Empty,
                     },
                 Qualify = o =>
                     o switch
                     {
-                        Option<Tuple<double, string>> d => d.Match(
-                            x => Qualification.Normal,
-                            () => Qualification.Empty
-                        ),
+                        Option<Tuple<double, string>> d
+                            => d.Match(x => Qualification.Normal, () => Qualification.Empty),
                         _ => Qualification.Empty,
                     },
+                Tag = d
             });
 
         LinkedHierarchyGridViewModel.Set(
@@ -483,4 +506,58 @@ public class DataViewModel : BaseViewModel
         Option<DataFlow> flow,
         Option<string> key
     ) => from s in source from f in flow from k in key select BuildTitle(s, f, k);
+
+    private bool HighlightGridImpl(Option<DateTime> highlightOpt)
+    {
+        var cell = highlightOpt.Match(
+            o =>
+            {
+                return from pCell in LinkedHierarchyGridViewModel.DrawnCells.Find(pc =>
+                        pc.ConsumerDefinition.Tag!.Equals(o)
+                    )
+                    select pCell;
+            },
+            () => Option<PositionedCell>.None
+        );
+
+        if (cell.IsNone) /* Cell is not drawn */
+        {
+            var hOffset = highlightOpt.Match(
+                o =>
+                {
+                    if (
+                        !LinkedHierarchyGridViewModel.DrawnCells.Exists(pc =>
+                            pc.ConsumerDefinition.Tag!.Equals(o)
+                        )
+                    )
+                    {
+                        return LinkedHierarchyGridViewModel
+                            .ColumnsDefinitions.OfType<ConsumerDefinition>()
+                            .Find(x => x.Tag!.Equals(o))
+                            .Match(p => p.Position, () => -1);
+                    }
+
+                    return -1;
+                },
+                () => -1
+            );
+
+            if (hOffset != -1)
+                LinkedHierarchyGridViewModel.HorizontalOffset = hOffset;
+            else
+                return true; /* Trigger the method again with elements that should have been drawn */
+        }
+
+        LinkedHierarchyGridViewModel.HoveredCell = cell;
+        LinkedHierarchyGridViewModel.HoveredColumn = cell.Match(
+            c => c.ConsumerDefinition!.Position,
+            () => -1
+        );
+
+        Observable
+            .Return(false)
+            .InvokeCommand(LinkedHierarchyGridViewModel, x => x.DrawGridCommand);
+
+        return false;
+    }
 }

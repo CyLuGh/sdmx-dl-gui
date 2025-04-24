@@ -1,13 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
-using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 using Avalonia.ReactiveUI;
+using LanguageExt;
+using LiveChartsCore;
+using LiveChartsCore.Drawing;
 using LiveChartsCore.Kernel;
-using LiveChartsCore.Kernel.Sketches;
 using ReactiveUI;
 using SdmxDl.Browser.ViewModels;
 
@@ -40,6 +40,36 @@ public partial class DataView : ReactiveUserControl<DataViewModel>
             {
                 var clipboard = TopLevel.GetTopLevel(view)?.Clipboard;
                 await clipboard?.SetTextAsync(ctx.Input);
+                ctx.SetOutput(RxUnit.Default);
+            })
+            .DisposeWith(disposables);
+
+        viewModel
+            .HighlightChartInteraction.RegisterHandler(ctx =>
+            {
+                var odt = ctx.Input;
+
+                var dateTimePoints = odt.Match(
+                    date =>
+                        view.LinkedChart.Series.ToSeq()
+                            .Map(s =>
+                                s.Fetch(view.LinkedChart.CoreChart)
+                                    .Where(cp =>
+                                        new DateTime((long)cp.Coordinate.SecondaryValue).Equals(
+                                            date
+                                        )
+                                    )
+                                    .ToSeq()
+                            )
+                            .Flatten(),
+                    () => Seq<ChartPoint>.Empty
+                );
+
+                if (dateTimePoints.IsEmpty)
+                    view.LinkedChart.Tooltip?.Hide(view.LinkedChart.CoreChart);
+                else
+                    view.LinkedChart.Tooltip?.Show(dateTimePoints, view.LinkedChart.CoreChart);
+
                 ctx.SetOutput(RxUnit.Default);
             })
             .DisposeWith(disposables);

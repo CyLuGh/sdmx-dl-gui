@@ -139,6 +139,10 @@ public class DataViewModel : BaseViewModel
 
     public ReactiveCommand<HoverCommandArgs, RxUnit> HoveredPointsChanged { get; }
 
+    public ReactiveCommand<Option<DateTime>, RxUnit> HighlightChart { get; }
+    public Interaction<Option<DateTime>, RxUnit> HighlightChartInteraction { get; } =
+        new(RxApp.MainThreadScheduler);
+
     public DataViewModel(ClientFactory clientFactory, ResiliencePipeline pipeline)
     {
         StartDate = new DateTimeOffset(new DateTime(1900, 1, 1));
@@ -153,6 +157,10 @@ public class DataViewModel : BaseViewModel
         );
 
         HighlightGrid = ReactiveCommand.Create((Option<DateTime> o) => HighlightGridImpl(o));
+
+        HighlightChart = ReactiveCommand.CreateFromObservable(
+            (Option<DateTime> o) => HighlightChartInteraction.Handle(o)
+        );
 
         HoveredPointsChanged = ReactiveCommand.Create(
             (HoverCommandArgs args) =>
@@ -224,6 +232,22 @@ public class DataViewModel : BaseViewModel
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .InvokeCommand(HighlightGrid)
                 .DisposeWith(disposables);
+
+            this.WhenAnyValue(x => x.HighlightedPoint)
+                .DistinctUntilChanged()
+                .Throttle(TimeSpan.FromMilliseconds(20))
+                .InvokeCommand(HighlightChart)
+                .DisposeWith(disposables);
+
+            LinkedHierarchyGridViewModel
+                .WhenAnyValue(x => x.HoveredCell)
+                .Subscribe(o =>
+                {
+                    HighlightedPoint = o.Match(
+                        x => (DateTime)x.ConsumerDefinition.Tag!,
+                        () => Option<DateTime>.None
+                    );
+                });
         });
     }
 

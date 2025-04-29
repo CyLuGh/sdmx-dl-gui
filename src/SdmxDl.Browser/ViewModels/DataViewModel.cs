@@ -68,7 +68,7 @@ public class DataViewModel : BaseViewModel
         get;
     }
 
-    public ICartesianAxis[] XAxes
+    public ICartesianAxis[]? XAxes
     {
         [ObservableAsProperty]
         get;
@@ -219,7 +219,7 @@ public class DataViewModel : BaseViewModel
 
             this.WhenAnyValue(x => x.HighlightedPoint)
                 .DistinctUntilChanged()
-                .Throttle(TimeSpan.FromMilliseconds(20))
+                .Throttle(TimeSpan.FromMilliseconds(50))
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .InvokeCommand(HighlightGrid)
                 .DisposeWith(disposables);
@@ -228,14 +228,14 @@ public class DataViewModel : BaseViewModel
                 .DistinctUntilChanged()
                 .CombineLatest(HighlightGrid.Where(x => x))
                 .Select(t => t.First)
-                .Throttle(TimeSpan.FromMilliseconds(20))
+                .Throttle(TimeSpan.FromMilliseconds(50))
                 .ObserveOn(RxApp.MainThreadScheduler)
                 .InvokeCommand(HighlightGrid)
                 .DisposeWith(disposables);
 
             this.WhenAnyValue(x => x.HighlightedPoint)
                 .DistinctUntilChanged()
-                .Throttle(TimeSpan.FromMilliseconds(20))
+                .Throttle(TimeSpan.FromMilliseconds(50))
                 .InvokeCommand(HighlightChart)
                 .DisposeWith(disposables);
 
@@ -370,8 +370,10 @@ public class DataViewModel : BaseViewModel
             Qualify = o =>
                 o switch
                 {
-                    Option<double> d
-                        => d.Match(x => Qualification.Normal, () => Qualification.Empty),
+                    Option<double> d => d.Match(
+                        x => Qualification.Normal,
+                        () => Qualification.Empty
+                    ),
                     _ => Qualification.Empty,
                 },
         });
@@ -404,27 +406,30 @@ public class DataViewModel : BaseViewModel
                 Consumer = o =>
                     o switch
                     {
-                        ChartSeries s
-                            => from x in data.Find(s.Key, d)
-                            from v in x
-                            select Tuple.Create(v, s.Format),
+                        ChartSeries s => from x in data.Find(s.Key, d)
+                        from v in x
+                        select Tuple.Create(v, s.Format),
                         _ => Option<Tuple<double, string>>.None,
                     },
                 Formatter = o =>
                     o switch
                     {
-                        Option<Tuple<double, string>> t
-                            => t.Match(x => x.Item1.ToString(x.Item2), () => string.Empty),
+                        Option<Tuple<double, string>> t => t.Match(
+                            x => x.Item1.ToString(x.Item2),
+                            () => string.Empty
+                        ),
                         _ => string.Empty,
                     },
                 Qualify = o =>
                     o switch
                     {
-                        Option<Tuple<double, string>> d
-                            => d.Match(x => Qualification.Normal, () => Qualification.Empty),
+                        Option<Tuple<double, string>> d => d.Match(
+                            x => Qualification.Normal,
+                            () => Qualification.Empty
+                        ),
                         _ => Qualification.Empty,
                     },
-                Tag = d
+                Tag = d,
             });
 
         LinkedHierarchyGridViewModel.Set(

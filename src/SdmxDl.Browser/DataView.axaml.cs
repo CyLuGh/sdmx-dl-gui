@@ -39,7 +39,8 @@ public partial class DataView : ReactiveUserControl<DataViewModel>
             .CopyToClipboardInteraction.RegisterHandler(async ctx =>
             {
                 var clipboard = TopLevel.GetTopLevel(view)?.Clipboard;
-                await clipboard?.SetTextAsync(ctx.Input);
+                if (clipboard is not null)
+                    await clipboard.SetTextAsync(ctx.Input);
                 ctx.SetOutput(RxUnit.Default);
             })
             .DisposeWith(disposables);

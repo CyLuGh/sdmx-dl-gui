@@ -294,7 +294,7 @@ public class BrowserViewModel : BaseViewModel
             {
                 var tryGetConfig = Prelude.Try(() =>
                 {
-                    var tracker = Locator.Current.GetService<Tracker>();
+                    var tracker = Locator.Current.GetService<Tracker>()!;
                     var store = tracker.Store.GetData("SettingsViewModel");
                     var settings = new Settings()
                     {

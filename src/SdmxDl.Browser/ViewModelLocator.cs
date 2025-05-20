@@ -2,7 +2,9 @@ global using RxCommand = ReactiveUI.ReactiveCommand<System.Reactive.Unit, System
 global using RxInteraction = ReactiveUI.Interaction<System.Reactive.Unit, System.Reactive.Unit>;
 global using RxUnit = System.Reactive.Unit;
 using System;
+using System.IO;
 using Jot;
+using Microsoft.Extensions.Configuration;
 using Polly;
 using Polly.Retry;
 using ReactiveUI;
@@ -20,6 +22,13 @@ public static class ViewModelLocator
     static ViewModelLocator()
     {
         Locator.CurrentMutable.InitializeSplat();
+
+        var configuration = new ConfigurationBuilder()
+            .SetBasePath(Path.GetDirectoryName(System.Environment.ProcessPath)!)
+            .AddJsonFile("appsettings.json", optional: true)
+            .Build();
+
+        SplatRegistrations.RegisterConstant<IConfiguration>(configuration);
 
         var tracker = new Tracker();
         tracker

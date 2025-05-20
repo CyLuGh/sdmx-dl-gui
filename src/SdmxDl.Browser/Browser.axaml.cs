@@ -5,11 +5,13 @@ using System.Reactive.Linq;
 using Avalonia.Controls;
 using Avalonia.Controls.Notifications;
 using Avalonia.ReactiveUI;
+using Microsoft.Extensions.Configuration;
 using ReactiveUI;
 using SdmxDl.Browser.ViewModels;
 using Splat;
 using SukiUI.Dialogs;
 using SukiUI.Toasts;
+using Velopack;
 
 namespace SdmxDl.Browser;
 
@@ -132,6 +134,29 @@ public partial class Browser : ReactiveUserControl<BrowserViewModel>
                 if (existingTab is not null)
                 {
                     view.TabControlResults.Items.Remove(existingTab);
+                }
+
+                ctx.SetOutput(RxUnit.Default);
+            })
+            .DisposeWith(disposables);
+
+        viewModel
+            .UpdateApplicationInteraction.RegisterHandler(async ctx =>
+            {
+                var mgr = new UpdateManager(
+                    viewModel.Configuration.GetValue("UpdateUrl", string.Empty)
+                );
+
+                if (mgr.IsInstalled)
+                {
+                    var info = await mgr.CheckForUpdatesAsync();
+
+                    if (info is not null)
+                    {
+                        await mgr.DownloadUpdatesAsync(info);
+                    }
+
+                    mgr.ApplyUpdatesAndRestart(info);
                 }
 
                 ctx.SetOutput(RxUnit.Default);

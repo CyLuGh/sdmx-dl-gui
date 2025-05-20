@@ -38,6 +38,9 @@ public class DataViewModel : BaseViewModel
     [Reactive]
     public DateTimeOffset EndDate { get; set; }
 
+    [Reactive]
+    public bool UseLogarithmicAxis { get; set; }
+
     public Option<DataSet> DataSet
     {
         [ObservableAsProperty]
@@ -74,6 +77,12 @@ public class DataViewModel : BaseViewModel
         get;
     }
 
+    public ICartesianAxis[]? YAxes
+    {
+        [ObservableAsProperty]
+        get;
+    }
+
     public LiveChartsCore.Measure.Margin Margins { get; } = new(10, 50);
 
     public bool HasNoData
@@ -84,6 +93,18 @@ public class DataViewModel : BaseViewModel
 
     [Reactive]
     public Option<DateTime> HighlightedPoint { get; set; }
+
+    public HierarchyDefinitions StandAloneHierarchyDefinitions
+    {
+        [ObservableAsProperty]
+        get;
+    }
+
+    public HierarchyDefinitions LinkedHierarchyDefinitions
+    {
+        [ObservableAsProperty]
+        get;
+    }
 
     public HierarchyGridViewModel StandAloneHierarchyGridViewModel { get; } =
         new()
@@ -121,11 +142,11 @@ public class DataViewModel : BaseViewModel
     private ReactiveCommand<DataSet, Seq<ChartSeries>> TransformData { get; }
     private ReactiveCommand<
         (Seq<ChartSeries>, DateTimeOffset, DateTimeOffset),
-        RxUnit
+        HierarchyDefinitions
     > BuildStandAloneGrid { get; }
     private ReactiveCommand<
         (Seq<ChartSeries>, DateTimeOffset, DateTimeOffset),
-        RxUnit
+        HierarchyDefinitions
     > BuildLinkedGrid { get; }
     public ReactiveCommand<Seq<ChartSeries>, ICartesianAxis[]> SetAxes { get; }
 
@@ -178,13 +199,6 @@ public class DataViewModel : BaseViewModel
             }
         );
 
-        LinkedHierarchyGridViewModel
-            .WhenAnyValue(x => x.HoveredCell)
-            .Subscribe(ohc =>
-            {
-                var test = ohc;
-            });
-
         SetLinesSeries = CreateCommandSetLinesSeries();
         SetAxes = CreateCommandSetAxes();
 
@@ -207,6 +221,13 @@ public class DataViewModel : BaseViewModel
         this.WhenActivated(disposables =>
         {
             ManageBusyState(disposables);
+
+            this.WhenAnyValue(x => x.UseLogarithmicAxis)
+                .Select<bool, ICartesianAxis[]>(isLog =>
+                    isLog ? [new LogarithmicAxis(10)] : [new Axis()]
+                )
+                .ToPropertyEx(this, x => x.YAxes, scheduler: RxApp.MainThreadScheduler)
+                .DisposeWith(disposables);
 
             this.WhenAnyValue(x => x.DataSet, x => x.ChartSeries)
                 .Select(t =>
@@ -248,6 +269,16 @@ public class DataViewModel : BaseViewModel
                         () => Option<DateTime>.None
                     );
                 });
+
+            this.WhenAnyValue(x => x.StandAloneHierarchyDefinitions)
+                .WhereNotNull()
+                .Subscribe(defs => StandAloneHierarchyGridViewModel.Set(defs))
+                .DisposeWith(disposables);
+
+            this.WhenAnyValue(x => x.LinkedHierarchyDefinitions)
+                .WhereNotNull()
+                .Subscribe(defs => LinkedHierarchyGridViewModel.Set(defs))
+                .DisposeWith(disposables);
         });
     }
 
@@ -294,14 +325,14 @@ public class DataViewModel : BaseViewModel
 
     private ReactiveCommand<
         (Seq<ChartSeries>, DateTimeOffset, DateTimeOffset),
-        RxUnit
+        HierarchyDefinitions
     > CreateCommandBuildStandAloneGrid()
     {
         var cmd = ReactiveCommand.CreateRunInBackground(
             ((Seq<ChartSeries>, DateTimeOffset, DateTimeOffset) t) =>
             {
                 var (series, start, end) = t;
-                BuildStandAloneGridImpl(series, start, end);
+                return BuildStandAloneGridImpl(series, start, end);
             }
         );
 
@@ -310,20 +341,26 @@ public class DataViewModel : BaseViewModel
             .CombineLatest(this.WhenAnyValue(x => x.StartDate), this.WhenAnyValue(x => x.EndDate))
             .Throttle(TimeSpan.FromMilliseconds(50))
             .InvokeCommand(cmd);
+
+        cmd.ToPropertyEx(
+            this,
+            x => x.StandAloneHierarchyDefinitions,
+            scheduler: RxApp.MainThreadScheduler
+        );
 
         return cmd;
     }
 
     private ReactiveCommand<
         (Seq<ChartSeries>, DateTimeOffset, DateTimeOffset),
-        RxUnit
+        HierarchyDefinitions
     > CreateCommandLinkedAloneGrid()
     {
         var cmd = ReactiveCommand.CreateRunInBackground(
             ((Seq<ChartSeries>, DateTimeOffset, DateTimeOffset) t) =>
             {
                 var (series, start, end) = t;
-                BuildLinkedGridImpl(series, start, end);
+                return BuildLinkedGridImpl(series, start, end);
             }
         );
 
@@ -333,10 +370,16 @@ public class DataViewModel : BaseViewModel
             .Throttle(TimeSpan.FromMilliseconds(50))
             .InvokeCommand(cmd);
 
+        cmd.ToPropertyEx(
+            this,
+            x => x.LinkedHierarchyDefinitions,
+            scheduler: RxApp.MainThreadScheduler
+        );
+
         return cmd;
     }
 
-    private void BuildStandAloneGridImpl(
+    private HierarchyDefinitions BuildStandAloneGridImpl(
         Seq<ChartSeries> series,
         DateTimeOffset start,
         DateTimeOffset end
@@ -378,12 +421,10 @@ public class DataViewModel : BaseViewModel
                 },
         });
 
-        StandAloneHierarchyGridViewModel.Set(
-            new HierarchyDefinitions(producerDefinitions, consumerDefinitions)
-        );
+        return new HierarchyDefinitions(producerDefinitions, consumerDefinitions);
     }
 
-    private void BuildLinkedGridImpl(
+    private HierarchyDefinitions BuildLinkedGridImpl(
         Seq<ChartSeries> series,
         DateTimeOffset start,
         DateTimeOffset end
@@ -432,9 +473,7 @@ public class DataViewModel : BaseViewModel
                 Tag = d,
             });
 
-        LinkedHierarchyGridViewModel.Set(
-            new HierarchyDefinitions(producerDefinitions, consumerDefinitions)
-        );
+        return new HierarchyDefinitions(producerDefinitions, consumerDefinitions);
     }
 
     private void ManageBusyState(CompositeDisposable disposables)

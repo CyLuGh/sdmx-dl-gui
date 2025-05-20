@@ -35,9 +35,9 @@ public static class ViewModelLocator
             .AddRetry(
                 new RetryStrategyOptions()
                 {
-                    MaxRetryAttempts = 4,
-                    Delay = TimeSpan.FromSeconds(1.5),
-                    BackoffType = DelayBackoffType.Exponential,
+                    MaxRetryAttempts = 3,
+                    Delay = TimeSpan.FromSeconds(.5),
+                    BackoffType = DelayBackoffType.Constant,
                 }
             )
             .Build();
@@ -58,6 +58,7 @@ public static class ViewModelLocator
         SplatRegistrations.RegisterLazySingleton<DimensionsSelectorViewModel>();
 
         SplatRegistrations.Register<DataViewModel>();
+        SplatRegistrations.Register<SeriesFinderViewModel>();
 
         var current = Locator.CurrentMutable;
 

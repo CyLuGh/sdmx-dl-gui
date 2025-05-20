@@ -1,4 +1,5 @@
-﻿using System.Reactive.Linq;
+﻿using System.Linq;
+using System.Reactive.Linq;
 using LanguageExt;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;

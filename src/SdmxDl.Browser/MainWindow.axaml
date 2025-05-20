@@ -3,18 +3,71 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:suki="https://github.com/kikipoulet/SukiUI"
+        xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
         xmlns:browser="clr-namespace:SdmxDl.Browser"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="SdmxDl.Browser.MainWindow"
         Title="SDMX-DL GUI"
+        ShowTitlebarBackground="False"
+        ShowBottomBorder="False"
         BackgroundStyle="Bubble"
+        UseLayoutRounding="True"
         Closing="Window_OnClosing">
     <suki:SukiWindow.Hosts>
         <suki:SukiToastHost Manager="{x:Static browser:ViewModelLocator.ToastManager}"/>    
         <suki:SukiDialogHost Manager="{x:Static browser:ViewModelLocator.DialogManager}"/>    
     </suki:SukiWindow.Hosts>
+    <suki:SukiWindow.RightWindowTitleBarControls>
+        <Button Classes="WindowControlsButton"
+                Content="{materialIcons:MaterialIconExt Kind=About}">
+            <Button.Flyout>
+                <Flyout>
+                    <Panel>
+                        <Border Margin="20"
+                                BoxShadow="{DynamicResource SukiPopupShadow}"
+                                CornerRadius="20"/>
+                        
+                        <Border MinWidth="350"
+                                Margin="20"
+                                Background="{DynamicResource SukiCardBackground}"
+                                BorderBrush="{DynamicResource SukiLightBorderBrush}"
+                                BorderThickness="1"
+                                ClipToBounds="True"
+                                CornerRadius="15">
+                            <Border Padding="15" Background="{DynamicResource PopupGradientBrush}">
+                                <StackPanel>
+                                    <TextBlock Text="SDMX-DL GUI" 
+                                               FontSize="16"
+                                               FontWeight="Bold" 
+                                               FontStretch="Expanded"/>
+                                    <TextBlock>
+                                        <Run>Developed by</Run>
+                                        <Run FontWeight="Bold">DEMORTIER Jeremy</Run>
+                                    </TextBlock>
+                                    <TextBlock>
+                                        GitHub: <HyperlinkButton Content="https://github.com/CyLuGh/sdmx-dl-gui" Click="GitHubLinkClick"/>
+                                    </TextBlock>
+                                    <TextBlock/>
+                                    <TextBlock Text="SDMX-DL" 
+                                               FontSize="16"
+                                               FontWeight="Bold" 
+                                               FontStretch="Expanded"/>
+                                    <TextBlock>
+                                        <Run>Developed by</Run>
+                                        <Run FontWeight="Bold">CHARLES Philippe</Run>
+                                    </TextBlock>
+                                    <TextBlock>
+                                        GitHub: <HyperlinkButton Content="https://github.com/nbbrd/sdmx-dl" Click="GitHubLinkClick"/>
+                                    </TextBlock>
+                                </StackPanel>
+                            </Border>
+                        </Border>
+                    </Panel>
+                </Flyout>
+            </Button.Flyout>
+        </Button>
+    </suki:SukiWindow.RightWindowTitleBarControls>
     
     <browser:Browser ViewModel="{x:Static browser:ViewModelLocator.BrowserViewModel}"
                      Margin="5"/>
-    <!-- <browser:BrowserDock ViewModel="{x:Static browser:ViewModelLocator.BrowserDockViewModel}"/> -->
 </suki:SukiWindow>

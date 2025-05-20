@@ -11,91 +11,91 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SdmxDl.Browser.SourceSelector"
              x:DataType="viewModels:SourceSelectorViewModel">
-    <UserControl.Resources>
-        <converters:SelectorToggleTextConverter x:Key="SelectorToggleTextConverter" />
-        <converters:SdmxWebSourceConverter x:Key="SdmxWebSourceConverter" />
-    </UserControl.Resources>
-    <Grid IsEnabled="{Binding !AllData.IsEmpty}">
-        <ToggleButton Name="ToggleSearch"
-                      Content="{Binding Selection,Converter={StaticResource SelectorToggleTextConverter}}"
-                      IsChecked="{Binding IsSearching}"
-                      IsVisible="{Binding !IsSearching}"
-                      HorizontalAlignment="Stretch">
-            <Interaction.Behaviors>
-                <ButtonClickEventTriggerBehavior>
-                    <FocusControlAction TargetControl="TextBoxSource" />
-                </ButtonClickEventTriggerBehavior>
-            </Interaction.Behaviors>
-        </ToggleButton>
+  <UserControl.Resources>
+    <converters:SelectorToggleTextConverter x:Key="SelectorToggleTextConverter" />
+    <converters:SdmxWebSourceConverter x:Key="SdmxWebSourceConverter" />
+  </UserControl.Resources>
+  <Grid IsEnabled="{Binding !AllData.IsEmpty}">
+    <ToggleButton Name="ToggleSearch"
+                  IsChecked="{Binding IsSearching}"
+                  IsVisible="{Binding !IsSearching}"
+                  HorizontalAlignment="Stretch">
+      <TextBlock Text="{Binding Selection,Converter={StaticResource SelectorToggleTextConverter}}"/>
+      <Interaction.Behaviors>
+        <ButtonClickEventTriggerBehavior>
+          <FocusControlAction TargetControl="TextBoxSource" />
+        </ButtonClickEventTriggerBehavior>
+      </Interaction.Behaviors>
+    </ToggleButton>
 
-        <TextBox Name="TextBoxSource"
-                 Text="{Binding CurrentInput}"
-                 Watermark="Source"
-                 suki:TextBoxExtensions.AddDeleteButton="True"
-                 IsVisible="{Binding #ToggleSearch.IsChecked}">
+    <TextBox Name="TextBoxSource"
+             Text="{Binding CurrentInput}"
+             Watermark="Source"
+             suki:TextBoxExtensions.AddDeleteButton="True"
+             IsVisible="{Binding #ToggleSearch.IsChecked}">
+      <Interaction.Behaviors>
+        <EventTriggerBehavior EventName="KeyDown">
+          <InvokeCommandAction Command="{Binding CheckTextBoxInput}"
+                               PassEventArgsToCommand="True" />
+        </EventTriggerBehavior>
+        <EventTriggerBehavior EventName="TextInput">
+          <InvokeCommandAction Command="{Binding CheckTextBoxInput}"
+                               PassEventArgsToCommand="True" />
+        </EventTriggerBehavior>
+      </Interaction.Behaviors>
+    </TextBox>
+    <Popup PlacementTarget="TextBoxSource"
+           Placement="RightEdgeAlignedTop"
+           PlacementConstraintAdjustment="FlipX"
+           IsOpen="{Binding IsSearching}">
+      <Interaction.Behaviors>
+        <EventTriggerBehavior EventName="KeyDown">
+          <InvokeCommandAction Command="{Binding CheckTextBoxInput}"
+                               PassEventArgsToCommand="True" />
+        </EventTriggerBehavior>
+      </Interaction.Behaviors>
+      <suki:GlassCard Classes="Standard"
+                      MinWidth="400"
+                      MaxWidth="800"
+                      MinHeight="500"
+                      MaxHeight="700">
+        <suki:GlassCard.Resources>
+          <system:Double x:Key="GlassOpacity">0.9</system:Double>
+        </suki:GlassCard.Resources>
+        <Grid RowDefinitions="*,Auto">
+          <ListBox SelectedItem="{Binding CurrentSelection}"
+                   ItemsSource="{Binding CurrentSources}">
             <Interaction.Behaviors>
-                <EventTriggerBehavior EventName="KeyDown">
-                    <InvokeCommandAction Command="{Binding CheckTextBoxInput}"
-                                         PassEventArgsToCommand="True" />
-                </EventTriggerBehavior>
-                <EventTriggerBehavior EventName="TextInput">
-                    <InvokeCommandAction Command="{Binding CheckTextBoxInput}"
-                                         PassEventArgsToCommand="True" />
-                </EventTriggerBehavior>
+              <EventTriggerBehavior EventName="DoubleTapped">
+                <InvokeCommandAction Command="{Binding ValidateSelection}" />
+              </EventTriggerBehavior>
             </Interaction.Behaviors>
-        </TextBox>
-        <Popup PlacementTarget="TextBoxSource"
-               Placement="RightEdgeAlignedTop"
-               PlacementConstraintAdjustment="FlipX"
-               IsOpen="{Binding IsSearching}">
-            <Interaction.Behaviors>
-                <EventTriggerBehavior EventName="KeyDown">
-                    <InvokeCommandAction Command="{Binding CheckTextBoxInput}"
-                                         PassEventArgsToCommand="True" />
-                </EventTriggerBehavior>
-            </Interaction.Behaviors>
-            <suki:GlassCard Classes="Standard"
-                            MinWidth="400"
-                            MaxWidth="800"
-                            MinHeight="500"
-                            MaxHeight="700">
-                <suki:GlassCard.Resources>
-                    <system:Double x:Key="GlassOpacity">0.9</system:Double>
-                </suki:GlassCard.Resources>
-                <Grid RowDefinitions="*,Auto">
-                    <ListBox SelectedItem="{Binding CurrentSelection}"
-                             ItemsSource="{Binding CurrentSources}">
-                        <Interaction.Behaviors>
-                            <EventTriggerBehavior EventName="DoubleTapped">
-                                <InvokeCommandAction Command="{Binding ValidateSelection}" />
-                            </EventTriggerBehavior>
-                        </Interaction.Behaviors>
-                        <ListBox.DataTemplates>
-                            <DataTemplate DataType="models:SdmxWebSource">
-                                <Grid>
-                                    <TextBlock Text="{Binding .,Converter={StaticResource SdmxWebSourceConverter}}" />
-                                </Grid>
-                            </DataTemplate>
-                        </ListBox.DataTemplates>
-                    </ListBox>
-
-                    <UniformGrid Margin="0 5 0 0"
-                                 HorizontalAlignment="Right"
-                                 Rows="1"
-                                 Grid.Row="1">
-                        <Button Command="{Binding CancelSelection}"
-                                Content="{materialIcons:MaterialIconTextExt Kind=Cancel, Text=CANCEL}">
-                        </Button>
-                        <Button Command="{Binding ValidateSelection}"
-                                Content="{materialIcons:MaterialIconTextExt Kind=CheckboxMarkedCircleOutline, Text=USE SOURCE}"
-                                Classes="Flat"
-                                Margin="5 0 0 0">
-                        </Button>
-                    </UniformGrid>
-
+            <ListBox.DataTemplates>
+              <DataTemplate DataType="models:SdmxWebSource">
+                <Grid>
+                  <TextBlock Text="{Binding .,Converter={StaticResource SdmxWebSourceConverter}}" TextTrimming="CharacterEllipsis"/>
                 </Grid>
-            </suki:GlassCard>
-        </Popup>
-    </Grid>
+              </DataTemplate>
+            </ListBox.DataTemplates>
+          </ListBox>
+
+          <UniformGrid Margin="0 5 0 0"
+                       HorizontalAlignment="Right"
+                       Rows="1"
+                       Grid.Row="1">
+            <Button Command="{Binding CancelSelection}"
+                    Content="{materialIcons:MaterialIconTextExt Kind=Cancel, Text=CANCEL}">
+            </Button>
+            <Button Command="{Binding ValidateSelection}"
+                    Content="{materialIcons:MaterialIconTextExt Kind=CheckboxMarkedCircleOutline, Text=USE SOURCE}"
+                    Classes="Flat"
+                    Margin="5 0 0 0">
+            </Button>
+          </UniformGrid>
+
+        </Grid>
+      </suki:GlassCard>
+    </Popup>
+  </Grid>
 
 </UserControl>

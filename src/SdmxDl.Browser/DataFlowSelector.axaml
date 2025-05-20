@@ -17,10 +17,10 @@
 
     <Grid IsEnabled="{Binding !AllData.IsEmpty}">
         <ToggleButton Name="ToggleSearch"
-                      Content="{Binding Selection,Converter={StaticResource SelectorToggleTextConverter}}"
                       IsChecked="{Binding IsSearching}"
                       IsVisible="{Binding !IsSearching}"
                       HorizontalAlignment="Stretch">
+          <TextBlock Text="{Binding Selection,Converter={StaticResource SelectorToggleTextConverter}}"/>
             <Interaction.Behaviors>
                 <ButtonClickEventTriggerBehavior>
                     <FocusControlAction TargetControl="TextBoxSource" />
@@ -72,8 +72,9 @@
                         </Interaction.Behaviors>
                         <ListBox.DataTemplates>
                             <DataTemplate DataType="models:DataFlow">
-                                <Grid>
-                                    <TextBlock Text="{Binding Name}"></TextBlock>
+                                <Grid RowDefinitions="Auto,Auto">
+                                    <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" FontWeight="Medium" Grid.Row="0"/>
+                                    <TextBlock Text="{Binding Ref}" FontStretch="Condensed" Grid.Row="1"/>
                                 </Grid>
                             </DataTemplate>
                         </ListBox.DataTemplates>
@@ -92,7 +93,6 @@
                                 Margin="5 0 0 0">
                         </Button>
                     </UniformGrid>
-
                 </Grid>
             </suki:GlassCard>
         </Popup>

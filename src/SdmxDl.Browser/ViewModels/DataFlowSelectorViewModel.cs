@@ -21,30 +21,15 @@ public class DataFlowSelectorViewModel(ClientFactory clientFactory, ResiliencePi
 
         return all.Where(s =>
                 s.Name.Contains(input, StringComparison.CurrentCultureIgnoreCase)
-                || s.Description.Contains(input, StringComparison.CurrentCultureIgnoreCase)
+                || s.Ref.Contains(input, StringComparison.CurrentCultureIgnoreCase)
             )
             .OrderBy(s => s.Name)
             .ToSeq()
             .Strict();
     }
 
-    [Pure]
-    protected override async Task<Seq<DataFlow>> RetrieveDataImpl(
+    protected override Task<Seq<DataFlow>> RetrieveDataImpl(
         SdmxWebSource input,
         ClientFactory clientFactory
-    )
-    {
-        var rawFlows = new List<Sdmxdl.Format.Protobuf.Flow>();
-        using var response = clientFactory
-            .GetClient()
-            .GetFlows(new DatabaseRequest() { Source = input.Id });
-
-        while (await response.ResponseStream.MoveNext(CancelTokenSource.Token))
-        {
-            var dataFlow = response.ResponseStream.Current;
-            rawFlows.Add(dataFlow);
-        }
-
-        return rawFlows.Map(f => new DataFlow(f)).ToSeq().Strict();
-    }
+    ) => clientFactory.GetClient().GetDataFlows(input, CancelTokenSource.Token);
 }

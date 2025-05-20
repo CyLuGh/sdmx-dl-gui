@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using Avalonia.Controls;
@@ -39,12 +40,29 @@ public partial class Browser : ReactiveUserControl<BrowserViewModel>
     )
     {
         viewModel
-            .LaunchServerInteraction.RegisterHandler(ctx =>
+            .ConfigureServerInteraction.RegisterHandler(ctx =>
             {
                 ViewModelLocator
                     .DialogManager.CreateDialog()
                     .WithContent(
                         new ServerStartup() { ViewModel = ViewModelLocator.SettingsViewModel }
+                    )
+                    .TryShow();
+
+                ctx.SetOutput(RxUnit.Default);
+            })
+            .DisposeWith(disposables);
+
+        viewModel
+            .LookupSeriesInteraction.RegisterHandler(ctx =>
+            {
+                ViewModelLocator
+                    .DialogManager.CreateDialog()
+                    .WithContent(
+                        new SeriesFinderView()
+                        {
+                            ViewModel = Locator.Current.GetService<SeriesFinderViewModel>(),
+                        }
                     )
                     .TryShow();
 
@@ -74,19 +92,48 @@ public partial class Browser : ReactiveUserControl<BrowserViewModel>
             .ShowResultsInteraction.RegisterHandler(ctx =>
             {
                 var (source, flow, key) = ctx.Input;
+                var title = DataViewModel.BuildTitle(source, flow, key);
 
-                var dvm = Locator.Current.GetService<DataViewModel>();
-                dvm.Source = source;
-                dvm.Flow = flow;
-                dvm.Key = key;
+                var existingTab = view
+                    .TabControlResults.Items.OfType<TabItem>()
+                    .FirstOrDefault(x => x.Header?.ToString()?.Equals(title) == true);
 
-                view.TabControlResults.Items.Add(
-                    new TabItem()
+                if (existingTab is not null)
+                {
+                    view.TabControlResults.SelectedItem = existingTab;
+                }
+                else
+                {
+                    var dvm = Locator.Current.GetService<DataViewModel>()!;
+                    dvm.Source = source;
+                    dvm.Flow = flow;
+                    dvm.Key = key;
+
+                    var tabItem = new TabItem()
                     {
-                        Header = DataViewModel.BuildTitle(source, flow, key),
+                        Header = title,
                         Content = new DataView() { ViewModel = dvm },
-                    }
-                );
+                    };
+                    view.TabControlResults.Items.Add(tabItem);
+                    view.TabControlResults.SelectedItem = tabItem;
+                }
+
+                ctx.SetOutput(RxUnit.Default);
+            })
+            .DisposeWith(disposables);
+
+        viewModel
+            .CloseInteraction.RegisterHandler(ctx =>
+            {
+                var existingTab = view
+                    .TabControlResults.Items.OfType<TabItem>()
+                    .FirstOrDefault(x => x.Header?.ToString()?.Equals(ctx.Input) == true);
+
+                if (existingTab is not null)
+                {
+                    view.TabControlResults.Items.Remove(existingTab);
+                }
+
                 ctx.SetOutput(RxUnit.Default);
             })
             .DisposeWith(disposables);

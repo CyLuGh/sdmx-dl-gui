@@ -3,6 +3,10 @@ using LanguageExt;
 
 namespace SdmxDl.Client.Models;
 
+/// <summary>
+/// Represents a source for SDMX (Statistical Data and Metadata eXchange) with relevant metadata, properties,
+/// and configuration settings.
+/// </summary>
 public readonly record struct SdmxWebSource
 {
     public required string Id { get; init; }

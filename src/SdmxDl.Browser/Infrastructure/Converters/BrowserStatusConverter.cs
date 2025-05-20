@@ -21,6 +21,8 @@ public class BrowserStatusConverter : IValueConverter
                 BrowserStatus.Offline => "OFFLINE",
                 BrowserStatus.Connected => "CONNECTED",
                 BrowserStatus.Hosting => "HOSTING",
+                BrowserStatus.Connecting => "CONNECTING",
+                BrowserStatus.Failed => "FAILED",
                 _ => string.Empty,
             },
             _ => string.Empty,

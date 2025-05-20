@@ -19,22 +19,10 @@ namespace SdmxDl.Browser.ViewModels;
 public class SourceSelectorViewModel(ClientFactory clientFactory, ResiliencePipeline pipeline)
     : SelectorViewModel<SdmxWebSource, RxUnit>(clientFactory, pipeline)
 {
-    [Pure]
-    protected override async Task<Seq<SdmxWebSource>> RetrieveDataImpl(
+    protected override Task<Seq<SdmxWebSource>> RetrieveDataImpl(
         RxUnit input,
         ClientFactory clientFactory
-    )
-    {
-        var rawSources = new List<Sdmxdl.Format.Protobuf.Web.WebSource>();
-        using var response = clientFactory.GetClient().GetSources(new Empty());
-        while (await response.ResponseStream.MoveNext(CancelTokenSource.Token))
-        {
-            var source = response.ResponseStream.Current;
-            rawSources.Add(source);
-        }
-
-        return rawSources.Select(s => new SdmxWebSource(s)).ToSeq();
-    }
+    ) => clientFactory.GetClient().GetSources(CancelTokenSource.Token);
 
     [Pure]
     protected override Seq<SdmxWebSource> Filter(Seq<SdmxWebSource> all, string? input)

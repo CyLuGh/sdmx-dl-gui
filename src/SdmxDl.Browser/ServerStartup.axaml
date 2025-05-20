@@ -39,18 +39,24 @@
                 <TextBox Watermark="Path to Java binaries"
                          UseFloatingWatermark="True"
                          Text="{Binding JavaPath}"
+                         VerticalAlignment="Center"
                          Grid.Column="0" Grid.Row="0"/>
                 <Button Command="{Binding Path=PickJavaPath}"
                         Content="{materialIcons:MaterialIconExt Kind=FolderOpen}" 
                         Classes="Icon"
+                        VerticalAlignment="Bottom"
+                        Margin="10 0 0 0"
                         Grid.Column="1" Grid.Row="0"/>
                 <TextBox Watermark="Path to sdmx-dl jar" 
                          UseFloatingWatermark="True"
                          Text="{Binding JarPath}"
+                         VerticalAlignment="Center"
                          Grid.Column="0" Grid.Row="1"/>
                 <Button Command="{Binding Path=PickJarPath}"
                         Content="{materialIcons:MaterialIconExt Kind=FolderOpen}" 
                         Classes="Icon"
+                        VerticalAlignment="Bottom"
+                        Margin="10 0 0 0"
                         Grid.Column="1" 
                         Grid.Row="1"/>
             </Grid>

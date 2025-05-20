@@ -6,6 +6,7 @@ using Avalonia.Input;
 using Jot;
 using LanguageExt;
 using LanguageExt.UnsafeValueAccess;
+using Microsoft.Extensions.Configuration;
 using Polly;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -20,6 +21,8 @@ namespace SdmxDl.Browser.ViewModels;
 
 public class BrowserViewModel : BaseViewModel
 {
+    public IConfiguration Configuration { get; }
+
     /// <summary>
     /// Indicates if a server is available.
     /// </summary>
@@ -96,7 +99,11 @@ public class BrowserViewModel : BaseViewModel
     public ReactiveCommand<string, RxUnit> Close { get; }
     public Interaction<string, RxUnit> CloseInteraction { get; } = new(RxApp.MainThreadScheduler);
 
+    private RxCommand UpdateApplication { get; }
+    internal RxInteraction UpdateApplicationInteraction { get; } = new(RxApp.MainThreadScheduler);
+
     public BrowserViewModel(
+        IConfiguration configuration,
         ClientFactory clientFactory,
         SourceSelectorViewModel sourceSelectorViewModel,
         DataFlowSelectorViewModel dataFlowSelectorViewModel,
@@ -105,6 +112,12 @@ public class BrowserViewModel : BaseViewModel
         ResiliencePipeline pipeline
     )
     {
+        Configuration = configuration;
+        UpdateApplicationInteraction.RegisterHandler(ctx => ctx.SetOutput(RxUnit.Default));
+        UpdateApplication = ReactiveCommand.CreateFromObservable(
+            () => UpdateApplicationInteraction.Handle(RxUnit.Default)
+        );
+
         ConfigureServer = CreateCommandConfigureServer();
         HostServer = CreateCommandHostServer(clientFactory);
         RetrieveVersion = CreateCommandRetrieveVersion(clientFactory, pipeline);
@@ -138,6 +151,12 @@ public class BrowserViewModel : BaseViewModel
 
         this.WhenActivated(disposables =>
         {
+            Observable
+                .Return(RxUnit.Default)
+                .Throttle(TimeSpan.FromSeconds(1))
+                .InvokeCommand(UpdateApplication)
+                .DisposeWith(disposables);
+
             this.WhenAnyValue(x => x.Status)
                 .Where(s => s == BrowserStatus.Failed)
                 .Select(_ => RxUnit.Default)

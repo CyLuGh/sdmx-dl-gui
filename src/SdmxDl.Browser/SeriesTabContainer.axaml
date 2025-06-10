@@ -26,7 +26,8 @@
         <StackPanel Orientation="Horizontal"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Bottom" Grid.Row="1">
-            <Button Classes="Rounded Flat" 
+            <Button Command="{Binding Path=OpenBrowser}" 
+                    Classes="Rounded Flat" 
                     Content="{materialIcons:MaterialIconTextExt Kind=Explore, Text=BROWSE}"
                     Margin="0 0 2.5 0"/>
             <Button Command="{Binding LookupSeries}"

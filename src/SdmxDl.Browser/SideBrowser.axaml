@@ -8,24 +8,12 @@
              xmlns:converters="clr-namespace:SdmxDl.Browser.Infrastructure.Converters"
              xmlns:browser="clr-namespace:SdmxDl.Browser"
              mc:Ignorable="d" d:DesignWidth="1500" d:DesignHeight="450"
-             x:Class="SdmxDl.Browser.Browser"
-             x:DataType="viewModels:BrowserViewModel">
-    <UserControl.Resources>
-        <converters:BrowserStatusConverter x:Key="BrowserStatusConverter" />
-    </UserControl.Resources>
-    <Grid RowDefinitions="*,Auto" Margin="5">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition MinWidth="300" Width="500" MaxWidth="1000" />
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
-
-        <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="3" Margin="-5" Background="Transparent" />
-
-        <suki:BusyArea IsBusy="{Binding IsBusy}"
-                       BusyText="{Binding BusyMessage}"
-                       Grid.Column="0" Grid.Row="0" Grid.RowSpan="2">
-            <Grid RowDefinitions="Auto,Auto,*,Auto">
+             x:DataType="viewModels:BrowserViewModel"
+             x:Class="SdmxDl.Browser.SideBrowser">
+    <suki:BusyArea IsBusy="{Binding IsBusy}"
+                   BusyText="{Binding BusyMessage}">
+        <Grid RowDefinitions="Auto,Auto,*,Auto"
+              Margin="20">
                 <suki:GlassCard Margin="20, 20, 0, 10" 
                                 IsAnimated="False"
                                 IsVisible="{Binding ServerIsRunning}"
@@ -127,60 +115,5 @@
                                FontWeight="DemiBold" />
                 </Border>
             </Grid>
-        </suki:BusyArea>
-
-        <GridSplitter ResizeBehavior="PreviousAndNext"
-                      ResizeDirection="Columns"
-                      Width="5"
-                      Margin="5 10"
-                      Grid.Column="1"
-                      Grid.Row="0"
-                      Grid.RowSpan="2"/>
-
-        <Image Source="{SvgImage /assets/SDMX_logo.svg}"  
-               MaxWidth="800"
-               IsVisible="{Binding !ItemCount, ElementName=TabControlResults}"
-               Grid.Row="0" 
-               Grid.Column="2"/>
-        
-        <TabControl x:Name="TabControlResults"
-                    Margin="0 0 0 10"
-                    Grid.Row="0"
-                    Grid.Column="2">
-
-        </TabControl>
-        
-        <Button Command="{Binding LookupSeries}" 
-                Content="{materialIcons:MaterialIconTextExt Kind=TagFind, Text=LOOKUP SERIES}"
-                Classes="Rounded Flat"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Bottom" 
-                Grid.Row="1"
-                Grid.Column="2"/>
-
-        <StackPanel HorizontalAlignment="Right"
-                    VerticalAlignment="Bottom"
-                    Orientation="Horizontal"
-                    Grid.Row="1"
-                    Grid.Column="2">
-            <TextBlock
-                Text="{Binding Path=Status, Converter={StaticResource BrowserStatusConverter},FallbackValue=STATUS}"
-                Classes="Accent"
-                IsVisible="{Binding Path=!ServerIsRunning}" />
-
-            <TextBlock
-                Text="{Binding Path=Status, Converter={StaticResource BrowserStatusConverter},FallbackValue=STATUS}"
-                Classes="Primary"
-                IsVisible="{Binding Path=ServerIsRunning}" />
-
-            <TextBlock Text="{Binding Version}"
-                       FontStretch="Condensed"
-                       FontWeight="SemiBold"
-                       Classes="H6"
-                       Margin="5 0"
-                       IsVisible="{Binding Path=ServerIsRunning}" />
-        </StackPanel>
-    </Grid>
-
-
+    </suki:BusyArea>
 </UserControl>

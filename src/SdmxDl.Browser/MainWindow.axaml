@@ -8,8 +8,8 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="SdmxDl.Browser.MainWindow"
         Title="SDMX-DL GUI"
-        ShowTitlebarBackground="False"
-        ShowBottomBorder="False"
+        ShowTitlebarBackground="True"
+        ShowBottomBorder="True"
         BackgroundStyle="Bubble"
         UseLayoutRounding="True"
         Closing="Window_OnClosing">

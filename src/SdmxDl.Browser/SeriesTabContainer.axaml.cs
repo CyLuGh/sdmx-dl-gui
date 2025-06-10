@@ -9,7 +9,9 @@ using Microsoft.Extensions.Configuration;
 using ReactiveUI;
 using SdmxDl.Browser.ViewModels;
 using Splat;
+using SukiUI.Controls;
 using SukiUI.Dialogs;
+using SukiUI.Enums;
 using SukiUI.Toasts;
 using Velopack;
 
@@ -158,6 +160,36 @@ public partial class SeriesTabContainer : ReactiveUserControl<BrowserViewModel>
 
                     mgr.ApplyUpdatesAndRestart(info);
                 }
+
+                ctx.SetOutput(RxUnit.Default);
+            })
+            .DisposeWith(disposables);
+
+        SukiWindow? browserWindow = null;
+        viewModel
+            .OpenBrowserInteraction.RegisterHandler(ctx =>
+            {
+                if (browserWindow is null)
+                {
+                    browserWindow = new SukiWindow()
+                    {
+                        Title = "Series Browser",
+                        Content = new SideBrowser() { ViewModel = viewModel },
+                        CanMaximize = false,
+                        CanMinimize = false,
+                        CanFullScreen = false,
+                        ShowBottomBorder = true,
+                        ShowTitlebarBackground = true,
+                        BackgroundStyle = SukiBackgroundStyle.Bubble,
+                        MinHeight = 700,
+                        MinWidth = 350,
+                        MaxWidthScreenRatio = .75,
+                    };
+                    browserWindow.Closed += (_, _) => browserWindow = null;
+                }
+
+                browserWindow.Show();
+                browserWindow.Activate();
 
                 ctx.SetOutput(RxUnit.Default);
             })

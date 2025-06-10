@@ -1,4 +1,5 @@
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using SdmxDl.Client;
@@ -18,6 +19,8 @@ public partial class App : Application
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             desktop.MainWindow = new MainWindow();
+            desktop.ShutdownMode = ShutdownMode.OnMainWindowClose;
+
             if (desktop.Args?.Length > 0)
                 ViewModelLocator.BrowserViewModel.Argument = desktop.Args[0];
 

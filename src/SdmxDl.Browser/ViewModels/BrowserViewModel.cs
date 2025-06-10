@@ -74,6 +74,9 @@ public class BrowserViewModel : BaseViewModel
     public RxCommand LookupSeries { get; }
     public RxInteraction LookupSeriesInteraction { get; } = new(RxApp.MainThreadScheduler);
 
+    public RxCommand OpenBrowser { get; }
+    public RxInteraction OpenBrowserInteraction { get; } = new(RxApp.MainThreadScheduler);
+
     /// <summary>
     /// Ask the server to provide its version.
     /// </summary>
@@ -125,6 +128,11 @@ public class BrowserViewModel : BaseViewModel
         LookupSeries = ReactiveCommand.CreateFromObservable(
             () => LookupSeriesInteraction.Handle(RxUnit.Default),
             this.WhenAnyValue(x => x.ServerIsRunning).ObserveOn(RxApp.MainThreadScheduler)
+        );
+
+        OpenBrowserInteraction.RegisterHandler(ctx => ctx.SetOutput(RxUnit.Default));
+        OpenBrowser = ReactiveCommand.CreateFromObservable(
+            () => OpenBrowserInteraction.Handle(RxUnit.Default)
         );
 
         BuildSelectionKey = CreateCommandBuildSelectionKey();

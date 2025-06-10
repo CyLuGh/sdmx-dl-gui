@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
 using HierarchyGrid.Definitions;
 using LanguageExt;
 using LiveChartsCore.Defaults;
@@ -281,6 +282,8 @@ public class DataViewModel : BaseViewModel
                 .DisposeWith(disposables);
         });
     }
+
+    public void Add(SeriesRequest request) { }
 
     public ReactiveCommand<Option<DateTime>, bool> HighlightGrid { get; }
 
@@ -627,5 +630,16 @@ public class DataViewModel : BaseViewModel
             .InvokeCommand(LinkedHierarchyGridViewModel, x => x.DrawGridCommand);
 
         return false;
+    }
+
+    private async Task<Option<DataSet>> RetrieveDataSetImpl(
+        SeriesRequest seriesRequest,
+        ClientFactory clientFactory,
+        ResiliencePipeline pipeline
+    )
+    {
+        var dataSet = await clientFactory.GetClient().GetDataAsync((KeyRequest)seriesRequest);
+
+        return dataSet.ToModel();
     }
 }

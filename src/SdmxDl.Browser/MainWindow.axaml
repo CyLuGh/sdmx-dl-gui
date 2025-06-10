@@ -68,6 +68,6 @@
         </Button>
     </suki:SukiWindow.RightWindowTitleBarControls>
     
-    <browser:Browser ViewModel="{x:Static browser:ViewModelLocator.BrowserViewModel}"
-                     Margin="5"/>
+    <browser:SeriesTabContainer ViewModel="{x:Static browser:ViewModelLocator.BrowserViewModel}"
+                                Margin="5"/>
 </suki:SukiWindow>

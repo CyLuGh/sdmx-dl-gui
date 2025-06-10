@@ -90,8 +90,8 @@ public class BrowserViewModel : BaseViewModel
     public ReactiveCommand<Settings, RxUnit> HostServer { get; }
 
     public RxCommand ShowResults { get; }
-    public ReactiveCommand<(SdmxWebSource, DataFlow, string), RxUnit> SendResults { get; }
-    public Interaction<(SdmxWebSource, DataFlow, string), RxUnit> ShowResultsInteraction { get; } =
+    public ReactiveCommand<Seq<SeriesRequest>, RxUnit> SendResults { get; }
+    public Interaction<Seq<SeriesRequest>, RxUnit> ShowResultsInteraction { get; } =
         new(RxApp.MainThreadScheduler);
 
     public ReactiveCommand<KeyEventArgs, RxUnit> CheckKeyTextBox { get; }
@@ -143,7 +143,7 @@ public class BrowserViewModel : BaseViewModel
             dimensionsSelectorViewModel
         );
         SendResults = ReactiveCommand.CreateFromObservable(
-            ((SdmxWebSource, DataFlow, string) t) => ShowResultsInteraction.Handle(t)
+            (Seq<SeriesRequest> t) => ShowResultsInteraction.Handle(t)
         );
         CheckKeyTextBox = CreateCommandCheckKeyTextBoxInput();
 
@@ -206,11 +206,10 @@ public class BrowserViewModel : BaseViewModel
                 .Select(t => t.First)
                 .Select(async s =>
                 {
-                    var elements = await SeriesFinderViewModel.ParseQueryImpl(s, clientFactory);
-                    return elements.Match(
-                        Observable.Return,
-                        Observable.Empty<(SdmxWebSource, DataFlow, string)>
-                    );
+                    var elements = await SeriesFinderViewModel.ParseQueriesImpl(s, clientFactory);
+                    return !elements.IsEmpty
+                        ? Observable.Return(elements)
+                        : Observable.Empty<Seq<SeriesRequest>>();
                 })
                 .Switch()
                 .Switch()
@@ -255,10 +254,12 @@ public class BrowserViewModel : BaseViewModel
         var showResults = ReactiveCommand.CreateFromObservable(
             () =>
                 ShowResultsInteraction.Handle(
-                    (
-                        sourceSelectorViewModel.Selection.ValueUnsafe(),
-                        dataFlowSelectorViewModel.Selection.ValueUnsafe(),
-                        SelectionKey
+                    Seq.create(
+                        new SeriesRequest(
+                            sourceSelectorViewModel.Selection.ValueUnsafe(),
+                            dataFlowSelectorViewModel.Selection.ValueUnsafe(),
+                            SelectionKey
+                        )
                     )
                 ),
             canShowResults

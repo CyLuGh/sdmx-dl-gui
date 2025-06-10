@@ -15,7 +15,7 @@ public static class Converters
         {
             Period = input.Period,
             Value = input.Value,
-            Meta = input.Meta.Map(x => (x.Key, x.Value)).ToHashMap()
+            Meta = input.Meta.Map(x => (x.Key, x.Value)).ToHashMap(),
         };
     }
 
@@ -25,7 +25,7 @@ public static class Converters
         {
             Key = input.Key,
             Meta = input.Meta.Map(x => (x.Key, x.Value)).ToHashMap(),
-            Obs = input.Obs.Map(o => o.ToModel()).ToSeq().Strict()
+            Obs = input.Obs.Map(o => o.ToModel()).ToSeq().Strict(),
         };
     }
 
@@ -35,7 +35,15 @@ public static class Converters
         {
             Ref = input.Ref,
             Query = input.Query.ToModel(),
-            Data = input.Data.Map(s => s.ToModel()).ToSeq().Strict()
+            Data = input.Data.Map(s => s.ToModel()).ToSeq().Strict(),
         };
     }
+
+    public static Sdmxdl.Grpc.KeyRequest ToDto(this KeyRequest request) =>
+        new()
+        {
+            Source = request.Source,
+            Flow = request.Flow,
+            Key = request.Key,
+        };
 }

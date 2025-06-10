@@ -10,4 +10,12 @@ public readonly record struct KeyRequest
 
     public Option<string> Database { get; init; }
     public Option<string> Languages { get; init; }
+
+    public static implicit operator Sdmxdl.Grpc.KeyRequest(KeyRequest keyRequest) =>
+        new()
+        {
+            Source = keyRequest.Source,
+            Flow = keyRequest.Flow,
+            Key = keyRequest.Key,
+        };
 }

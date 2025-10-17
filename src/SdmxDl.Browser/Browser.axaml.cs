@@ -1,12 +1,13 @@
 using System;
 using System.Linq;
 using System.Reactive.Disposables;
+using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
 using Avalonia.Controls;
 using Avalonia.Controls.Notifications;
-using Avalonia.ReactiveUI;
 using Microsoft.Extensions.Configuration;
 using ReactiveUI;
+using ReactiveUI.Avalonia;
 using SdmxDl.Browser.ViewModels;
 using Splat;
 using SukiUI.Dialogs;

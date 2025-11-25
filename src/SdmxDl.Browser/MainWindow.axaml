@@ -44,8 +44,10 @@
                                         <Run>Developed by</Run>
                                         <Run FontWeight="Bold">DEMORTIER Jeremy</Run>
                                     </TextBlock>
-                                    <TextBlock>
-                                        GitHub: <HyperlinkButton Content="https://github.com/CyLuGh/sdmx-dl-gui" Click="GitHubLinkClick"/>
+                                    <TextBlock VerticalAlignment="Center">
+                                        GitHub: <HyperlinkButton Content="https://github.com/CyLuGh/sdmx-dl-gui" 
+                                                                 Click="GitHubLinkClick"
+                                                                 VerticalAlignment="Center"/>
                                     </TextBlock>
                                     <TextBlock/>
                                     <TextBlock Text="SDMX-DL" 
@@ -56,8 +58,10 @@
                                         <Run>Developed by</Run>
                                         <Run FontWeight="Bold">CHARLES Philippe</Run>
                                     </TextBlock>
-                                    <TextBlock>
-                                        GitHub: <HyperlinkButton Content="https://github.com/nbbrd/sdmx-dl" Click="GitHubLinkClick"/>
+                                    <TextBlock VerticalAlignment="Center">
+                                        GitHub: <HyperlinkButton Content="https://github.com/nbbrd/sdmx-dl" 
+                                                                 Click="GitHubLinkClick"
+                                                                 VerticalAlignment="Center"/>
                                     </TextBlock>
                                 </StackPanel>
                             </Border>

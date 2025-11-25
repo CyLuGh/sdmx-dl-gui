@@ -30,7 +30,7 @@
 
         <TextBox Name="TextBoxSource"
                  Text="{Binding CurrentInput}"
-                 Watermark="Source"
+                 Watermark="Flow"
                  suki:TextBoxExtensions.AddDeleteButton="True"
                  IsVisible="{Binding #ToggleSearch.IsChecked}">
             <Interaction.Behaviors>
@@ -55,13 +55,11 @@
                 </EventTriggerBehavior>
             </Interaction.Behaviors>
             <suki:GlassCard Classes="Standard"
+                            IsOpaque="True"
                             MinWidth="400"
                             MaxWidth="800"
                             MinHeight="500"
                             MaxHeight="700">
-                <suki:GlassCard.Resources>
-                    <system:Double x:Key="GlassOpacity">0.9</system:Double>
-                </suki:GlassCard.Resources>
                 <Grid RowDefinitions="*,Auto">
                     <ListBox SelectedItem="{Binding CurrentSelection}"
                              ItemsSource="{Binding CurrentSources}">

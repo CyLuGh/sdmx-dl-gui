@@ -2,8 +2,11 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media;
 using SdmxDl.Client;
 using Splat;
+using SukiUI;
+using SukiUI.Models;
 
 namespace SdmxDl.Browser;
 
@@ -18,6 +21,20 @@ public partial class App : Application
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
+            var theme = SukiTheme
+                .GetInstance()
+                .ColorThemes.Find(c => c.DisplayName.Equals("CustomTheme"))
+                .Match(
+                    t => t,
+                    () =>
+                        new SukiColorTheme(
+                            "CustomTheme",
+                            Color.FromArgb(255, 0, 146, 182),
+                            Color.FromArgb(255, 226, 16, 115)
+                        )
+                );
+            SukiTheme.GetInstance().ChangeColorTheme(theme);
+
             desktop.MainWindow = new MainWindow();
             desktop.ShutdownMode = ShutdownMode.OnMainWindowClose;
 

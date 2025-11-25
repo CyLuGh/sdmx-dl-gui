@@ -68,11 +68,6 @@ public partial class BrowserViewModel : BaseViewModel
     /// </summary>
     public ReactiveCommand<RxUnit, string> RetrieveVersion { get; }
 
-    public ReactiveCommand<
-        (Seq<PositionedDimensionViewModel>, HierarchicalDimensionViewModel?),
-        string
-    > BuildSelectionKey { get; }
-
     public Interaction<Exception, RxUnit> DisplayErrorMessageInteraction { get; } =
         new(RxApp.MainThreadScheduler);
 
@@ -120,8 +115,6 @@ public partial class BrowserViewModel : BaseViewModel
         OpenBrowser = ReactiveCommand.CreateFromObservable(
             () => OpenBrowserInteraction.Handle(RxUnit.Default)
         );
-
-        BuildSelectionKey = CreateCommandBuildSelectionKey();
 
         ViewModelLocator
             .SettingsViewModel.WhenAnyValue(x => x.CurrentSettings)
@@ -181,8 +174,8 @@ public partial class BrowserViewModel : BaseViewModel
             );
 
             dimensionsSelectorViewModel
-                .WhenAnyValue(x => x.PositionedDimensions, x => x.SelectedDimension)
-                .InvokeCommand(BuildSelectionKey)
+                .WhenAnyValue(x => x.SelectionKey)
+                .Subscribe(key => SelectionKey = key)
                 .DisposeWith(disposables);
 
             this.WhenAnyValue(x => x.Argument)
@@ -487,35 +480,6 @@ public partial class BrowserViewModel : BaseViewModel
 
         cmd.ThrownExceptions.Subscribe(async ex => await DisplayErrorMessageInteraction.Handle(ex));
         cmd.ThrownExceptions.Select(_ => RxUnit.Default).InvokeCommand(ConfigureServer);
-        return cmd;
-    }
-
-    private ReactiveCommand<
-        (Seq<PositionedDimensionViewModel>, HierarchicalDimensionViewModel?),
-        string
-    > CreateCommandBuildSelectionKey()
-    {
-        var cmd = ReactiveCommand.CreateRunInBackground(
-            ((Seq<PositionedDimensionViewModel>, HierarchicalDimensionViewModel?) t) =>
-            {
-                var (dimensions, selection) = t;
-
-                if (dimensions.IsEmpty || selection is null)
-                    return string.Empty;
-
-                return string.Join(
-                    ".",
-                    dimensions
-                        .OrderBy(d => d.Dimension.Position)
-                        .Select(d =>
-                            selection.Keys.Find(d.Dimension.Position, k => k, () => string.Empty)
-                        )
-                );
-            }
-        );
-
-        cmd.Subscribe(s => SelectionKey = s);
-
         return cmd;
     }
 

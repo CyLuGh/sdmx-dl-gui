@@ -5,6 +5,7 @@ using System.Reactive.Disposables;
 using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
+using Grpc.Core;
 using LanguageExt;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
@@ -29,11 +30,27 @@ public partial class DimensionsSelectorViewModel : BaseViewModel
     [ObservableAsProperty(ReadOnly = false)]
     private Seq<HierarchicalDimensionViewModel> _hierarchicalDimensions;
 
+    [ObservableAsProperty(ReadOnly = false)]
+    private HashSet<string> _rootCodes;
+
     public ReactiveCommand<
         (SdmxWebSource, DataFlow),
         Option<DataStructure>
     > RetrieveDimensions { get; }
     public ReactiveCommand<RxUnit, Option<DataStructure>> Clear { get; }
+
+    public ReactiveCommand<
+        (Seq<PositionedDimensionViewModel>, HierarchicalDimensionViewModel?),
+        string
+    > BuildSelectionKey { get; }
+
+    [ObservableAsProperty(ReadOnly = false)]
+    private string _selectionKey;
+
+    public ReactiveCommand<
+        (SdmxWebSource, DataFlow, string, int),
+        HashSet<string>
+    > FetchAvailableValues { get; }
 
     public DimensionsSelectorViewModel(
         SourceSelectorViewModel sourceSelectorViewModel,
@@ -41,6 +58,12 @@ public partial class DimensionsSelectorViewModel : BaseViewModel
         ClientFactory clientFactory
     )
     {
+        BuildSelectionKey = CreateCommandBuildSelectionKey();
+        FetchAvailableValues = CreateCommandFetchAvailableValues(
+            sourceSelectorViewModel,
+            dataFlowSelectorViewModel,
+            clientFactory
+        );
         Clear = ReactiveCommand.Create(() => Option<DataStructure>.None);
 
         RetrieveDimensions = CreateCommandRetrieveDimensions(
@@ -92,11 +115,20 @@ public partial class DimensionsSelectorViewModel : BaseViewModel
     private void UpdateHierarchy(CompositeDisposable disposables)
     {
         _hierarchicalDimensionsHelper = this.WhenAnyValue(x => x.PositionedDimensions)
+            .CombineLatest(this.WhenAnyValue(x => x.RootCodes))
             .Throttle(TimeSpan.FromMilliseconds(150))
-            .Select(seq =>
-                seq.Length == 0
-                    ? Seq<HierarchicalDimensionViewModel>.Empty
-                    : HierarchicalDimensionViewModel.BuildHierarchy(seq, HashMap<int, string>.Empty)
+            .Select(
+                ((Seq<PositionedDimensionViewModel>, HashSet<string>) t) =>
+                {
+                    var (pDims, codes) = t;
+                    return pDims.Length == 0
+                        ? Seq<HierarchicalDimensionViewModel>.Empty
+                        : HierarchicalDimensionViewModel.BuildHierarchy(
+                            pDims,
+                            codes,
+                            HashMap<int, string>.Empty
+                        );
+                }
             )
             .ToProperty(this, x => x.HierarchicalDimensions, scheduler: RxApp.MainThreadScheduler)
             .DisposeWith(disposables);
@@ -192,16 +224,128 @@ public partial class DimensionsSelectorViewModel : BaseViewModel
         return new DataStructure(metaSet.Structure);
     }
 
-    //private static async Task<Seq<string>> DoFetchAvailableValues(
-    //    ClientFactory clientFactory,
-    //    SdmxWebSource source,
-    //    DataFlow dataFlow,
-    //    Dimension dimension
-    //)
-    //{
-    //    var client = clientFactory.GetClient();
-    //    var request = client.GetAvailability(
-    //        new KeyDimensionRequestDto() { Source = source.Id, Flow = dataFlow.Ref }
-    //    );
-    //}
+    private ReactiveCommand<
+        (Seq<PositionedDimensionViewModel>, HierarchicalDimensionViewModel?),
+        string
+    > CreateCommandBuildSelectionKey()
+    {
+        var cmd = ReactiveCommand.CreateRunInBackground(
+            ((Seq<PositionedDimensionViewModel>, HierarchicalDimensionViewModel?) t) =>
+            {
+                var (dimensions, selection) = t;
+                return DoBuildKey(dimensions, selection);
+            }
+        );
+
+        this.WhenAnyValue(x => x.PositionedDimensions)
+            .CombineLatest(this.WhenAnyValue(x => x.SelectedDimension))
+            .InvokeCommand(cmd);
+
+        _selectionKeyHelper = cmd.ToProperty(
+            this,
+            x => x.SelectionKey,
+            initialValue: string.Empty,
+            scheduler: RxApp.MainThreadScheduler
+        );
+
+        return cmd;
+    }
+
+    public static string DoBuildKey(
+        Seq<PositionedDimensionViewModel> dimensions,
+        HierarchicalDimensionViewModel? selection
+    )
+    {
+        if (dimensions.IsEmpty)
+            return string.Empty;
+
+        if (selection is null)
+            return string.Join(".", dimensions.Map(_ => string.Empty));
+
+        return string.Join(
+            ".",
+            dimensions
+                .OrderBy(d => d.Dimension.Position)
+                .Select(d => selection.Keys.Find(d.Dimension.Position, k => k, () => string.Empty))
+        );
+    }
+
+    private ReactiveCommand<
+        (SdmxWebSource, DataFlow, string, int),
+        HashSet<string>
+    > CreateCommandFetchAvailableValues(
+        SourceSelectorViewModel sourceSelectorViewModel,
+        DataFlowSelectorViewModel dataFlowSelectorViewModel,
+        ClientFactory clientFactory
+    )
+    {
+        var cmd = ReactiveCommand.CreateFromTask(
+            async ((SdmxWebSource, DataFlow, string, int) t) =>
+            {
+                var (source, flow, key, position) = t;
+                var ds = await DoFetchAvailableValues(clientFactory, source, flow, key, position)
+                    .ConfigureAwait(false);
+                return ds;
+            }
+        );
+
+        sourceSelectorViewModel
+            .WhenAnyValue(x => x.Selection)
+            .CombineLatest(
+                dataFlowSelectorViewModel.WhenAnyValue(x => x.Selection),
+                this.WhenAnyValue(x => x.PositionedDimensions)
+                    .Where(d => d.Count > 0)
+                    .Select(d => DoBuildKey(d, null)),
+                this.WhenAnyValue(x => x.PositionedDimensions)
+                    .Where(d => d.Count > 0)
+                    .Select(d => d[0].Dimension.Position)
+            )
+            .Throttle(TimeSpan.FromMilliseconds(200))
+            .Select(t =>
+            {
+                var (source, flow, key, position) = t;
+                var o = from s in source from f in flow select (s, f, key, position);
+                return o.Some(Observable.Return)
+                    .None(Observable.Empty<(SdmxWebSource, DataFlow, string, int)>);
+            })
+            .Switch()
+            .InvokeCommand(cmd);
+
+        _rootCodesHelper = cmd.ToProperty(
+            this,
+            x => x.RootCodes,
+            scheduler: RxApp.MainThreadScheduler
+        );
+
+        return cmd;
+    }
+
+    private static async Task<HashSet<string>> DoFetchAvailableValues(
+        ClientFactory clientFactory,
+        SdmxWebSource source,
+        DataFlow dataFlow,
+        string key,
+        int dimensionPosition
+    )
+    {
+        var client = clientFactory.GetClient();
+        var request = client.GetAvailability(
+            new KeyDimensionRequestDto()
+            {
+                Source = source.Id,
+                Flow = dataFlow.Ref,
+                Key = key,
+                Dimension = dimensionPosition
+            }
+        );
+
+        Seq<Seq<string>> codes = Seq<Seq<string>>.Empty;
+        while (await request.ResponseStream.MoveNext())
+        {
+            var dto = request.ResponseStream.Current;
+            codes = codes.Add(dto.Codes.ToSeq());
+        }
+
+        return HashSet.createRange(codes.Flatten());
+    }
 }

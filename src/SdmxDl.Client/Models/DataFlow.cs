@@ -2,6 +2,10 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace SdmxDl.Client.Models;
 
+/// <summary>
+/// Represents a data flow in the SDMX system, encapsulating details such as the flow reference,
+/// structure reference, name, and description.
+/// </summary>
 public readonly record struct DataFlow
 {
     public required string Ref { get; init; }
@@ -10,7 +14,7 @@ public readonly record struct DataFlow
     public required string Description { get; init; }
 
     [SetsRequiredMembers]
-    public DataFlow(Sdmxdl.Format.Protobuf.Flow flow)
+    public DataFlow(Sdmxdl.Format.Protobuf.FlowDto flow)
     {
         Ref = flow.Ref;
         StructureRef = flow.StructureRef;

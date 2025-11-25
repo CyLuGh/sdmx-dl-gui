@@ -2,17 +2,17 @@
 using System.Reactive.Linq;
 using LanguageExt;
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
+using ReactiveUI.SourceGenerators;
 using SdmxDl.Client.Models;
 
 namespace SdmxDl.Browser.ViewModels;
 
-public class PositionedDimensionViewModel : BaseViewModel
+public partial class PositionedDimensionViewModel : BaseViewModel
 {
     public int CurrentPosition { get; }
 
     [Reactive]
-    public Option<int> DesiredPosition { get; private set; }
+    public partial Option<int> DesiredPosition { get; private set; }
 
     public int ShiftSign => DesiredPosition.Match(p => p - CurrentPosition, () => 0);
 

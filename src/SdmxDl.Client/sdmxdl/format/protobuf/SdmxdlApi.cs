@@ -24,72 +24,78 @@ namespace Sdmxdl.Format.Protobuf {
     static SdmxdlApiReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "ChBzZG14ZGxfYXBpLnByb3RvEhZzZG14ZGwuZm9ybWF0LnByb3RvYnVmIiYK",
-            "BUFib3V0EgwKBG5hbWUYASABKAkSDwoHdmVyc2lvbhgCIAEoCSKwAQoJQXR0",
-            "cmlidXRlEgoKAmlkGAEgASgJEgwKBG5hbWUYAiABKAkSNwoIY29kZWxpc3QY",
-            "AyABKAsyIC5zZG14ZGwuZm9ybWF0LnByb3RvYnVmLkNvZGVsaXN0SACIAQES",
-            "QwoMcmVsYXRpb25zaGlwGAQgASgOMi0uc2RteGRsLmZvcm1hdC5wcm90b2J1",
-            "Zi5BdHRyaWJ1dGVSZWxhdGlvbnNoaXBCCwoJX2NvZGVsaXN0IoEBCghDb2Rl",
-            "bGlzdBILCgNyZWYYASABKAkSOgoFY29kZXMYAiADKAsyKy5zZG14ZGwuZm9y",
-            "bWF0LnByb3RvYnVmLkNvZGVsaXN0LkNvZGVzRW50cnkaLAoKQ29kZXNFbnRy",
-            "eRILCgNrZXkYASABKAkSDQoFdmFsdWUYAiABKAk6AjgBIiUKCERhdGFiYXNl",
-            "EgsKA3JlZhgBIAEoCRIMCgRuYW1lGAIgASgJIpoCCg5EYXRhUmVwb3NpdG9y",
-            "eRIMCgRuYW1lGAEgASgJEjMKCWRhdGFiYXNlcxgCIAMoCzIgLnNkbXhkbC5m",
-            "b3JtYXQucHJvdG9idWYuRGF0YWJhc2USNQoKc3RydWN0dXJlcxgDIAMoCzIh",
-            "LnNkbXhkbC5mb3JtYXQucHJvdG9idWYuU3RydWN0dXJlEisKBWZsb3dzGAQg",
-            "AygLMhwuc2RteGRsLmZvcm1hdC5wcm90b2J1Zi5GbG93EjEKCGRhdGFTZXRz",
-            "GAUgAygLMh8uc2RteGRsLmZvcm1hdC5wcm90b2J1Zi5EYXRhU2V0EhUKDWNy",
-            "ZWF0aW9uX3RpbWUYBiABKAkSFwoPZXhwaXJhdGlvbl90aW1lGAcgASgJInIK",
-            "B0RhdGFTZXQSCwoDcmVmGAEgASgJEiwKBXF1ZXJ5GAIgASgLMh0uc2RteGRs",
-            "LmZvcm1hdC5wcm90b2J1Zi5RdWVyeRIsCgRkYXRhGAMgAygLMh4uc2RteGRs",
-            "LmZvcm1hdC5wcm90b2J1Zi5TZXJpZXMiawoJRGltZW5zaW9uEgoKAmlkGAEg",
-            "ASgJEgwKBG5hbWUYAiABKAkSMgoIY29kZWxpc3QYAyABKAsyIC5zZG14ZGwu",
-            "Zm9ybWF0LnByb3RvYnVmLkNvZGVsaXN0EhAKCHBvc2l0aW9uGAQgASgFImIK",
-            "BEZsb3cSCwoDcmVmGAEgASgJEhUKDXN0cnVjdHVyZV9yZWYYAiABKAkSDAoE",
-            "bmFtZRgDIAEoCRIYCgtkZXNjcmlwdGlvbhgEIAEoCUgAiAEBQg4KDF9kZXNj",
-            "cmlwdGlvbiKGAQoDT2JzEg4KBnBlcmlvZBgBIAEoCRINCgV2YWx1ZRgCIAEo",
-            "ARIzCgRtZXRhGAMgAygLMiUuc2RteGRsLmZvcm1hdC5wcm90b2J1Zi5PYnMu",
-            "TWV0YUVudHJ5GisKCU1ldGFFbnRyeRILCgNrZXkYASABKAkSDQoFdmFsdWUY",
-            "AiABKAk6AjgBIkQKBVF1ZXJ5EgsKA2tleRgBIAEoCRIuCgZkZXRhaWwYAiAB",
-            "KA4yHi5zZG14ZGwuZm9ybWF0LnByb3RvYnVmLkRldGFpbCKkAQoGU2VyaWVz",
-            "EgsKA2tleRgBIAEoCRI2CgRtZXRhGAIgAygLMiguc2RteGRsLmZvcm1hdC5w",
-            "cm90b2J1Zi5TZXJpZXMuTWV0YUVudHJ5EigKA29icxgDIAMoCzIbLnNkbXhk",
-            "bC5mb3JtYXQucHJvdG9idWYuT2JzGisKCU1ldGFFbnRyeRILCgNrZXkYASAB",
-            "KAkSDQoFdmFsdWUYAiABKAk6AjgBIuYBCglTdHJ1Y3R1cmUSCwoDcmVmGAEg",
-            "ASgJEjUKCmRpbWVuc2lvbnMYAiADKAsyIS5zZG14ZGwuZm9ybWF0LnByb3Rv",
-            "YnVmLkRpbWVuc2lvbhI1CgphdHRyaWJ1dGVzGAMgAygLMiEuc2RteGRsLmZv",
-            "cm1hdC5wcm90b2J1Zi5BdHRyaWJ1dGUSHgoRdGltZV9kaW1lbnNpb25faWQY",
-            "BCABKAlIAIgBARIaChJwcmltYXJ5X21lYXN1cmVfaWQYBSABKAkSDAoEbmFt",
-            "ZRgGIAEoCUIUChJfdGltZV9kaW1lbnNpb25faWQqWgoVQXR0cmlidXRlUmVs",
-            "YXRpb25zaGlwEgsKB1VOS05PV04QABIMCghEQVRBRkxPVxABEgkKBUdST1VQ",
-            "EAISCgoGU0VSSUVTEAMSDwoLT0JTRVJWQVRJT04QBCpdCg9Db25maWRlbnRp",
-            "YWxpdHkSCgoGUFVCTElDEAASEAoMVU5SRVNUUklDVEVEEAESDgoKUkVTVFJJ",
-            "Q1RFRBACEhAKDENPTkZJREVOVElBTBADEgoKBlNFQ1JFVBAEKkQKBkRldGFp",
-            "bBIICgRGVUxMEAASDQoJREFUQV9PTkxZEAESFAoQU0VSSUVTX0tFWVNfT05M",
-            "WRACEgsKB05PX0RBVEEQAyo8CgdGZWF0dXJlEhoKFkRBVEFfUVVFUllfQUxM",
-            "X0tFWVdPUkQQABIVChFEQVRBX1FVRVJZX0RFVEFJTBABQgJQAWIGcHJvdG8z"));
+            "ChBzZG14ZGxfYXBpLnByb3RvEhZzZG14ZGwuZm9ybWF0LnByb3RvYnVmIikK",
+            "CEFib3V0RHRvEgwKBG5hbWUYASABKAkSDwoHdmVyc2lvbhgCIAEoCSK5AQoM",
+            "QXR0cmlidXRlRHRvEgoKAmlkGAEgASgJEgwKBG5hbWUYAiABKAkSOgoIY29k",
+            "ZWxpc3QYAyABKAsyIy5zZG14ZGwuZm9ybWF0LnByb3RvYnVmLkNvZGVsaXN0",
+            "RHRvSACIAQESRgoMcmVsYXRpb25zaGlwGAQgASgOMjAuc2RteGRsLmZvcm1h",
+            "dC5wcm90b2J1Zi5BdHRyaWJ1dGVSZWxhdGlvbnNoaXBEdG9CCwoJX2NvZGVs",
+            "aXN0IocBCgtDb2RlbGlzdER0bxILCgNyZWYYASABKAkSPQoFY29kZXMYAiAD",
+            "KAsyLi5zZG14ZGwuZm9ybWF0LnByb3RvYnVmLkNvZGVsaXN0RHRvLkNvZGVz",
+            "RW50cnkaLAoKQ29kZXNFbnRyeRILCgNrZXkYASABKAkSDQoFdmFsdWUYAiAB",
+            "KAk6AjgBIigKC0RhdGFiYXNlRHRvEgsKA3JlZhgBIAEoCRIMCgRuYW1lGAIg",
+            "ASgJIqkCChFEYXRhUmVwb3NpdG9yeUR0bxIMCgRuYW1lGAEgASgJEjYKCWRh",
+            "dGFiYXNlcxgCIAMoCzIjLnNkbXhkbC5mb3JtYXQucHJvdG9idWYuRGF0YWJh",
+            "c2VEdG8SOAoKc3RydWN0dXJlcxgDIAMoCzIkLnNkbXhkbC5mb3JtYXQucHJv",
+            "dG9idWYuU3RydWN0dXJlRHRvEi4KBWZsb3dzGAQgAygLMh8uc2RteGRsLmZv",
+            "cm1hdC5wcm90b2J1Zi5GbG93RHRvEjQKCGRhdGFTZXRzGAUgAygLMiIuc2Rt",
+            "eGRsLmZvcm1hdC5wcm90b2J1Zi5EYXRhU2V0RHRvEhUKDWNyZWF0aW9uX3Rp",
+            "bWUYBiABKAkSFwoPZXhwaXJhdGlvbl90aW1lGAcgASgJInQKCk1ldGFTZXRE",
+            "dG8SLQoEZmxvdxgBIAEoCzIfLnNkbXhkbC5mb3JtYXQucHJvdG9idWYuRmxv",
+            "d0R0bxI3CglzdHJ1Y3R1cmUYAiABKAsyJC5zZG14ZGwuZm9ybWF0LnByb3Rv",
+            "YnVmLlN0cnVjdHVyZUR0byJ7CgpEYXRhU2V0RHRvEgsKA3JlZhgBIAEoCRIv",
+            "CgVxdWVyeRgCIAEoCzIgLnNkbXhkbC5mb3JtYXQucHJvdG9idWYuUXVlcnlE",
+            "dG8SLwoEZGF0YRgDIAMoCzIhLnNkbXhkbC5mb3JtYXQucHJvdG9idWYuU2Vy",
+            "aWVzRHRvIl8KDERpbWVuc2lvbkR0bxIKCgJpZBgBIAEoCRIMCgRuYW1lGAIg",
+            "ASgJEjUKCGNvZGVsaXN0GAMgASgLMiMuc2RteGRsLmZvcm1hdC5wcm90b2J1",
+            "Zi5Db2RlbGlzdER0byJlCgdGbG93RHRvEgsKA3JlZhgBIAEoCRIVCg1zdHJ1",
+            "Y3R1cmVfcmVmGAIgASgJEgwKBG5hbWUYAyABKAkSGAoLZGVzY3JpcHRpb24Y",
+            "BCABKAlIAIgBAUIOCgxfZGVzY3JpcHRpb24ijAEKBk9ic0R0bxIOCgZwZXJp",
+            "b2QYASABKAkSDQoFdmFsdWUYAiABKAESNgoEbWV0YRgDIAMoCzIoLnNkbXhk",
+            "bC5mb3JtYXQucHJvdG9idWYuT2JzRHRvLk1ldGFFbnRyeRorCglNZXRhRW50",
+            "cnkSCwoDa2V5GAEgASgJEg0KBXZhbHVlGAIgASgJOgI4ASJKCghRdWVyeUR0",
+            "bxILCgNrZXkYASABKAkSMQoGZGV0YWlsGAIgASgOMiEuc2RteGRsLmZvcm1h",
+            "dC5wcm90b2J1Zi5EZXRhaWxEdG8irQEKCVNlcmllc0R0bxILCgNrZXkYASAB",
+            "KAkSOQoEbWV0YRgCIAMoCzIrLnNkbXhkbC5mb3JtYXQucHJvdG9idWYuU2Vy",
+            "aWVzRHRvLk1ldGFFbnRyeRIrCgNvYnMYAyADKAsyHi5zZG14ZGwuZm9ybWF0",
+            "LnByb3RvYnVmLk9ic0R0bxorCglNZXRhRW50cnkSCwoDa2V5GAEgASgJEg0K",
+            "BXZhbHVlGAIgASgJOgI4ASLvAQoMU3RydWN0dXJlRHRvEgsKA3JlZhgBIAEo",
+            "CRI4CgpkaW1lbnNpb25zGAIgAygLMiQuc2RteGRsLmZvcm1hdC5wcm90b2J1",
+            "Zi5EaW1lbnNpb25EdG8SOAoKYXR0cmlidXRlcxgDIAMoCzIkLnNkbXhkbC5m",
+            "b3JtYXQucHJvdG9idWYuQXR0cmlidXRlRHRvEh4KEXRpbWVfZGltZW5zaW9u",
+            "X2lkGAQgASgJSACIAQESGgoScHJpbWFyeV9tZWFzdXJlX2lkGAUgASgJEgwK",
+            "BG5hbWUYBiABKAlCFAoSX3RpbWVfZGltZW5zaW9uX2lkKl0KGEF0dHJpYnV0",
+            "ZVJlbGF0aW9uc2hpcER0bxILCgdVTktOT1dOEAASDAoIREFUQUZMT1cQARIJ",
+            "CgVHUk9VUBACEgoKBlNFUklFUxADEg8KC09CU0VSVkFUSU9OEAQqYAoSQ29u",
+            "ZmlkZW50aWFsaXR5RHRvEgoKBlBVQkxJQxAAEhAKDFVOUkVTVFJJQ1RFRBAB",
+            "Eg4KClJFU1RSSUNURUQQAhIQCgxDT05GSURFTlRJQUwQAxIKCgZTRUNSRVQQ",
+            "BCpHCglEZXRhaWxEdG8SCAoERlVMTBAAEg0KCURBVEFfT05MWRABEhQKEFNF",
+            "UklFU19LRVlTX09OTFkQAhILCgdOT19EQVRBEAMqPwoKRmVhdHVyZUR0bxIa",
+            "ChZEQVRBX1FVRVJZX0FMTF9LRVlXT1JEEAASFQoRREFUQV9RVUVSWV9ERVRB",
+            "SUwQAUICUAFiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
-          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Sdmxdl.Format.Protobuf.AttributeRelationship), typeof(global::Sdmxdl.Format.Protobuf.Confidentiality), typeof(global::Sdmxdl.Format.Protobuf.Detail), typeof(global::Sdmxdl.Format.Protobuf.Feature), }, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Sdmxdl.Format.Protobuf.About), global::Sdmxdl.Format.Protobuf.About.Parser, new[]{ "Name", "Version" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Sdmxdl.Format.Protobuf.Attribute), global::Sdmxdl.Format.Protobuf.Attribute.Parser, new[]{ "Id", "Name", "Codelist", "Relationship" }, new[]{ "Codelist" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Sdmxdl.Format.Protobuf.Codelist), global::Sdmxdl.Format.Protobuf.Codelist.Parser, new[]{ "Ref", "Codes" }, null, null, null, new pbr::GeneratedClrTypeInfo[] { null, }),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Sdmxdl.Format.Protobuf.Database), global::Sdmxdl.Format.Protobuf.Database.Parser, new[]{ "Ref", "Name" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Sdmxdl.Format.Protobuf.DataRepository), global::Sdmxdl.Format.Protobuf.DataRepository.Parser, new[]{ "Name", "Databases", "Structures", "Flows", "DataSets", "CreationTime", "ExpirationTime" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Sdmxdl.Format.Protobuf.DataSet), global::Sdmxdl.Format.Protobuf.DataSet.Parser, new[]{ "Ref", "Query", "Data" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Sdmxdl.Format.Protobuf.Dimension), global::Sdmxdl.Format.Protobuf.Dimension.Parser, new[]{ "Id", "Name", "Codelist", "Position" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Sdmxdl.Format.Protobuf.Flow), global::Sdmxdl.Format.Protobuf.Flow.Parser, new[]{ "Ref", "StructureRef", "Name", "Description" }, new[]{ "Description" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Sdmxdl.Format.Protobuf.Obs), global::Sdmxdl.Format.Protobuf.Obs.Parser, new[]{ "Period", "Value", "Meta" }, null, null, null, new pbr::GeneratedClrTypeInfo[] { null, }),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Sdmxdl.Format.Protobuf.Query), global::Sdmxdl.Format.Protobuf.Query.Parser, new[]{ "Key", "Detail" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Sdmxdl.Format.Protobuf.Series), global::Sdmxdl.Format.Protobuf.Series.Parser, new[]{ "Key", "Meta", "Obs" }, null, null, null, new pbr::GeneratedClrTypeInfo[] { null, }),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Sdmxdl.Format.Protobuf.Structure), global::Sdmxdl.Format.Protobuf.Structure.Parser, new[]{ "Ref", "Dimensions", "Attributes", "TimeDimensionId", "PrimaryMeasureId", "Name" }, new[]{ "TimeDimensionId" }, null, null, null)
+          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Sdmxdl.Format.Protobuf.AttributeRelationshipDto), typeof(global::Sdmxdl.Format.Protobuf.ConfidentialityDto), typeof(global::Sdmxdl.Format.Protobuf.DetailDto), typeof(global::Sdmxdl.Format.Protobuf.FeatureDto), }, null, new pbr::GeneratedClrTypeInfo[] {
+            new pbr::GeneratedClrTypeInfo(typeof(global::Sdmxdl.Format.Protobuf.AboutDto), global::Sdmxdl.Format.Protobuf.AboutDto.Parser, new[]{ "Name", "Version" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Sdmxdl.Format.Protobuf.AttributeDto), global::Sdmxdl.Format.Protobuf.AttributeDto.Parser, new[]{ "Id", "Name", "Codelist", "Relationship" }, new[]{ "Codelist" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Sdmxdl.Format.Protobuf.CodelistDto), global::Sdmxdl.Format.Protobuf.CodelistDto.Parser, new[]{ "Ref", "Codes" }, null, null, null, new pbr::GeneratedClrTypeInfo[] { null, }),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Sdmxdl.Format.Protobuf.DatabaseDto), global::Sdmxdl.Format.Protobuf.DatabaseDto.Parser, new[]{ "Ref", "Name" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Sdmxdl.Format.Protobuf.DataRepositoryDto), global::Sdmxdl.Format.Protobuf.DataRepositoryDto.Parser, new[]{ "Name", "Databases", "Structures", "Flows", "DataSets", "CreationTime", "ExpirationTime" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Sdmxdl.Format.Protobuf.MetaSetDto), global::Sdmxdl.Format.Protobuf.MetaSetDto.Parser, new[]{ "Flow", "Structure" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Sdmxdl.Format.Protobuf.DataSetDto), global::Sdmxdl.Format.Protobuf.DataSetDto.Parser, new[]{ "Ref", "Query", "Data" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Sdmxdl.Format.Protobuf.DimensionDto), global::Sdmxdl.Format.Protobuf.DimensionDto.Parser, new[]{ "Id", "Name", "Codelist" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Sdmxdl.Format.Protobuf.FlowDto), global::Sdmxdl.Format.Protobuf.FlowDto.Parser, new[]{ "Ref", "StructureRef", "Name", "Description" }, new[]{ "Description" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Sdmxdl.Format.Protobuf.ObsDto), global::Sdmxdl.Format.Protobuf.ObsDto.Parser, new[]{ "Period", "Value", "Meta" }, null, null, null, new pbr::GeneratedClrTypeInfo[] { null, }),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Sdmxdl.Format.Protobuf.QueryDto), global::Sdmxdl.Format.Protobuf.QueryDto.Parser, new[]{ "Key", "Detail" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Sdmxdl.Format.Protobuf.SeriesDto), global::Sdmxdl.Format.Protobuf.SeriesDto.Parser, new[]{ "Key", "Meta", "Obs" }, null, null, null, new pbr::GeneratedClrTypeInfo[] { null, }),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Sdmxdl.Format.Protobuf.StructureDto), global::Sdmxdl.Format.Protobuf.StructureDto.Parser, new[]{ "Ref", "Dimensions", "Attributes", "TimeDimensionId", "PrimaryMeasureId", "Name" }, new[]{ "TimeDimensionId" }, null, null, null)
           }));
     }
     #endregion
 
   }
   #region Enums
-  public enum AttributeRelationship {
+  public enum AttributeRelationshipDto {
     [pbr::OriginalName("UNKNOWN")] Unknown = 0,
     [pbr::OriginalName("DATAFLOW")] Dataflow = 1,
     [pbr::OriginalName("GROUP")] Group = 2,
@@ -97,7 +103,7 @@ namespace Sdmxdl.Format.Protobuf {
     [pbr::OriginalName("OBSERVATION")] Observation = 4,
   }
 
-  public enum Confidentiality {
+  public enum ConfidentialityDto {
     [pbr::OriginalName("PUBLIC")] Public = 0,
     [pbr::OriginalName("UNRESTRICTED")] Unrestricted = 1,
     [pbr::OriginalName("RESTRICTED")] Restricted = 2,
@@ -105,14 +111,14 @@ namespace Sdmxdl.Format.Protobuf {
     [pbr::OriginalName("SECRET")] Secret = 4,
   }
 
-  public enum Detail {
+  public enum DetailDto {
     [pbr::OriginalName("FULL")] Full = 0,
     [pbr::OriginalName("DATA_ONLY")] DataOnly = 1,
     [pbr::OriginalName("SERIES_KEYS_ONLY")] SeriesKeysOnly = 2,
     [pbr::OriginalName("NO_DATA")] NoData = 3,
   }
 
-  public enum Feature {
+  public enum FeatureDto {
     [pbr::OriginalName("DATA_QUERY_ALL_KEYWORD")] DataQueryAllKeyword = 0,
     [pbr::OriginalName("DATA_QUERY_DETAIL")] DataQueryDetail = 1,
   }
@@ -121,16 +127,16 @@ namespace Sdmxdl.Format.Protobuf {
 
   #region Messages
   [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-  public sealed partial class About : pb::IMessage<About>
+  public sealed partial class AboutDto : pb::IMessage<AboutDto>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif
   {
-    private static readonly pb::MessageParser<About> _parser = new pb::MessageParser<About>(() => new About());
+    private static readonly pb::MessageParser<AboutDto> _parser = new pb::MessageParser<AboutDto>(() => new AboutDto());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public static pb::MessageParser<About> Parser { get { return _parser; } }
+    public static pb::MessageParser<AboutDto> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -146,7 +152,7 @@ namespace Sdmxdl.Format.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public About() {
+    public AboutDto() {
       OnConstruction();
     }
 
@@ -154,7 +160,7 @@ namespace Sdmxdl.Format.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public About(About other) : this() {
+    public AboutDto(AboutDto other) : this() {
       name_ = other.name_;
       version_ = other.version_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
@@ -162,8 +168,8 @@ namespace Sdmxdl.Format.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public About Clone() {
-      return new About(this);
+    public AboutDto Clone() {
+      return new AboutDto(this);
     }
 
     /// <summary>Field number for the "name" field.</summary>
@@ -193,12 +199,12 @@ namespace Sdmxdl.Format.Protobuf {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
-      return Equals(other as About);
+      return Equals(other as AboutDto);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public bool Equals(About other) {
+    public bool Equals(AboutDto other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
@@ -284,7 +290,7 @@ namespace Sdmxdl.Format.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void MergeFrom(About other) {
+    public void MergeFrom(AboutDto other) {
       if (other == null) {
         return;
       }
@@ -356,16 +362,16 @@ namespace Sdmxdl.Format.Protobuf {
   }
 
   [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-  public sealed partial class Attribute : pb::IMessage<Attribute>
+  public sealed partial class AttributeDto : pb::IMessage<AttributeDto>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif
   {
-    private static readonly pb::MessageParser<Attribute> _parser = new pb::MessageParser<Attribute>(() => new Attribute());
+    private static readonly pb::MessageParser<AttributeDto> _parser = new pb::MessageParser<AttributeDto>(() => new AttributeDto());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public static pb::MessageParser<Attribute> Parser { get { return _parser; } }
+    public static pb::MessageParser<AttributeDto> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -381,7 +387,7 @@ namespace Sdmxdl.Format.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public Attribute() {
+    public AttributeDto() {
       OnConstruction();
     }
 
@@ -389,7 +395,7 @@ namespace Sdmxdl.Format.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public Attribute(Attribute other) : this() {
+    public AttributeDto(AttributeDto other) : this() {
       id_ = other.id_;
       name_ = other.name_;
       codelist_ = other.codelist_ != null ? other.codelist_.Clone() : null;
@@ -399,8 +405,8 @@ namespace Sdmxdl.Format.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public Attribute Clone() {
-      return new Attribute(this);
+    public AttributeDto Clone() {
+      return new AttributeDto(this);
     }
 
     /// <summary>Field number for the "id" field.</summary>
@@ -429,10 +435,10 @@ namespace Sdmxdl.Format.Protobuf {
 
     /// <summary>Field number for the "codelist" field.</summary>
     public const int CodelistFieldNumber = 3;
-    private global::Sdmxdl.Format.Protobuf.Codelist codelist_;
+    private global::Sdmxdl.Format.Protobuf.CodelistDto codelist_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::Sdmxdl.Format.Protobuf.Codelist Codelist {
+    public global::Sdmxdl.Format.Protobuf.CodelistDto Codelist {
       get { return codelist_; }
       set {
         codelist_ = value;
@@ -441,10 +447,10 @@ namespace Sdmxdl.Format.Protobuf {
 
     /// <summary>Field number for the "relationship" field.</summary>
     public const int RelationshipFieldNumber = 4;
-    private global::Sdmxdl.Format.Protobuf.AttributeRelationship relationship_ = global::Sdmxdl.Format.Protobuf.AttributeRelationship.Unknown;
+    private global::Sdmxdl.Format.Protobuf.AttributeRelationshipDto relationship_ = global::Sdmxdl.Format.Protobuf.AttributeRelationshipDto.Unknown;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::Sdmxdl.Format.Protobuf.AttributeRelationship Relationship {
+    public global::Sdmxdl.Format.Protobuf.AttributeRelationshipDto Relationship {
       get { return relationship_; }
       set {
         relationship_ = value;
@@ -454,12 +460,12 @@ namespace Sdmxdl.Format.Protobuf {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
-      return Equals(other as Attribute);
+      return Equals(other as AttributeDto);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public bool Equals(Attribute other) {
+    public bool Equals(AttributeDto other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
@@ -480,7 +486,7 @@ namespace Sdmxdl.Format.Protobuf {
       if (Id.Length != 0) hash ^= Id.GetHashCode();
       if (Name.Length != 0) hash ^= Name.GetHashCode();
       if (codelist_ != null) hash ^= Codelist.GetHashCode();
-      if (Relationship != global::Sdmxdl.Format.Protobuf.AttributeRelationship.Unknown) hash ^= Relationship.GetHashCode();
+      if (Relationship != global::Sdmxdl.Format.Protobuf.AttributeRelationshipDto.Unknown) hash ^= Relationship.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -511,7 +517,7 @@ namespace Sdmxdl.Format.Protobuf {
         output.WriteRawTag(26);
         output.WriteMessage(Codelist);
       }
-      if (Relationship != global::Sdmxdl.Format.Protobuf.AttributeRelationship.Unknown) {
+      if (Relationship != global::Sdmxdl.Format.Protobuf.AttributeRelationshipDto.Unknown) {
         output.WriteRawTag(32);
         output.WriteEnum((int) Relationship);
       }
@@ -537,7 +543,7 @@ namespace Sdmxdl.Format.Protobuf {
         output.WriteRawTag(26);
         output.WriteMessage(Codelist);
       }
-      if (Relationship != global::Sdmxdl.Format.Protobuf.AttributeRelationship.Unknown) {
+      if (Relationship != global::Sdmxdl.Format.Protobuf.AttributeRelationshipDto.Unknown) {
         output.WriteRawTag(32);
         output.WriteEnum((int) Relationship);
       }
@@ -560,7 +566,7 @@ namespace Sdmxdl.Format.Protobuf {
       if (codelist_ != null) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(Codelist);
       }
-      if (Relationship != global::Sdmxdl.Format.Protobuf.AttributeRelationship.Unknown) {
+      if (Relationship != global::Sdmxdl.Format.Protobuf.AttributeRelationshipDto.Unknown) {
         size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) Relationship);
       }
       if (_unknownFields != null) {
@@ -571,7 +577,7 @@ namespace Sdmxdl.Format.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void MergeFrom(Attribute other) {
+    public void MergeFrom(AttributeDto other) {
       if (other == null) {
         return;
       }
@@ -583,11 +589,11 @@ namespace Sdmxdl.Format.Protobuf {
       }
       if (other.codelist_ != null) {
         if (codelist_ == null) {
-          Codelist = new global::Sdmxdl.Format.Protobuf.Codelist();
+          Codelist = new global::Sdmxdl.Format.Protobuf.CodelistDto();
         }
         Codelist.MergeFrom(other.Codelist);
       }
-      if (other.Relationship != global::Sdmxdl.Format.Protobuf.AttributeRelationship.Unknown) {
+      if (other.Relationship != global::Sdmxdl.Format.Protobuf.AttributeRelationshipDto.Unknown) {
         Relationship = other.Relationship;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
@@ -619,13 +625,13 @@ namespace Sdmxdl.Format.Protobuf {
           }
           case 26: {
             if (codelist_ == null) {
-              Codelist = new global::Sdmxdl.Format.Protobuf.Codelist();
+              Codelist = new global::Sdmxdl.Format.Protobuf.CodelistDto();
             }
             input.ReadMessage(Codelist);
             break;
           }
           case 32: {
-            Relationship = (global::Sdmxdl.Format.Protobuf.AttributeRelationship) input.ReadEnum();
+            Relationship = (global::Sdmxdl.Format.Protobuf.AttributeRelationshipDto) input.ReadEnum();
             break;
           }
         }
@@ -657,13 +663,13 @@ namespace Sdmxdl.Format.Protobuf {
           }
           case 26: {
             if (codelist_ == null) {
-              Codelist = new global::Sdmxdl.Format.Protobuf.Codelist();
+              Codelist = new global::Sdmxdl.Format.Protobuf.CodelistDto();
             }
             input.ReadMessage(Codelist);
             break;
           }
           case 32: {
-            Relationship = (global::Sdmxdl.Format.Protobuf.AttributeRelationship) input.ReadEnum();
+            Relationship = (global::Sdmxdl.Format.Protobuf.AttributeRelationshipDto) input.ReadEnum();
             break;
           }
         }
@@ -674,16 +680,16 @@ namespace Sdmxdl.Format.Protobuf {
   }
 
   [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-  public sealed partial class Codelist : pb::IMessage<Codelist>
+  public sealed partial class CodelistDto : pb::IMessage<CodelistDto>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif
   {
-    private static readonly pb::MessageParser<Codelist> _parser = new pb::MessageParser<Codelist>(() => new Codelist());
+    private static readonly pb::MessageParser<CodelistDto> _parser = new pb::MessageParser<CodelistDto>(() => new CodelistDto());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public static pb::MessageParser<Codelist> Parser { get { return _parser; } }
+    public static pb::MessageParser<CodelistDto> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -699,7 +705,7 @@ namespace Sdmxdl.Format.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public Codelist() {
+    public CodelistDto() {
       OnConstruction();
     }
 
@@ -707,7 +713,7 @@ namespace Sdmxdl.Format.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public Codelist(Codelist other) : this() {
+    public CodelistDto(CodelistDto other) : this() {
       ref_ = other.ref_;
       codes_ = other.codes_.Clone();
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
@@ -715,8 +721,8 @@ namespace Sdmxdl.Format.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public Codelist Clone() {
-      return new Codelist(this);
+    public CodelistDto Clone() {
+      return new CodelistDto(this);
     }
 
     /// <summary>Field number for the "ref" field.</summary>
@@ -748,12 +754,12 @@ namespace Sdmxdl.Format.Protobuf {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
-      return Equals(other as Codelist);
+      return Equals(other as CodelistDto);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public bool Equals(Codelist other) {
+    public bool Equals(CodelistDto other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
@@ -831,7 +837,7 @@ namespace Sdmxdl.Format.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void MergeFrom(Codelist other) {
+    public void MergeFrom(CodelistDto other) {
       if (other == null) {
         return;
       }
@@ -901,16 +907,16 @@ namespace Sdmxdl.Format.Protobuf {
   }
 
   [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-  public sealed partial class Database : pb::IMessage<Database>
+  public sealed partial class DatabaseDto : pb::IMessage<DatabaseDto>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif
   {
-    private static readonly pb::MessageParser<Database> _parser = new pb::MessageParser<Database>(() => new Database());
+    private static readonly pb::MessageParser<DatabaseDto> _parser = new pb::MessageParser<DatabaseDto>(() => new DatabaseDto());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public static pb::MessageParser<Database> Parser { get { return _parser; } }
+    public static pb::MessageParser<DatabaseDto> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -926,7 +932,7 @@ namespace Sdmxdl.Format.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public Database() {
+    public DatabaseDto() {
       OnConstruction();
     }
 
@@ -934,7 +940,7 @@ namespace Sdmxdl.Format.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public Database(Database other) : this() {
+    public DatabaseDto(DatabaseDto other) : this() {
       ref_ = other.ref_;
       name_ = other.name_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
@@ -942,8 +948,8 @@ namespace Sdmxdl.Format.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public Database Clone() {
-      return new Database(this);
+    public DatabaseDto Clone() {
+      return new DatabaseDto(this);
     }
 
     /// <summary>Field number for the "ref" field.</summary>
@@ -976,12 +982,12 @@ namespace Sdmxdl.Format.Protobuf {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
-      return Equals(other as Database);
+      return Equals(other as DatabaseDto);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public bool Equals(Database other) {
+    public bool Equals(DatabaseDto other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
@@ -1067,7 +1073,7 @@ namespace Sdmxdl.Format.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void MergeFrom(Database other) {
+    public void MergeFrom(DatabaseDto other) {
       if (other == null) {
         return;
       }
@@ -1139,16 +1145,16 @@ namespace Sdmxdl.Format.Protobuf {
   }
 
   [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-  public sealed partial class DataRepository : pb::IMessage<DataRepository>
+  public sealed partial class DataRepositoryDto : pb::IMessage<DataRepositoryDto>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif
   {
-    private static readonly pb::MessageParser<DataRepository> _parser = new pb::MessageParser<DataRepository>(() => new DataRepository());
+    private static readonly pb::MessageParser<DataRepositoryDto> _parser = new pb::MessageParser<DataRepositoryDto>(() => new DataRepositoryDto());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public static pb::MessageParser<DataRepository> Parser { get { return _parser; } }
+    public static pb::MessageParser<DataRepositoryDto> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -1164,7 +1170,7 @@ namespace Sdmxdl.Format.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public DataRepository() {
+    public DataRepositoryDto() {
       OnConstruction();
     }
 
@@ -1172,7 +1178,7 @@ namespace Sdmxdl.Format.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public DataRepository(DataRepository other) : this() {
+    public DataRepositoryDto(DataRepositoryDto other) : this() {
       name_ = other.name_;
       databases_ = other.databases_.Clone();
       structures_ = other.structures_.Clone();
@@ -1185,8 +1191,8 @@ namespace Sdmxdl.Format.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public DataRepository Clone() {
-      return new DataRepository(this);
+    public DataRepositoryDto Clone() {
+      return new DataRepositoryDto(this);
     }
 
     /// <summary>Field number for the "name" field.</summary>
@@ -1203,45 +1209,45 @@ namespace Sdmxdl.Format.Protobuf {
 
     /// <summary>Field number for the "databases" field.</summary>
     public const int DatabasesFieldNumber = 2;
-    private static readonly pb::FieldCodec<global::Sdmxdl.Format.Protobuf.Database> _repeated_databases_codec
-        = pb::FieldCodec.ForMessage(18, global::Sdmxdl.Format.Protobuf.Database.Parser);
-    private readonly pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.Database> databases_ = new pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.Database>();
+    private static readonly pb::FieldCodec<global::Sdmxdl.Format.Protobuf.DatabaseDto> _repeated_databases_codec
+        = pb::FieldCodec.ForMessage(18, global::Sdmxdl.Format.Protobuf.DatabaseDto.Parser);
+    private readonly pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.DatabaseDto> databases_ = new pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.DatabaseDto>();
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.Database> Databases {
+    public pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.DatabaseDto> Databases {
       get { return databases_; }
     }
 
     /// <summary>Field number for the "structures" field.</summary>
     public const int StructuresFieldNumber = 3;
-    private static readonly pb::FieldCodec<global::Sdmxdl.Format.Protobuf.Structure> _repeated_structures_codec
-        = pb::FieldCodec.ForMessage(26, global::Sdmxdl.Format.Protobuf.Structure.Parser);
-    private readonly pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.Structure> structures_ = new pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.Structure>();
+    private static readonly pb::FieldCodec<global::Sdmxdl.Format.Protobuf.StructureDto> _repeated_structures_codec
+        = pb::FieldCodec.ForMessage(26, global::Sdmxdl.Format.Protobuf.StructureDto.Parser);
+    private readonly pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.StructureDto> structures_ = new pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.StructureDto>();
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.Structure> Structures {
+    public pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.StructureDto> Structures {
       get { return structures_; }
     }
 
     /// <summary>Field number for the "flows" field.</summary>
     public const int FlowsFieldNumber = 4;
-    private static readonly pb::FieldCodec<global::Sdmxdl.Format.Protobuf.Flow> _repeated_flows_codec
-        = pb::FieldCodec.ForMessage(34, global::Sdmxdl.Format.Protobuf.Flow.Parser);
-    private readonly pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.Flow> flows_ = new pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.Flow>();
+    private static readonly pb::FieldCodec<global::Sdmxdl.Format.Protobuf.FlowDto> _repeated_flows_codec
+        = pb::FieldCodec.ForMessage(34, global::Sdmxdl.Format.Protobuf.FlowDto.Parser);
+    private readonly pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.FlowDto> flows_ = new pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.FlowDto>();
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.Flow> Flows {
+    public pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.FlowDto> Flows {
       get { return flows_; }
     }
 
     /// <summary>Field number for the "dataSets" field.</summary>
     public const int DataSetsFieldNumber = 5;
-    private static readonly pb::FieldCodec<global::Sdmxdl.Format.Protobuf.DataSet> _repeated_dataSets_codec
-        = pb::FieldCodec.ForMessage(42, global::Sdmxdl.Format.Protobuf.DataSet.Parser);
-    private readonly pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.DataSet> dataSets_ = new pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.DataSet>();
+    private static readonly pb::FieldCodec<global::Sdmxdl.Format.Protobuf.DataSetDto> _repeated_dataSets_codec
+        = pb::FieldCodec.ForMessage(42, global::Sdmxdl.Format.Protobuf.DataSetDto.Parser);
+    private readonly pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.DataSetDto> dataSets_ = new pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.DataSetDto>();
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.DataSet> DataSets {
+    public pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.DataSetDto> DataSets {
       get { return dataSets_; }
     }
 
@@ -1272,12 +1278,12 @@ namespace Sdmxdl.Format.Protobuf {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
-      return Equals(other as DataRepository);
+      return Equals(other as DataRepositoryDto);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public bool Equals(DataRepository other) {
+    public bool Equals(DataRepositoryDto other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
@@ -1396,7 +1402,7 @@ namespace Sdmxdl.Format.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void MergeFrom(DataRepository other) {
+    public void MergeFrom(DataRepositoryDto other) {
       if (other == null) {
         return;
       }
@@ -1515,16 +1521,16 @@ namespace Sdmxdl.Format.Protobuf {
   }
 
   [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-  public sealed partial class DataSet : pb::IMessage<DataSet>
+  public sealed partial class MetaSetDto : pb::IMessage<MetaSetDto>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif
   {
-    private static readonly pb::MessageParser<DataSet> _parser = new pb::MessageParser<DataSet>(() => new DataSet());
+    private static readonly pb::MessageParser<MetaSetDto> _parser = new pb::MessageParser<MetaSetDto>(() => new MetaSetDto());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public static pb::MessageParser<DataSet> Parser { get { return _parser; } }
+    public static pb::MessageParser<MetaSetDto> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -1540,7 +1546,7 @@ namespace Sdmxdl.Format.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public DataSet() {
+    public MetaSetDto() {
       OnConstruction();
     }
 
@@ -1548,7 +1554,260 @@ namespace Sdmxdl.Format.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public DataSet(DataSet other) : this() {
+    public MetaSetDto(MetaSetDto other) : this() {
+      flow_ = other.flow_ != null ? other.flow_.Clone() : null;
+      structure_ = other.structure_ != null ? other.structure_.Clone() : null;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public MetaSetDto Clone() {
+      return new MetaSetDto(this);
+    }
+
+    /// <summary>Field number for the "flow" field.</summary>
+    public const int FlowFieldNumber = 1;
+    private global::Sdmxdl.Format.Protobuf.FlowDto flow_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public global::Sdmxdl.Format.Protobuf.FlowDto Flow {
+      get { return flow_; }
+      set {
+        flow_ = value;
+      }
+    }
+
+    /// <summary>Field number for the "structure" field.</summary>
+    public const int StructureFieldNumber = 2;
+    private global::Sdmxdl.Format.Protobuf.StructureDto structure_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public global::Sdmxdl.Format.Protobuf.StructureDto Structure {
+      get { return structure_; }
+      set {
+        structure_ = value;
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override bool Equals(object other) {
+      return Equals(other as MetaSetDto);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public bool Equals(MetaSetDto other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (!object.Equals(Flow, other.Flow)) return false;
+      if (!object.Equals(Structure, other.Structure)) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (flow_ != null) hash ^= Flow.GetHashCode();
+      if (structure_ != null) hash ^= Structure.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void WriteTo(pb::CodedOutputStream output) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      output.WriteRawMessage(this);
+    #else
+      if (flow_ != null) {
+        output.WriteRawTag(10);
+        output.WriteMessage(Flow);
+      }
+      if (structure_ != null) {
+        output.WriteRawTag(18);
+        output.WriteMessage(Structure);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
+      if (flow_ != null) {
+        output.WriteRawTag(10);
+        output.WriteMessage(Flow);
+      }
+      if (structure_ != null) {
+        output.WriteRawTag(18);
+        output.WriteMessage(Structure);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(ref output);
+      }
+    }
+    #endif
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public int CalculateSize() {
+      int size = 0;
+      if (flow_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Flow);
+      }
+      if (structure_ != null) {
+        size += 1 + pb::CodedOutputStream.ComputeMessageSize(Structure);
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(MetaSetDto other) {
+      if (other == null) {
+        return;
+      }
+      if (other.flow_ != null) {
+        if (flow_ == null) {
+          Flow = new global::Sdmxdl.Format.Protobuf.FlowDto();
+        }
+        Flow.MergeFrom(other.Flow);
+      }
+      if (other.structure_ != null) {
+        if (structure_ == null) {
+          Structure = new global::Sdmxdl.Format.Protobuf.StructureDto();
+        }
+        Structure.MergeFrom(other.Structure);
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public void MergeFrom(pb::CodedInputStream input) {
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      input.ReadRawMessage(this);
+    #else
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+      if ((tag & 7) == 4) {
+        // Abort on any end group tag.
+        return;
+      }
+      switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 10: {
+            if (flow_ == null) {
+              Flow = new global::Sdmxdl.Format.Protobuf.FlowDto();
+            }
+            input.ReadMessage(Flow);
+            break;
+          }
+          case 18: {
+            if (structure_ == null) {
+              Structure = new global::Sdmxdl.Format.Protobuf.StructureDto();
+            }
+            input.ReadMessage(Structure);
+            break;
+          }
+        }
+      }
+    #endif
+    }
+
+    #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    void pb::IBufferMessage.InternalMergeFrom(ref pb::ParseContext input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+      if ((tag & 7) == 4) {
+        // Abort on any end group tag.
+        return;
+      }
+      switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
+            break;
+          case 10: {
+            if (flow_ == null) {
+              Flow = new global::Sdmxdl.Format.Protobuf.FlowDto();
+            }
+            input.ReadMessage(Flow);
+            break;
+          }
+          case 18: {
+            if (structure_ == null) {
+              Structure = new global::Sdmxdl.Format.Protobuf.StructureDto();
+            }
+            input.ReadMessage(Structure);
+            break;
+          }
+        }
+      }
+    }
+    #endif
+
+  }
+
+  [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
+  public sealed partial class DataSetDto : pb::IMessage<DataSetDto>
+  #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
+      , pb::IBufferMessage
+  #endif
+  {
+    private static readonly pb::MessageParser<DataSetDto> _parser = new pb::MessageParser<DataSetDto>(() => new DataSetDto());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pb::MessageParser<DataSetDto> Parser { get { return _parser; } }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Sdmxdl.Format.Protobuf.SdmxdlApiReflection.Descriptor.MessageTypes[6]; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public DataSetDto() {
+      OnConstruction();
+    }
+
+    partial void OnConstruction();
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+    public DataSetDto(DataSetDto other) : this() {
       ref_ = other.ref_;
       query_ = other.query_ != null ? other.query_.Clone() : null;
       data_ = other.data_.Clone();
@@ -1557,8 +1816,8 @@ namespace Sdmxdl.Format.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public DataSet Clone() {
-      return new DataSet(this);
+    public DataSetDto Clone() {
+      return new DataSetDto(this);
     }
 
     /// <summary>Field number for the "ref" field.</summary>
@@ -1578,10 +1837,10 @@ namespace Sdmxdl.Format.Protobuf {
 
     /// <summary>Field number for the "query" field.</summary>
     public const int QueryFieldNumber = 2;
-    private global::Sdmxdl.Format.Protobuf.Query query_;
+    private global::Sdmxdl.Format.Protobuf.QueryDto query_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::Sdmxdl.Format.Protobuf.Query Query {
+    public global::Sdmxdl.Format.Protobuf.QueryDto Query {
       get { return query_; }
       set {
         query_ = value;
@@ -1590,24 +1849,24 @@ namespace Sdmxdl.Format.Protobuf {
 
     /// <summary>Field number for the "data" field.</summary>
     public const int DataFieldNumber = 3;
-    private static readonly pb::FieldCodec<global::Sdmxdl.Format.Protobuf.Series> _repeated_data_codec
-        = pb::FieldCodec.ForMessage(26, global::Sdmxdl.Format.Protobuf.Series.Parser);
-    private readonly pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.Series> data_ = new pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.Series>();
+    private static readonly pb::FieldCodec<global::Sdmxdl.Format.Protobuf.SeriesDto> _repeated_data_codec
+        = pb::FieldCodec.ForMessage(26, global::Sdmxdl.Format.Protobuf.SeriesDto.Parser);
+    private readonly pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.SeriesDto> data_ = new pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.SeriesDto>();
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.Series> Data {
+    public pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.SeriesDto> Data {
       get { return data_; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
-      return Equals(other as DataSet);
+      return Equals(other as DataSetDto);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public bool Equals(DataSet other) {
+    public bool Equals(DataSetDto other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
@@ -1698,7 +1957,7 @@ namespace Sdmxdl.Format.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void MergeFrom(DataSet other) {
+    public void MergeFrom(DataSetDto other) {
       if (other == null) {
         return;
       }
@@ -1707,7 +1966,7 @@ namespace Sdmxdl.Format.Protobuf {
       }
       if (other.query_ != null) {
         if (query_ == null) {
-          Query = new global::Sdmxdl.Format.Protobuf.Query();
+          Query = new global::Sdmxdl.Format.Protobuf.QueryDto();
         }
         Query.MergeFrom(other.Query);
       }
@@ -1737,7 +1996,7 @@ namespace Sdmxdl.Format.Protobuf {
           }
           case 18: {
             if (query_ == null) {
-              Query = new global::Sdmxdl.Format.Protobuf.Query();
+              Query = new global::Sdmxdl.Format.Protobuf.QueryDto();
             }
             input.ReadMessage(Query);
             break;
@@ -1771,7 +2030,7 @@ namespace Sdmxdl.Format.Protobuf {
           }
           case 18: {
             if (query_ == null) {
-              Query = new global::Sdmxdl.Format.Protobuf.Query();
+              Query = new global::Sdmxdl.Format.Protobuf.QueryDto();
             }
             input.ReadMessage(Query);
             break;
@@ -1788,21 +2047,21 @@ namespace Sdmxdl.Format.Protobuf {
   }
 
   [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-  public sealed partial class Dimension : pb::IMessage<Dimension>
+  public sealed partial class DimensionDto : pb::IMessage<DimensionDto>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif
   {
-    private static readonly pb::MessageParser<Dimension> _parser = new pb::MessageParser<Dimension>(() => new Dimension());
+    private static readonly pb::MessageParser<DimensionDto> _parser = new pb::MessageParser<DimensionDto>(() => new DimensionDto());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public static pb::MessageParser<Dimension> Parser { get { return _parser; } }
+    public static pb::MessageParser<DimensionDto> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Sdmxdl.Format.Protobuf.SdmxdlApiReflection.Descriptor.MessageTypes[6]; }
+      get { return global::Sdmxdl.Format.Protobuf.SdmxdlApiReflection.Descriptor.MessageTypes[7]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1813,7 +2072,7 @@ namespace Sdmxdl.Format.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public Dimension() {
+    public DimensionDto() {
       OnConstruction();
     }
 
@@ -1821,18 +2080,17 @@ namespace Sdmxdl.Format.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public Dimension(Dimension other) : this() {
+    public DimensionDto(DimensionDto other) : this() {
       id_ = other.id_;
       name_ = other.name_;
       codelist_ = other.codelist_ != null ? other.codelist_.Clone() : null;
-      position_ = other.position_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public Dimension Clone() {
-      return new Dimension(this);
+    public DimensionDto Clone() {
+      return new DimensionDto(this);
     }
 
     /// <summary>Field number for the "id" field.</summary>
@@ -1861,37 +2119,25 @@ namespace Sdmxdl.Format.Protobuf {
 
     /// <summary>Field number for the "codelist" field.</summary>
     public const int CodelistFieldNumber = 3;
-    private global::Sdmxdl.Format.Protobuf.Codelist codelist_;
+    private global::Sdmxdl.Format.Protobuf.CodelistDto codelist_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::Sdmxdl.Format.Protobuf.Codelist Codelist {
+    public global::Sdmxdl.Format.Protobuf.CodelistDto Codelist {
       get { return codelist_; }
       set {
         codelist_ = value;
       }
     }
 
-    /// <summary>Field number for the "position" field.</summary>
-    public const int PositionFieldNumber = 4;
-    private int position_;
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public int Position {
-      get { return position_; }
-      set {
-        position_ = value;
-      }
-    }
-
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
-      return Equals(other as Dimension);
+      return Equals(other as DimensionDto);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public bool Equals(Dimension other) {
+    public bool Equals(DimensionDto other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
@@ -1901,7 +2147,6 @@ namespace Sdmxdl.Format.Protobuf {
       if (Id != other.Id) return false;
       if (Name != other.Name) return false;
       if (!object.Equals(Codelist, other.Codelist)) return false;
-      if (Position != other.Position) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1912,7 +2157,6 @@ namespace Sdmxdl.Format.Protobuf {
       if (Id.Length != 0) hash ^= Id.GetHashCode();
       if (Name.Length != 0) hash ^= Name.GetHashCode();
       if (codelist_ != null) hash ^= Codelist.GetHashCode();
-      if (Position != 0) hash ^= Position.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -1943,10 +2187,6 @@ namespace Sdmxdl.Format.Protobuf {
         output.WriteRawTag(26);
         output.WriteMessage(Codelist);
       }
-      if (Position != 0) {
-        output.WriteRawTag(32);
-        output.WriteInt32(Position);
-      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -1969,10 +2209,6 @@ namespace Sdmxdl.Format.Protobuf {
         output.WriteRawTag(26);
         output.WriteMessage(Codelist);
       }
-      if (Position != 0) {
-        output.WriteRawTag(32);
-        output.WriteInt32(Position);
-      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -1992,9 +2228,6 @@ namespace Sdmxdl.Format.Protobuf {
       if (codelist_ != null) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(Codelist);
       }
-      if (Position != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Position);
-      }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
       }
@@ -2003,7 +2236,7 @@ namespace Sdmxdl.Format.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void MergeFrom(Dimension other) {
+    public void MergeFrom(DimensionDto other) {
       if (other == null) {
         return;
       }
@@ -2015,12 +2248,9 @@ namespace Sdmxdl.Format.Protobuf {
       }
       if (other.codelist_ != null) {
         if (codelist_ == null) {
-          Codelist = new global::Sdmxdl.Format.Protobuf.Codelist();
+          Codelist = new global::Sdmxdl.Format.Protobuf.CodelistDto();
         }
         Codelist.MergeFrom(other.Codelist);
-      }
-      if (other.Position != 0) {
-        Position = other.Position;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -2051,13 +2281,9 @@ namespace Sdmxdl.Format.Protobuf {
           }
           case 26: {
             if (codelist_ == null) {
-              Codelist = new global::Sdmxdl.Format.Protobuf.Codelist();
+              Codelist = new global::Sdmxdl.Format.Protobuf.CodelistDto();
             }
             input.ReadMessage(Codelist);
-            break;
-          }
-          case 32: {
-            Position = input.ReadInt32();
             break;
           }
         }
@@ -2089,13 +2315,9 @@ namespace Sdmxdl.Format.Protobuf {
           }
           case 26: {
             if (codelist_ == null) {
-              Codelist = new global::Sdmxdl.Format.Protobuf.Codelist();
+              Codelist = new global::Sdmxdl.Format.Protobuf.CodelistDto();
             }
             input.ReadMessage(Codelist);
-            break;
-          }
-          case 32: {
-            Position = input.ReadInt32();
             break;
           }
         }
@@ -2106,21 +2328,21 @@ namespace Sdmxdl.Format.Protobuf {
   }
 
   [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-  public sealed partial class Flow : pb::IMessage<Flow>
+  public sealed partial class FlowDto : pb::IMessage<FlowDto>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif
   {
-    private static readonly pb::MessageParser<Flow> _parser = new pb::MessageParser<Flow>(() => new Flow());
+    private static readonly pb::MessageParser<FlowDto> _parser = new pb::MessageParser<FlowDto>(() => new FlowDto());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public static pb::MessageParser<Flow> Parser { get { return _parser; } }
+    public static pb::MessageParser<FlowDto> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Sdmxdl.Format.Protobuf.SdmxdlApiReflection.Descriptor.MessageTypes[7]; }
+      get { return global::Sdmxdl.Format.Protobuf.SdmxdlApiReflection.Descriptor.MessageTypes[8]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -2131,7 +2353,7 @@ namespace Sdmxdl.Format.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public Flow() {
+    public FlowDto() {
       OnConstruction();
     }
 
@@ -2139,7 +2361,7 @@ namespace Sdmxdl.Format.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public Flow(Flow other) : this() {
+    public FlowDto(FlowDto other) : this() {
       ref_ = other.ref_;
       structureRef_ = other.structureRef_;
       name_ = other.name_;
@@ -2149,8 +2371,8 @@ namespace Sdmxdl.Format.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public Flow Clone() {
-      return new Flow(this);
+    public FlowDto Clone() {
+      return new FlowDto(this);
     }
 
     /// <summary>Field number for the "ref" field.</summary>
@@ -2224,12 +2446,12 @@ namespace Sdmxdl.Format.Protobuf {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
-      return Equals(other as Flow);
+      return Equals(other as FlowDto);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public bool Equals(Flow other) {
+    public bool Equals(FlowDto other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
@@ -2341,7 +2563,7 @@ namespace Sdmxdl.Format.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void MergeFrom(Flow other) {
+    public void MergeFrom(FlowDto other) {
       if (other == null) {
         return;
       }
@@ -2435,21 +2657,21 @@ namespace Sdmxdl.Format.Protobuf {
   }
 
   [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-  public sealed partial class Obs : pb::IMessage<Obs>
+  public sealed partial class ObsDto : pb::IMessage<ObsDto>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif
   {
-    private static readonly pb::MessageParser<Obs> _parser = new pb::MessageParser<Obs>(() => new Obs());
+    private static readonly pb::MessageParser<ObsDto> _parser = new pb::MessageParser<ObsDto>(() => new ObsDto());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public static pb::MessageParser<Obs> Parser { get { return _parser; } }
+    public static pb::MessageParser<ObsDto> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Sdmxdl.Format.Protobuf.SdmxdlApiReflection.Descriptor.MessageTypes[8]; }
+      get { return global::Sdmxdl.Format.Protobuf.SdmxdlApiReflection.Descriptor.MessageTypes[9]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -2460,7 +2682,7 @@ namespace Sdmxdl.Format.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public Obs() {
+    public ObsDto() {
       OnConstruction();
     }
 
@@ -2468,7 +2690,7 @@ namespace Sdmxdl.Format.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public Obs(Obs other) : this() {
+    public ObsDto(ObsDto other) : this() {
       period_ = other.period_;
       value_ = other.value_;
       meta_ = other.meta_.Clone();
@@ -2477,8 +2699,8 @@ namespace Sdmxdl.Format.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public Obs Clone() {
-      return new Obs(this);
+    public ObsDto Clone() {
+      return new ObsDto(this);
     }
 
     /// <summary>Field number for the "period" field.</summary>
@@ -2522,12 +2744,12 @@ namespace Sdmxdl.Format.Protobuf {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
-      return Equals(other as Obs);
+      return Equals(other as ObsDto);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public bool Equals(Obs other) {
+    public bool Equals(ObsDto other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
@@ -2618,7 +2840,7 @@ namespace Sdmxdl.Format.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void MergeFrom(Obs other) {
+    public void MergeFrom(ObsDto other) {
       if (other == null) {
         return;
       }
@@ -2699,21 +2921,21 @@ namespace Sdmxdl.Format.Protobuf {
   }
 
   [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-  public sealed partial class Query : pb::IMessage<Query>
+  public sealed partial class QueryDto : pb::IMessage<QueryDto>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif
   {
-    private static readonly pb::MessageParser<Query> _parser = new pb::MessageParser<Query>(() => new Query());
+    private static readonly pb::MessageParser<QueryDto> _parser = new pb::MessageParser<QueryDto>(() => new QueryDto());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public static pb::MessageParser<Query> Parser { get { return _parser; } }
+    public static pb::MessageParser<QueryDto> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Sdmxdl.Format.Protobuf.SdmxdlApiReflection.Descriptor.MessageTypes[9]; }
+      get { return global::Sdmxdl.Format.Protobuf.SdmxdlApiReflection.Descriptor.MessageTypes[10]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -2724,7 +2946,7 @@ namespace Sdmxdl.Format.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public Query() {
+    public QueryDto() {
       OnConstruction();
     }
 
@@ -2732,7 +2954,7 @@ namespace Sdmxdl.Format.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public Query(Query other) : this() {
+    public QueryDto(QueryDto other) : this() {
       key_ = other.key_;
       detail_ = other.detail_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
@@ -2740,8 +2962,8 @@ namespace Sdmxdl.Format.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public Query Clone() {
-      return new Query(this);
+    public QueryDto Clone() {
+      return new QueryDto(this);
     }
 
     /// <summary>Field number for the "key" field.</summary>
@@ -2761,10 +2983,10 @@ namespace Sdmxdl.Format.Protobuf {
 
     /// <summary>Field number for the "detail" field.</summary>
     public const int DetailFieldNumber = 2;
-    private global::Sdmxdl.Format.Protobuf.Detail detail_ = global::Sdmxdl.Format.Protobuf.Detail.Full;
+    private global::Sdmxdl.Format.Protobuf.DetailDto detail_ = global::Sdmxdl.Format.Protobuf.DetailDto.Full;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::Sdmxdl.Format.Protobuf.Detail Detail {
+    public global::Sdmxdl.Format.Protobuf.DetailDto Detail {
       get { return detail_; }
       set {
         detail_ = value;
@@ -2774,12 +2996,12 @@ namespace Sdmxdl.Format.Protobuf {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
-      return Equals(other as Query);
+      return Equals(other as QueryDto);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public bool Equals(Query other) {
+    public bool Equals(QueryDto other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
@@ -2796,7 +3018,7 @@ namespace Sdmxdl.Format.Protobuf {
     public override int GetHashCode() {
       int hash = 1;
       if (Key.Length != 0) hash ^= Key.GetHashCode();
-      if (Detail != global::Sdmxdl.Format.Protobuf.Detail.Full) hash ^= Detail.GetHashCode();
+      if (Detail != global::Sdmxdl.Format.Protobuf.DetailDto.Full) hash ^= Detail.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -2819,7 +3041,7 @@ namespace Sdmxdl.Format.Protobuf {
         output.WriteRawTag(10);
         output.WriteString(Key);
       }
-      if (Detail != global::Sdmxdl.Format.Protobuf.Detail.Full) {
+      if (Detail != global::Sdmxdl.Format.Protobuf.DetailDto.Full) {
         output.WriteRawTag(16);
         output.WriteEnum((int) Detail);
       }
@@ -2837,7 +3059,7 @@ namespace Sdmxdl.Format.Protobuf {
         output.WriteRawTag(10);
         output.WriteString(Key);
       }
-      if (Detail != global::Sdmxdl.Format.Protobuf.Detail.Full) {
+      if (Detail != global::Sdmxdl.Format.Protobuf.DetailDto.Full) {
         output.WriteRawTag(16);
         output.WriteEnum((int) Detail);
       }
@@ -2854,7 +3076,7 @@ namespace Sdmxdl.Format.Protobuf {
       if (Key.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(Key);
       }
-      if (Detail != global::Sdmxdl.Format.Protobuf.Detail.Full) {
+      if (Detail != global::Sdmxdl.Format.Protobuf.DetailDto.Full) {
         size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) Detail);
       }
       if (_unknownFields != null) {
@@ -2865,14 +3087,14 @@ namespace Sdmxdl.Format.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void MergeFrom(Query other) {
+    public void MergeFrom(QueryDto other) {
       if (other == null) {
         return;
       }
       if (other.Key.Length != 0) {
         Key = other.Key;
       }
-      if (other.Detail != global::Sdmxdl.Format.Protobuf.Detail.Full) {
+      if (other.Detail != global::Sdmxdl.Format.Protobuf.DetailDto.Full) {
         Detail = other.Detail;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
@@ -2899,7 +3121,7 @@ namespace Sdmxdl.Format.Protobuf {
             break;
           }
           case 16: {
-            Detail = (global::Sdmxdl.Format.Protobuf.Detail) input.ReadEnum();
+            Detail = (global::Sdmxdl.Format.Protobuf.DetailDto) input.ReadEnum();
             break;
           }
         }
@@ -2926,7 +3148,7 @@ namespace Sdmxdl.Format.Protobuf {
             break;
           }
           case 16: {
-            Detail = (global::Sdmxdl.Format.Protobuf.Detail) input.ReadEnum();
+            Detail = (global::Sdmxdl.Format.Protobuf.DetailDto) input.ReadEnum();
             break;
           }
         }
@@ -2937,21 +3159,21 @@ namespace Sdmxdl.Format.Protobuf {
   }
 
   [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-  public sealed partial class Series : pb::IMessage<Series>
+  public sealed partial class SeriesDto : pb::IMessage<SeriesDto>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif
   {
-    private static readonly pb::MessageParser<Series> _parser = new pb::MessageParser<Series>(() => new Series());
+    private static readonly pb::MessageParser<SeriesDto> _parser = new pb::MessageParser<SeriesDto>(() => new SeriesDto());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public static pb::MessageParser<Series> Parser { get { return _parser; } }
+    public static pb::MessageParser<SeriesDto> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Sdmxdl.Format.Protobuf.SdmxdlApiReflection.Descriptor.MessageTypes[10]; }
+      get { return global::Sdmxdl.Format.Protobuf.SdmxdlApiReflection.Descriptor.MessageTypes[11]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -2962,7 +3184,7 @@ namespace Sdmxdl.Format.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public Series() {
+    public SeriesDto() {
       OnConstruction();
     }
 
@@ -2970,7 +3192,7 @@ namespace Sdmxdl.Format.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public Series(Series other) : this() {
+    public SeriesDto(SeriesDto other) : this() {
       key_ = other.key_;
       meta_ = other.meta_.Clone();
       obs_ = other.obs_.Clone();
@@ -2979,8 +3201,8 @@ namespace Sdmxdl.Format.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public Series Clone() {
-      return new Series(this);
+    public SeriesDto Clone() {
+      return new SeriesDto(this);
     }
 
     /// <summary>Field number for the "key" field.</summary>
@@ -3011,24 +3233,24 @@ namespace Sdmxdl.Format.Protobuf {
 
     /// <summary>Field number for the "obs" field.</summary>
     public const int ObsFieldNumber = 3;
-    private static readonly pb::FieldCodec<global::Sdmxdl.Format.Protobuf.Obs> _repeated_obs_codec
-        = pb::FieldCodec.ForMessage(26, global::Sdmxdl.Format.Protobuf.Obs.Parser);
-    private readonly pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.Obs> obs_ = new pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.Obs>();
+    private static readonly pb::FieldCodec<global::Sdmxdl.Format.Protobuf.ObsDto> _repeated_obs_codec
+        = pb::FieldCodec.ForMessage(26, global::Sdmxdl.Format.Protobuf.ObsDto.Parser);
+    private readonly pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.ObsDto> obs_ = new pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.ObsDto>();
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.Obs> Obs {
+    public pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.ObsDto> Obs {
       get { return obs_; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
-      return Equals(other as Series);
+      return Equals(other as SeriesDto);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public bool Equals(Series other) {
+    public bool Equals(SeriesDto other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
@@ -3111,7 +3333,7 @@ namespace Sdmxdl.Format.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void MergeFrom(Series other) {
+    public void MergeFrom(SeriesDto other) {
       if (other == null) {
         return;
       }
@@ -3190,21 +3412,21 @@ namespace Sdmxdl.Format.Protobuf {
   }
 
   [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-  public sealed partial class Structure : pb::IMessage<Structure>
+  public sealed partial class StructureDto : pb::IMessage<StructureDto>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif
   {
-    private static readonly pb::MessageParser<Structure> _parser = new pb::MessageParser<Structure>(() => new Structure());
+    private static readonly pb::MessageParser<StructureDto> _parser = new pb::MessageParser<StructureDto>(() => new StructureDto());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public static pb::MessageParser<Structure> Parser { get { return _parser; } }
+    public static pb::MessageParser<StructureDto> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Sdmxdl.Format.Protobuf.SdmxdlApiReflection.Descriptor.MessageTypes[11]; }
+      get { return global::Sdmxdl.Format.Protobuf.SdmxdlApiReflection.Descriptor.MessageTypes[12]; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -3215,7 +3437,7 @@ namespace Sdmxdl.Format.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public Structure() {
+    public StructureDto() {
       OnConstruction();
     }
 
@@ -3223,7 +3445,7 @@ namespace Sdmxdl.Format.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public Structure(Structure other) : this() {
+    public StructureDto(StructureDto other) : this() {
       ref_ = other.ref_;
       dimensions_ = other.dimensions_.Clone();
       attributes_ = other.attributes_.Clone();
@@ -3235,8 +3457,8 @@ namespace Sdmxdl.Format.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public Structure Clone() {
-      return new Structure(this);
+    public StructureDto Clone() {
+      return new StructureDto(this);
     }
 
     /// <summary>Field number for the "ref" field.</summary>
@@ -3256,23 +3478,23 @@ namespace Sdmxdl.Format.Protobuf {
 
     /// <summary>Field number for the "dimensions" field.</summary>
     public const int DimensionsFieldNumber = 2;
-    private static readonly pb::FieldCodec<global::Sdmxdl.Format.Protobuf.Dimension> _repeated_dimensions_codec
-        = pb::FieldCodec.ForMessage(18, global::Sdmxdl.Format.Protobuf.Dimension.Parser);
-    private readonly pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.Dimension> dimensions_ = new pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.Dimension>();
+    private static readonly pb::FieldCodec<global::Sdmxdl.Format.Protobuf.DimensionDto> _repeated_dimensions_codec
+        = pb::FieldCodec.ForMessage(18, global::Sdmxdl.Format.Protobuf.DimensionDto.Parser);
+    private readonly pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.DimensionDto> dimensions_ = new pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.DimensionDto>();
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.Dimension> Dimensions {
+    public pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.DimensionDto> Dimensions {
       get { return dimensions_; }
     }
 
     /// <summary>Field number for the "attributes" field.</summary>
     public const int AttributesFieldNumber = 3;
-    private static readonly pb::FieldCodec<global::Sdmxdl.Format.Protobuf.Attribute> _repeated_attributes_codec
-        = pb::FieldCodec.ForMessage(26, global::Sdmxdl.Format.Protobuf.Attribute.Parser);
-    private readonly pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.Attribute> attributes_ = new pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.Attribute>();
+    private static readonly pb::FieldCodec<global::Sdmxdl.Format.Protobuf.AttributeDto> _repeated_attributes_codec
+        = pb::FieldCodec.ForMessage(26, global::Sdmxdl.Format.Protobuf.AttributeDto.Parser);
+    private readonly pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.AttributeDto> attributes_ = new pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.AttributeDto>();
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.Attribute> Attributes {
+    public pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.AttributeDto> Attributes {
       get { return attributes_; }
     }
 
@@ -3329,12 +3551,12 @@ namespace Sdmxdl.Format.Protobuf {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
-      return Equals(other as Structure);
+      return Equals(other as StructureDto);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public bool Equals(Structure other) {
+    public bool Equals(StructureDto other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
@@ -3456,7 +3678,7 @@ namespace Sdmxdl.Format.Protobuf {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void MergeFrom(Structure other) {
+    public void MergeFrom(StructureDto other) {
       if (other == null) {
         return;
       }

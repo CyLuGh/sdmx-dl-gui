@@ -1,6 +1,8 @@
 using System;
 using System.Linq;
+using System.Reactive;
 using System.Reactive.Disposables;
+using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,19 +10,20 @@ using Avalonia.Input;
 using LanguageExt;
 using Polly;
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
+using ReactiveUI.SourceGenerators;
+using SdmxDl.Browser.Models;
 using SdmxDl.Client;
 using SdmxDl.Client.Models;
 using Sdmxdl.Grpc;
 
 namespace SdmxDl.Browser.ViewModels;
 
-public class SeriesFinderViewModel : BaseViewModel
+public partial class SeriesFinderViewModel : BaseViewModel
 {
     [Reactive]
-    public string? Query { get; set; }
+    public partial string? Query { get; set; }
 
-    public ReactiveCommand<string?, Option<(SdmxWebSource, DataFlow, string)>> ParseQuery { get; }
+    public ReactiveCommand<string?, Seq<SeriesRequest>> ParseQuery { get; }
     public RxCommand Close { get; }
     public RxInteraction CloseInteraction { get; } = new(RxApp.MainThreadScheduler);
     public ReactiveCommand<KeyEventArgs, RxUnit> CheckKeyboardInput { get; }
@@ -51,16 +54,16 @@ public class SeriesFinderViewModel : BaseViewModel
         this.WhenActivated(disposables =>
         {
             ParseQuery
-                .Select(x =>
-                    x.Match(_ => Observable.Return(RxUnit.Default), Observable.Empty<RxUnit>)
+                .Select(seq =>
+                    !seq.IsEmpty ? Observable.Return(RxUnit.Default) : Observable.Empty<RxUnit>()
                 )
                 .Switch()
                 .InvokeCommand(Close)
                 .DisposeWith(disposables);
 
             ParseQuery
-                .Select(x =>
-                    x.Match(Observable.Return, Observable.Empty<(SdmxWebSource, DataFlow, string)>)
+                .Select(seq =>
+                    !seq.IsEmpty ? Observable.Return(seq) : Observable.Empty<Seq<SeriesRequest>>()
                 )
                 .Switch()
                 .InvokeCommand(browserViewModel, x => x.SendResults)
@@ -68,17 +71,16 @@ public class SeriesFinderViewModel : BaseViewModel
         });
     }
 
-    private ReactiveCommand<
-        string?,
-        Option<(SdmxWebSource, DataFlow, string)>
-    > CreateCommandParseQuery(ClientFactory clientFactory)
+    private ReactiveCommand<string?, Seq<SeriesRequest>> CreateCommandParseQuery(
+        ClientFactory clientFactory
+    )
     {
         var canParse = this.WhenAnyValue(x => x.Query)
             .Select(CheckInput)
             .ObserveOn(RxApp.MainThreadScheduler);
 
         var cmd = ReactiveCommand.CreateFromTask(
-            (string? s) => ParseQueryImpl(s, clientFactory),
+            (string? s) => ParseQueriesImpl(s, clientFactory),
             canParse
         );
 
@@ -86,6 +88,9 @@ public class SeriesFinderViewModel : BaseViewModel
     }
 
     private static bool CheckInput(string? input) =>
+        !string.IsNullOrWhiteSpace(input) && SplitInput(input).All(CheckInputPart);
+
+    private static bool CheckInputPart(string? input) =>
         !string.IsNullOrWhiteSpace(input)
         && (
             (
@@ -99,23 +104,42 @@ public class SeriesFinderViewModel : BaseViewModel
             )
         );
 
-    private static Seq<string> SplitInput(string input)
+    private static Seq<string> SplitInput(string input) => input.Split(';').ToSeq().Strict();
+
+    private static Seq<string> SplitPart(string input)
     {
         return input.StartsWith("sdmx-dl:/")
             ? input.Split('/').Skip(1).ToSeq()
             : input.Split(' ').ToSeq();
     }
 
-    internal static async Task<Option<(SdmxWebSource, DataFlow, string)>> ParseQueryImpl(
+    internal static async Task<Seq<SeriesRequest>> ParseQueriesImpl(
         string? input,
         ClientFactory clientFactory
     )
     {
         if (!CheckInput(input))
-            return Option<(SdmxWebSource, DataFlow, string)>.None;
+            return Seq<SeriesRequest>.Empty;
+
+        return (
+            await Task.WhenAll(
+                SplitInput(input!).Select(part => ParseQueryImpl(part, clientFactory))
+            )
+        )
+            .ToSeq()
+            .Somes();
+    }
+
+    private static async Task<Option<SeriesRequest>> ParseQueryImpl(
+        string? input,
+        ClientFactory clientFactory
+    )
+    {
+        if (!CheckInputPart(input))
+            return Option<SeriesRequest>.None;
 
         var client = clientFactory.GetClient();
-        var split = SplitInput(input!);
+        var split = SplitPart(input!);
         var source = (await client.GetSources(CancellationToken.None)).Find(s =>
             s.Id.Equals(split[0])
         );
@@ -130,6 +154,6 @@ public class SeriesFinderViewModel : BaseViewModel
 
         return from s in source
             from f in flow
-            select (s, f, split[2]);
+            select new SeriesRequest(s, f, split[2]);
     }
 }

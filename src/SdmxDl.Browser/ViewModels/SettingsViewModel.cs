@@ -4,30 +4,27 @@ using System.Reactive.Linq;
 using Jot;
 using LanguageExt;
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
+using ReactiveUI.SourceGenerators;
 using SdmxDl.Client.Models;
 
 namespace SdmxDl.Browser.ViewModels;
 
-public class SettingsViewModel : BaseViewModel
+public partial class SettingsViewModel : BaseViewModel
 {
-    public Settings CurrentSettings
-    {
-        [ObservableAsProperty]
-        get;
-    }
+    [ObservableAsProperty(ReadOnly = false)]
+    private Settings _currentSettings;
 
     [Reactive]
-    public string? JavaPath { get; set; }
+    public partial string? JavaPath { get; set; }
 
     [Reactive]
-    public string? JarPath { get; set; }
+    public partial string? JarPath { get; set; }
 
     [Reactive]
-    public string? ServerUri { get; set; }
+    public partial string? ServerUri { get; set; }
 
     [Reactive]
-    public bool UseRunningServer { get; set; }
+    public partial bool UseRunningServer { get; set; }
 
     public ReactiveCommand<RxUnit, Settings> Connect { get; }
     public ReactiveCommand<RxUnit, Settings> Cancel { get; }
@@ -52,11 +49,11 @@ public class SettingsViewModel : BaseViewModel
         Cancel = ReactiveCommand.Create(() => Settings.None);
         ReloadSettings = ReactiveCommand.CreateRunInBackground(GetSettings);
 
-        Connect
+        _currentSettingsHelper = Connect
             .Merge(Cancel)
             .Merge(ReloadSettings)
             .Merge(Connect.IsExecuting.Where(x => x).Select(_ => Settings.None)) // Reset settings on new connection configuration
-            .ToPropertyEx(this, x => x.CurrentSettings, initialValue: Settings.None);
+            .ToProperty(this, x => x.CurrentSettings, initialValue: Settings.None);
         Connect.Merge(Cancel).Select(_ => RxUnit.Default).InvokeCommand(Close);
 
         PickJavaPath = CreateCommandPickJavaPath();

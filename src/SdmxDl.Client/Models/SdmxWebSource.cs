@@ -23,7 +23,7 @@ public readonly record struct SdmxWebSource
     public SdmxWebSource() { }
 
     [SetsRequiredMembers]
-    public SdmxWebSource(Sdmxdl.Format.Protobuf.Web.WebSource webSource)
+    public SdmxWebSource(Sdmxdl.Format.Protobuf.Web.WebSourceDto webSource)
     {
         Id = webSource.Id;
         Driver = webSource.Driver;

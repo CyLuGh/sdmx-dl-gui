@@ -11,7 +11,7 @@ public readonly record struct Attribute
     public required AttributeRelationship Relationship { get; init; }
 
     [SetsRequiredMembers]
-    public Attribute(Sdmxdl.Format.Protobuf.Attribute attribute)
+    public Attribute(Sdmxdl.Format.Protobuf.AttributeDto attribute)
     {
         Id = attribute.Id;
         Name = attribute.Name;

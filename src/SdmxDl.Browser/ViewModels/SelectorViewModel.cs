@@ -8,12 +8,12 @@ using DynamicData;
 using LanguageExt;
 using Polly;
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
+using ReactiveUI.SourceGenerators;
 using SdmxDl.Client;
 
 namespace SdmxDl.Browser.ViewModels;
 
-public abstract class SelectorViewModel<TData, TInput> : CancellableBaseViewModel
+public abstract partial class SelectorViewModel<TData, TInput> : CancellableBaseViewModel
 {
     [Pure]
     protected abstract Seq<TData> Filter(Seq<TData> all, string? input);
@@ -22,28 +22,22 @@ public abstract class SelectorViewModel<TData, TInput> : CancellableBaseViewMode
     protected abstract Task<Seq<TData>> RetrieveDataImpl(TInput input, ClientFactory clientFactory);
 
     [Reactive]
-    public bool IsSearching { get; set; }
+    public partial bool IsSearching { get; set; }
 
     [Reactive]
-    public string? CurrentInput { get; set; }
+    public partial string? CurrentInput { get; set; }
 
     [Reactive]
-    public TData? CurrentSelection { get; set; }
+    public partial TData? CurrentSelection { get; set; }
 
     [Reactive]
-    public Option<TData> Selection { get; set; }
+    public partial Option<TData> Selection { get; set; }
 
-    public Seq<TData> AllData
-    {
-        [ObservableAsProperty]
-        get;
-    }
+    [ObservableAsProperty(ReadOnly = false, UseProtected = true)]
+    private Seq<TData> _allData;
 
-    public Seq<TData> CurrentSources
-    {
-        [ObservableAsProperty]
-        get;
-    }
+    [ObservableAsProperty(ReadOnly = false, UseProtected = true)]
+    private Seq<TData> _currentSources;
 
     public ReactiveCommand<TInput, Seq<TData>> RetrieveData { get; }
     public ReactiveCommand<KeyEventArgs, RxUnit> CheckTextBoxInput { get; }
@@ -68,14 +62,14 @@ public abstract class SelectorViewModel<TData, TInput> : CancellableBaseViewMode
                 Selection = Option<TData>.None;
             });
 
-        this.WhenAnyValue(x => x.AllData)
+        _currentSourcesHelper = this.WhenAnyValue(x => x.AllData)
             .CombineLatest(this.WhenAnyValue(x => x.CurrentInput))
             .Select(t =>
             {
                 var (allSources, input) = t;
                 return Filter(allSources, input);
             })
-            .ToPropertyEx(
+            .ToProperty(
                 this,
                 x => x.CurrentSources,
                 scheduler: RxApp.MainThreadScheduler,
@@ -102,7 +96,7 @@ public abstract class SelectorViewModel<TData, TInput> : CancellableBaseViewMode
                 CancellationToken.None
             );
         });
-        command.ToPropertyEx(
+        _allDataHelper = command.ToProperty(
             this,
             x => x.AllData,
             scheduler: RxApp.MainThreadScheduler,

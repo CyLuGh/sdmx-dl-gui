@@ -25,43 +25,43 @@ namespace Sdmxdl.Format.Protobuf.Web {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
             "ChBzZG14ZGxfd2ViLnByb3RvEhpzZG14ZGwuZm9ybWF0LnByb3RvYnVmLndl",
-            "YhoQc2RteGRsX2FwaS5wcm90byLvAwoJV2ViU291cmNlEgoKAmlkGAEgASgJ",
-            "Ej8KBW5hbWVzGAIgAygLMjAuc2RteGRsLmZvcm1hdC5wcm90b2J1Zi53ZWIu",
-            "V2ViU291cmNlLk5hbWVzRW50cnkSDgoGZHJpdmVyGAMgASgJEhAKCGVuZHBv",
-            "aW50GAQgASgJEkkKCnByb3BlcnRpZXMYBSADKAsyNS5zZG14ZGwuZm9ybWF0",
-            "LnByb3RvYnVmLndlYi5XZWJTb3VyY2UuUHJvcGVydGllc0VudHJ5Eg8KB2Fs",
-            "aWFzZXMYBiADKAkSFAoHd2Vic2l0ZRgHIAEoCUgAiAEBEhQKB21vbml0b3IY",
-            "CCABKAlIAYgBARIcCg9tb25pdG9yX3dlYnNpdGUYCSABKAlIAogBARJACg9j",
-            "b25maWRlbnRpYWxpdHkYCiABKA4yJy5zZG14ZGwuZm9ybWF0LnByb3RvYnVm",
-            "LkNvbmZpZGVudGlhbGl0eRosCgpOYW1lc0VudHJ5EgsKA2tleRgBIAEoCRIN",
-            "CgV2YWx1ZRgCIAEoCToCOAEaMQoPUHJvcGVydGllc0VudHJ5EgsKA2tleRgB",
-            "IAEoCRINCgV2YWx1ZRgCIAEoCToCOAFCCgoIX3dlYnNpdGVCCgoIX21vbml0",
-            "b3JCEgoQX21vbml0b3Jfd2Vic2l0ZSJICgpXZWJTb3VyY2VzEjoKC3dlYl9z",
-            "b3VyY2VzGAEgAygLMiUuc2RteGRsLmZvcm1hdC5wcm90b2J1Zi53ZWIuV2Vi",
-            "U291cmNlIsQBCg1Nb25pdG9yUmVwb3J0Eg4KBnNvdXJjZRgBIAEoCRI5CgZz",
-            "dGF0dXMYAiABKA4yKS5zZG14ZGwuZm9ybWF0LnByb3RvYnVmLndlYi5Nb25p",
-            "dG9yU3RhdHVzEhkKDHVwdGltZV9yYXRpbxgDIAEoAUgAiAEBEiIKFWF2ZXJh",
-            "Z2VfcmVzcG9uc2VfdGltZRgEIAEoA0gBiAEBQg8KDV91cHRpbWVfcmF0aW9C",
-            "GAoWX2F2ZXJhZ2VfcmVzcG9uc2VfdGltZSKQAQoOTW9uaXRvclJlcG9ydHMS",
-            "EgoKdXJpX3NjaGVtZRgBIAEoCRI6CgdyZXBvcnRzGAIgAygLMikuc2RteGRs",
-            "LmZvcm1hdC5wcm90b2J1Zi53ZWIuTW9uaXRvclJlcG9ydBIVCg1jcmVhdGlv",
-            "bl90aW1lGAMgASgJEhcKD2V4cGlyYXRpb25fdGltZRgEIAEoCSouCg1Nb25p",
-            "dG9yU3RhdHVzEgsKB1VOS05PV04QABIGCgJVUBABEggKBERPV04QAkICUAFi",
-            "BnByb3RvMw=="));
+            "YhoQc2RteGRsX2FwaS5wcm90byL7AwoMV2ViU291cmNlRHRvEgoKAmlkGAEg",
+            "ASgJEkIKBW5hbWVzGAIgAygLMjMuc2RteGRsLmZvcm1hdC5wcm90b2J1Zi53",
+            "ZWIuV2ViU291cmNlRHRvLk5hbWVzRW50cnkSDgoGZHJpdmVyGAMgASgJEhAK",
+            "CGVuZHBvaW50GAQgASgJEkwKCnByb3BlcnRpZXMYBSADKAsyOC5zZG14ZGwu",
+            "Zm9ybWF0LnByb3RvYnVmLndlYi5XZWJTb3VyY2VEdG8uUHJvcGVydGllc0Vu",
+            "dHJ5Eg8KB2FsaWFzZXMYBiADKAkSFAoHd2Vic2l0ZRgHIAEoCUgAiAEBEhQK",
+            "B21vbml0b3IYCCABKAlIAYgBARIcCg9tb25pdG9yX3dlYnNpdGUYCSABKAlI",
+            "AogBARJDCg9jb25maWRlbnRpYWxpdHkYCiABKA4yKi5zZG14ZGwuZm9ybWF0",
+            "LnByb3RvYnVmLkNvbmZpZGVudGlhbGl0eUR0bxosCgpOYW1lc0VudHJ5EgsK",
+            "A2tleRgBIAEoCRINCgV2YWx1ZRgCIAEoCToCOAEaMQoPUHJvcGVydGllc0Vu",
+            "dHJ5EgsKA2tleRgBIAEoCRINCgV2YWx1ZRgCIAEoCToCOAFCCgoIX3dlYnNp",
+            "dGVCCgoIX21vbml0b3JCEgoQX21vbml0b3Jfd2Vic2l0ZSJOCg1XZWJTb3Vy",
+            "Y2VzRHRvEj0KC3dlYl9zb3VyY2VzGAEgAygLMiguc2RteGRsLmZvcm1hdC5w",
+            "cm90b2J1Zi53ZWIuV2ViU291cmNlRHRvIsoBChBNb25pdG9yUmVwb3J0RHRv",
+            "Eg4KBnNvdXJjZRgBIAEoCRI8CgZzdGF0dXMYAiABKA4yLC5zZG14ZGwuZm9y",
+            "bWF0LnByb3RvYnVmLndlYi5Nb25pdG9yU3RhdHVzRHRvEhkKDHVwdGltZV9y",
+            "YXRpbxgDIAEoAUgAiAEBEiIKFWF2ZXJhZ2VfcmVzcG9uc2VfdGltZRgEIAEo",
+            "A0gBiAEBQg8KDV91cHRpbWVfcmF0aW9CGAoWX2F2ZXJhZ2VfcmVzcG9uc2Vf",
+            "dGltZSKWAQoRTW9uaXRvclJlcG9ydHNEdG8SEgoKdXJpX3NjaGVtZRgBIAEo",
+            "CRI9CgdyZXBvcnRzGAIgAygLMiwuc2RteGRsLmZvcm1hdC5wcm90b2J1Zi53",
+            "ZWIuTW9uaXRvclJlcG9ydER0bxIVCg1jcmVhdGlvbl90aW1lGAMgASgJEhcK",
+            "D2V4cGlyYXRpb25fdGltZRgEIAEoCSoxChBNb25pdG9yU3RhdHVzRHRvEgsK",
+            "B1VOS05PV04QABIGCgJVUBABEggKBERPV04QAkICUAFiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { global::Sdmxdl.Format.Protobuf.SdmxdlApiReflection.Descriptor, },
-          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Sdmxdl.Format.Protobuf.Web.MonitorStatus), }, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Sdmxdl.Format.Protobuf.Web.WebSource), global::Sdmxdl.Format.Protobuf.Web.WebSource.Parser, new[]{ "Id", "Names", "Driver", "Endpoint", "Properties", "Aliases", "Website", "Monitor", "MonitorWebsite", "Confidentiality" }, new[]{ "Website", "Monitor", "MonitorWebsite" }, null, null, new pbr::GeneratedClrTypeInfo[] { null, null, }),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Sdmxdl.Format.Protobuf.Web.WebSources), global::Sdmxdl.Format.Protobuf.Web.WebSources.Parser, new[]{ "WebSources_" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Sdmxdl.Format.Protobuf.Web.MonitorReport), global::Sdmxdl.Format.Protobuf.Web.MonitorReport.Parser, new[]{ "Source", "Status", "UptimeRatio", "AverageResponseTime" }, new[]{ "UptimeRatio", "AverageResponseTime" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Sdmxdl.Format.Protobuf.Web.MonitorReports), global::Sdmxdl.Format.Protobuf.Web.MonitorReports.Parser, new[]{ "UriScheme", "Reports", "CreationTime", "ExpirationTime" }, null, null, null, null)
+          new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Sdmxdl.Format.Protobuf.Web.MonitorStatusDto), }, null, new pbr::GeneratedClrTypeInfo[] {
+            new pbr::GeneratedClrTypeInfo(typeof(global::Sdmxdl.Format.Protobuf.Web.WebSourceDto), global::Sdmxdl.Format.Protobuf.Web.WebSourceDto.Parser, new[]{ "Id", "Names", "Driver", "Endpoint", "Properties", "Aliases", "Website", "Monitor", "MonitorWebsite", "Confidentiality" }, new[]{ "Website", "Monitor", "MonitorWebsite" }, null, null, new pbr::GeneratedClrTypeInfo[] { null, null, }),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Sdmxdl.Format.Protobuf.Web.WebSourcesDto), global::Sdmxdl.Format.Protobuf.Web.WebSourcesDto.Parser, new[]{ "WebSources" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Sdmxdl.Format.Protobuf.Web.MonitorReportDto), global::Sdmxdl.Format.Protobuf.Web.MonitorReportDto.Parser, new[]{ "Source", "Status", "UptimeRatio", "AverageResponseTime" }, new[]{ "UptimeRatio", "AverageResponseTime" }, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Sdmxdl.Format.Protobuf.Web.MonitorReportsDto), global::Sdmxdl.Format.Protobuf.Web.MonitorReportsDto.Parser, new[]{ "UriScheme", "Reports", "CreationTime", "ExpirationTime" }, null, null, null, null)
           }));
     }
     #endregion
 
   }
   #region Enums
-  public enum MonitorStatus {
+  public enum MonitorStatusDto {
     [pbr::OriginalName("UNKNOWN")] Unknown = 0,
     [pbr::OriginalName("UP")] Up = 1,
     [pbr::OriginalName("DOWN")] Down = 2,
@@ -71,16 +71,16 @@ namespace Sdmxdl.Format.Protobuf.Web {
 
   #region Messages
   [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-  public sealed partial class WebSource : pb::IMessage<WebSource>
+  public sealed partial class WebSourceDto : pb::IMessage<WebSourceDto>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif
   {
-    private static readonly pb::MessageParser<WebSource> _parser = new pb::MessageParser<WebSource>(() => new WebSource());
+    private static readonly pb::MessageParser<WebSourceDto> _parser = new pb::MessageParser<WebSourceDto>(() => new WebSourceDto());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public static pb::MessageParser<WebSource> Parser { get { return _parser; } }
+    public static pb::MessageParser<WebSourceDto> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -96,7 +96,7 @@ namespace Sdmxdl.Format.Protobuf.Web {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public WebSource() {
+    public WebSourceDto() {
       OnConstruction();
     }
 
@@ -104,7 +104,7 @@ namespace Sdmxdl.Format.Protobuf.Web {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public WebSource(WebSource other) : this() {
+    public WebSourceDto(WebSourceDto other) : this() {
       id_ = other.id_;
       names_ = other.names_.Clone();
       driver_ = other.driver_;
@@ -120,8 +120,8 @@ namespace Sdmxdl.Format.Protobuf.Web {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public WebSource Clone() {
-      return new WebSource(this);
+    public WebSourceDto Clone() {
+      return new WebSourceDto(this);
     }
 
     /// <summary>Field number for the "id" field.</summary>
@@ -273,10 +273,10 @@ namespace Sdmxdl.Format.Protobuf.Web {
 
     /// <summary>Field number for the "confidentiality" field.</summary>
     public const int ConfidentialityFieldNumber = 10;
-    private global::Sdmxdl.Format.Protobuf.Confidentiality confidentiality_ = global::Sdmxdl.Format.Protobuf.Confidentiality.Public;
+    private global::Sdmxdl.Format.Protobuf.ConfidentialityDto confidentiality_ = global::Sdmxdl.Format.Protobuf.ConfidentialityDto.Public;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::Sdmxdl.Format.Protobuf.Confidentiality Confidentiality {
+    public global::Sdmxdl.Format.Protobuf.ConfidentialityDto Confidentiality {
       get { return confidentiality_; }
       set {
         confidentiality_ = value;
@@ -286,12 +286,12 @@ namespace Sdmxdl.Format.Protobuf.Web {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
-      return Equals(other as WebSource);
+      return Equals(other as WebSourceDto);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public bool Equals(WebSource other) {
+    public bool Equals(WebSourceDto other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
@@ -324,7 +324,7 @@ namespace Sdmxdl.Format.Protobuf.Web {
       if (HasWebsite) hash ^= Website.GetHashCode();
       if (HasMonitor) hash ^= Monitor.GetHashCode();
       if (HasMonitorWebsite) hash ^= MonitorWebsite.GetHashCode();
-      if (Confidentiality != global::Sdmxdl.Format.Protobuf.Confidentiality.Public) hash ^= Confidentiality.GetHashCode();
+      if (Confidentiality != global::Sdmxdl.Format.Protobuf.ConfidentialityDto.Public) hash ^= Confidentiality.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -370,7 +370,7 @@ namespace Sdmxdl.Format.Protobuf.Web {
         output.WriteRawTag(74);
         output.WriteString(MonitorWebsite);
       }
-      if (Confidentiality != global::Sdmxdl.Format.Protobuf.Confidentiality.Public) {
+      if (Confidentiality != global::Sdmxdl.Format.Protobuf.ConfidentialityDto.Public) {
         output.WriteRawTag(80);
         output.WriteEnum((int) Confidentiality);
       }
@@ -411,7 +411,7 @@ namespace Sdmxdl.Format.Protobuf.Web {
         output.WriteRawTag(74);
         output.WriteString(MonitorWebsite);
       }
-      if (Confidentiality != global::Sdmxdl.Format.Protobuf.Confidentiality.Public) {
+      if (Confidentiality != global::Sdmxdl.Format.Protobuf.ConfidentialityDto.Public) {
         output.WriteRawTag(80);
         output.WriteEnum((int) Confidentiality);
       }
@@ -446,7 +446,7 @@ namespace Sdmxdl.Format.Protobuf.Web {
       if (HasMonitorWebsite) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(MonitorWebsite);
       }
-      if (Confidentiality != global::Sdmxdl.Format.Protobuf.Confidentiality.Public) {
+      if (Confidentiality != global::Sdmxdl.Format.Protobuf.ConfidentialityDto.Public) {
         size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) Confidentiality);
       }
       if (_unknownFields != null) {
@@ -457,7 +457,7 @@ namespace Sdmxdl.Format.Protobuf.Web {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void MergeFrom(WebSource other) {
+    public void MergeFrom(WebSourceDto other) {
       if (other == null) {
         return;
       }
@@ -482,7 +482,7 @@ namespace Sdmxdl.Format.Protobuf.Web {
       if (other.HasMonitorWebsite) {
         MonitorWebsite = other.MonitorWebsite;
       }
-      if (other.Confidentiality != global::Sdmxdl.Format.Protobuf.Confidentiality.Public) {
+      if (other.Confidentiality != global::Sdmxdl.Format.Protobuf.ConfidentialityDto.Public) {
         Confidentiality = other.Confidentiality;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
@@ -541,7 +541,7 @@ namespace Sdmxdl.Format.Protobuf.Web {
             break;
           }
           case 80: {
-            Confidentiality = (global::Sdmxdl.Format.Protobuf.Confidentiality) input.ReadEnum();
+            Confidentiality = (global::Sdmxdl.Format.Protobuf.ConfidentialityDto) input.ReadEnum();
             break;
           }
         }
@@ -600,7 +600,7 @@ namespace Sdmxdl.Format.Protobuf.Web {
             break;
           }
           case 80: {
-            Confidentiality = (global::Sdmxdl.Format.Protobuf.Confidentiality) input.ReadEnum();
+            Confidentiality = (global::Sdmxdl.Format.Protobuf.ConfidentialityDto) input.ReadEnum();
             break;
           }
         }
@@ -611,16 +611,16 @@ namespace Sdmxdl.Format.Protobuf.Web {
   }
 
   [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-  public sealed partial class WebSources : pb::IMessage<WebSources>
+  public sealed partial class WebSourcesDto : pb::IMessage<WebSourcesDto>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif
   {
-    private static readonly pb::MessageParser<WebSources> _parser = new pb::MessageParser<WebSources>(() => new WebSources());
+    private static readonly pb::MessageParser<WebSourcesDto> _parser = new pb::MessageParser<WebSourcesDto>(() => new WebSourcesDto());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public static pb::MessageParser<WebSources> Parser { get { return _parser; } }
+    public static pb::MessageParser<WebSourcesDto> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -636,7 +636,7 @@ namespace Sdmxdl.Format.Protobuf.Web {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public WebSources() {
+    public WebSourcesDto() {
       OnConstruction();
     }
 
@@ -644,37 +644,37 @@ namespace Sdmxdl.Format.Protobuf.Web {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public WebSources(WebSources other) : this() {
+    public WebSourcesDto(WebSourcesDto other) : this() {
       webSources_ = other.webSources_.Clone();
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public WebSources Clone() {
-      return new WebSources(this);
+    public WebSourcesDto Clone() {
+      return new WebSourcesDto(this);
     }
 
     /// <summary>Field number for the "web_sources" field.</summary>
-    public const int WebSources_FieldNumber = 1;
-    private static readonly pb::FieldCodec<global::Sdmxdl.Format.Protobuf.Web.WebSource> _repeated_webSources_codec
-        = pb::FieldCodec.ForMessage(10, global::Sdmxdl.Format.Protobuf.Web.WebSource.Parser);
-    private readonly pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.Web.WebSource> webSources_ = new pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.Web.WebSource>();
+    public const int WebSourcesFieldNumber = 1;
+    private static readonly pb::FieldCodec<global::Sdmxdl.Format.Protobuf.Web.WebSourceDto> _repeated_webSources_codec
+        = pb::FieldCodec.ForMessage(10, global::Sdmxdl.Format.Protobuf.Web.WebSourceDto.Parser);
+    private readonly pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.Web.WebSourceDto> webSources_ = new pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.Web.WebSourceDto>();
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.Web.WebSource> WebSources_ {
+    public pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.Web.WebSourceDto> WebSources {
       get { return webSources_; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
-      return Equals(other as WebSources);
+      return Equals(other as WebSourcesDto);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public bool Equals(WebSources other) {
+    public bool Equals(WebSourcesDto other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
@@ -739,7 +739,7 @@ namespace Sdmxdl.Format.Protobuf.Web {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void MergeFrom(WebSources other) {
+    public void MergeFrom(WebSourcesDto other) {
       if (other == null) {
         return;
       }
@@ -798,17 +798,17 @@ namespace Sdmxdl.Format.Protobuf.Web {
   }
 
   [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-  public sealed partial class MonitorReport : pb::IMessage<MonitorReport>
+  public sealed partial class MonitorReportDto : pb::IMessage<MonitorReportDto>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif
   {
-    private static readonly pb::MessageParser<MonitorReport> _parser = new pb::MessageParser<MonitorReport>(() => new MonitorReport());
+    private static readonly pb::MessageParser<MonitorReportDto> _parser = new pb::MessageParser<MonitorReportDto>(() => new MonitorReportDto());
     private pb::UnknownFieldSet _unknownFields;
     private int _hasBits0;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public static pb::MessageParser<MonitorReport> Parser { get { return _parser; } }
+    public static pb::MessageParser<MonitorReportDto> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -824,7 +824,7 @@ namespace Sdmxdl.Format.Protobuf.Web {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public MonitorReport() {
+    public MonitorReportDto() {
       OnConstruction();
     }
 
@@ -832,7 +832,7 @@ namespace Sdmxdl.Format.Protobuf.Web {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public MonitorReport(MonitorReport other) : this() {
+    public MonitorReportDto(MonitorReportDto other) : this() {
       _hasBits0 = other._hasBits0;
       source_ = other.source_;
       status_ = other.status_;
@@ -843,8 +843,8 @@ namespace Sdmxdl.Format.Protobuf.Web {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public MonitorReport Clone() {
-      return new MonitorReport(this);
+    public MonitorReportDto Clone() {
+      return new MonitorReportDto(this);
     }
 
     /// <summary>Field number for the "source" field.</summary>
@@ -861,10 +861,10 @@ namespace Sdmxdl.Format.Protobuf.Web {
 
     /// <summary>Field number for the "status" field.</summary>
     public const int StatusFieldNumber = 2;
-    private global::Sdmxdl.Format.Protobuf.Web.MonitorStatus status_ = global::Sdmxdl.Format.Protobuf.Web.MonitorStatus.Unknown;
+    private global::Sdmxdl.Format.Protobuf.Web.MonitorStatusDto status_ = global::Sdmxdl.Format.Protobuf.Web.MonitorStatusDto.Unknown;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public global::Sdmxdl.Format.Protobuf.Web.MonitorStatus Status {
+    public global::Sdmxdl.Format.Protobuf.Web.MonitorStatusDto Status {
       get { return status_; }
       set {
         status_ = value;
@@ -928,12 +928,12 @@ namespace Sdmxdl.Format.Protobuf.Web {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
-      return Equals(other as MonitorReport);
+      return Equals(other as MonitorReportDto);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public bool Equals(MonitorReport other) {
+    public bool Equals(MonitorReportDto other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
@@ -952,7 +952,7 @@ namespace Sdmxdl.Format.Protobuf.Web {
     public override int GetHashCode() {
       int hash = 1;
       if (Source.Length != 0) hash ^= Source.GetHashCode();
-      if (Status != global::Sdmxdl.Format.Protobuf.Web.MonitorStatus.Unknown) hash ^= Status.GetHashCode();
+      if (Status != global::Sdmxdl.Format.Protobuf.Web.MonitorStatusDto.Unknown) hash ^= Status.GetHashCode();
       if (HasUptimeRatio) hash ^= pbc::ProtobufEqualityComparers.BitwiseDoubleEqualityComparer.GetHashCode(UptimeRatio);
       if (HasAverageResponseTime) hash ^= AverageResponseTime.GetHashCode();
       if (_unknownFields != null) {
@@ -977,7 +977,7 @@ namespace Sdmxdl.Format.Protobuf.Web {
         output.WriteRawTag(10);
         output.WriteString(Source);
       }
-      if (Status != global::Sdmxdl.Format.Protobuf.Web.MonitorStatus.Unknown) {
+      if (Status != global::Sdmxdl.Format.Protobuf.Web.MonitorStatusDto.Unknown) {
         output.WriteRawTag(16);
         output.WriteEnum((int) Status);
       }
@@ -1003,7 +1003,7 @@ namespace Sdmxdl.Format.Protobuf.Web {
         output.WriteRawTag(10);
         output.WriteString(Source);
       }
-      if (Status != global::Sdmxdl.Format.Protobuf.Web.MonitorStatus.Unknown) {
+      if (Status != global::Sdmxdl.Format.Protobuf.Web.MonitorStatusDto.Unknown) {
         output.WriteRawTag(16);
         output.WriteEnum((int) Status);
       }
@@ -1028,7 +1028,7 @@ namespace Sdmxdl.Format.Protobuf.Web {
       if (Source.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(Source);
       }
-      if (Status != global::Sdmxdl.Format.Protobuf.Web.MonitorStatus.Unknown) {
+      if (Status != global::Sdmxdl.Format.Protobuf.Web.MonitorStatusDto.Unknown) {
         size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) Status);
       }
       if (HasUptimeRatio) {
@@ -1045,14 +1045,14 @@ namespace Sdmxdl.Format.Protobuf.Web {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void MergeFrom(MonitorReport other) {
+    public void MergeFrom(MonitorReportDto other) {
       if (other == null) {
         return;
       }
       if (other.Source.Length != 0) {
         Source = other.Source;
       }
-      if (other.Status != global::Sdmxdl.Format.Protobuf.Web.MonitorStatus.Unknown) {
+      if (other.Status != global::Sdmxdl.Format.Protobuf.Web.MonitorStatusDto.Unknown) {
         Status = other.Status;
       }
       if (other.HasUptimeRatio) {
@@ -1085,7 +1085,7 @@ namespace Sdmxdl.Format.Protobuf.Web {
             break;
           }
           case 16: {
-            Status = (global::Sdmxdl.Format.Protobuf.Web.MonitorStatus) input.ReadEnum();
+            Status = (global::Sdmxdl.Format.Protobuf.Web.MonitorStatusDto) input.ReadEnum();
             break;
           }
           case 25: {
@@ -1120,7 +1120,7 @@ namespace Sdmxdl.Format.Protobuf.Web {
             break;
           }
           case 16: {
-            Status = (global::Sdmxdl.Format.Protobuf.Web.MonitorStatus) input.ReadEnum();
+            Status = (global::Sdmxdl.Format.Protobuf.Web.MonitorStatusDto) input.ReadEnum();
             break;
           }
           case 25: {
@@ -1139,16 +1139,16 @@ namespace Sdmxdl.Format.Protobuf.Web {
   }
 
   [global::System.Diagnostics.DebuggerDisplayAttribute("{ToString(),nq}")]
-  public sealed partial class MonitorReports : pb::IMessage<MonitorReports>
+  public sealed partial class MonitorReportsDto : pb::IMessage<MonitorReportsDto>
   #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       , pb::IBufferMessage
   #endif
   {
-    private static readonly pb::MessageParser<MonitorReports> _parser = new pb::MessageParser<MonitorReports>(() => new MonitorReports());
+    private static readonly pb::MessageParser<MonitorReportsDto> _parser = new pb::MessageParser<MonitorReportsDto>(() => new MonitorReportsDto());
     private pb::UnknownFieldSet _unknownFields;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public static pb::MessageParser<MonitorReports> Parser { get { return _parser; } }
+    public static pb::MessageParser<MonitorReportsDto> Parser { get { return _parser; } }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
@@ -1164,7 +1164,7 @@ namespace Sdmxdl.Format.Protobuf.Web {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public MonitorReports() {
+    public MonitorReportsDto() {
       OnConstruction();
     }
 
@@ -1172,7 +1172,7 @@ namespace Sdmxdl.Format.Protobuf.Web {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public MonitorReports(MonitorReports other) : this() {
+    public MonitorReportsDto(MonitorReportsDto other) : this() {
       uriScheme_ = other.uriScheme_;
       reports_ = other.reports_.Clone();
       creationTime_ = other.creationTime_;
@@ -1182,8 +1182,8 @@ namespace Sdmxdl.Format.Protobuf.Web {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public MonitorReports Clone() {
-      return new MonitorReports(this);
+    public MonitorReportsDto Clone() {
+      return new MonitorReportsDto(this);
     }
 
     /// <summary>Field number for the "uri_scheme" field.</summary>
@@ -1200,12 +1200,12 @@ namespace Sdmxdl.Format.Protobuf.Web {
 
     /// <summary>Field number for the "reports" field.</summary>
     public const int ReportsFieldNumber = 2;
-    private static readonly pb::FieldCodec<global::Sdmxdl.Format.Protobuf.Web.MonitorReport> _repeated_reports_codec
-        = pb::FieldCodec.ForMessage(18, global::Sdmxdl.Format.Protobuf.Web.MonitorReport.Parser);
-    private readonly pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.Web.MonitorReport> reports_ = new pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.Web.MonitorReport>();
+    private static readonly pb::FieldCodec<global::Sdmxdl.Format.Protobuf.Web.MonitorReportDto> _repeated_reports_codec
+        = pb::FieldCodec.ForMessage(18, global::Sdmxdl.Format.Protobuf.Web.MonitorReportDto.Parser);
+    private readonly pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.Web.MonitorReportDto> reports_ = new pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.Web.MonitorReportDto>();
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.Web.MonitorReport> Reports {
+    public pbc::RepeatedField<global::Sdmxdl.Format.Protobuf.Web.MonitorReportDto> Reports {
       get { return reports_; }
     }
 
@@ -1236,12 +1236,12 @@ namespace Sdmxdl.Format.Protobuf.Web {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public override bool Equals(object other) {
-      return Equals(other as MonitorReports);
+      return Equals(other as MonitorReportsDto);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public bool Equals(MonitorReports other) {
+    public bool Equals(MonitorReportsDto other) {
       if (ReferenceEquals(other, null)) {
         return false;
       }
@@ -1345,7 +1345,7 @@ namespace Sdmxdl.Format.Protobuf.Web {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void MergeFrom(MonitorReports other) {
+    public void MergeFrom(MonitorReportsDto other) {
       if (other == null) {
         return;
       }

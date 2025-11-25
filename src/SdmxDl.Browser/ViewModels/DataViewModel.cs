@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Reactive.Disposables;
+using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
 using HierarchyGrid.Definitions;
 using LanguageExt;
 using LiveChartsCore.Defaults;
@@ -10,7 +12,7 @@ using LiveChartsCore.Kernel.Sketches;
 using LiveChartsCore.SkiaSharpView;
 using Polly;
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
+using ReactiveUI.SourceGenerators;
 using SdmxDl.Browser.Infrastructure;
 using SdmxDl.Browser.Models;
 using SdmxDl.Client;
@@ -18,93 +20,63 @@ using SdmxDl.Client.Models;
 
 namespace SdmxDl.Browser.ViewModels;
 
-public class DataViewModel : BaseViewModel
+public partial class DataViewModel : BaseViewModel
 {
     [Reactive]
-    public Option<SdmxWebSource> Source { get; set; }
+    public partial Option<SdmxWebSource> Source { get; set; }
 
     [Reactive]
-    public Option<DataFlow> Flow { get; set; }
+    public partial Option<DataFlow> Flow { get; set; }
 
     [Reactive]
-    public Option<string> Key { get; set; }
+    public partial Option<string> Key { get; set; }
 
     [Reactive]
-    public bool IsSplitView { get; set; }
+    public partial bool IsSplitView { get; set; }
 
     [Reactive]
-    public DateTimeOffset StartDate { get; set; }
+    public partial DateTimeOffset StartDate { get; set; }
 
     [Reactive]
-    public DateTimeOffset EndDate { get; set; }
+    public partial DateTimeOffset EndDate { get; set; }
 
     [Reactive]
-    public bool UseLogarithmicAxis { get; set; }
+    public partial bool UseLogarithmicAxis { get; set; }
 
-    public Option<DataSet> DataSet
-    {
-        [ObservableAsProperty]
-        get;
-    }
+    [ObservableAsProperty(ReadOnly = false)]
+    private Option<DataSet> _dataSet;
 
-    public bool IsBusy
-    {
-        [ObservableAsProperty]
-        get;
-    }
+    [ObservableAsProperty(ReadOnly = false)]
+    private bool _isBusy;
 
-    public string? BusyMessage
-    {
-        [ObservableAsProperty]
-        get;
-    }
+    [ObservableAsProperty(ReadOnly = false)]
+    private string? _busyMessage;
 
-    public Seq<ChartSeries> ChartSeries
-    {
-        [ObservableAsProperty]
-        get;
-    }
+    [ObservableAsProperty(ReadOnly = false)]
+    private Seq<ChartSeries> _chartSeries;
 
-    public Seq<LineSeries<DateTimePoint>> LineSeries
-    {
-        [ObservableAsProperty]
-        get;
-    }
+    [ObservableAsProperty(ReadOnly = false)]
+    private Seq<LineSeries<DateTimePoint>> _lineSeries;
 
-    public ICartesianAxis[]? XAxes
-    {
-        [ObservableAsProperty]
-        get;
-    }
+    [ObservableAsProperty(ReadOnly = false)]
+    private ICartesianAxis[]? _xAxes;
 
-    public ICartesianAxis[]? YAxes
-    {
-        [ObservableAsProperty]
-        get;
-    }
+    [ObservableAsProperty(ReadOnly = false)]
+    private ICartesianAxis[]? _yAxes;
 
     public LiveChartsCore.Measure.Margin Margins { get; } = new(10, 50);
 
-    public bool HasNoData
-    {
-        [ObservableAsProperty]
-        get;
-    }
+    [ObservableAsProperty(ReadOnly = false)]
+    private bool _hasNoData;
 
     [Reactive]
-    public Option<DateTime> HighlightedPoint { get; set; }
+    public partial Option<DateTime> HighlightedPoint { get; set; }
 
-    public HierarchyDefinitions StandAloneHierarchyDefinitions
-    {
-        [ObservableAsProperty]
-        get;
-    }
+    [ObservableAsProperty(ReadOnly = false)]
+    private HierarchyDefinitions _standAloneHierarchyDefinitions;
 
-    public HierarchyDefinitions LinkedHierarchyDefinitions
-    {
-        [ObservableAsProperty]
-        get;
-    }
+    [ObservableAsProperty(ReadOnly = false)]
+    private HierarchyDefinitions _linkedHierarchyDefinitions;
 
     public HierarchyGridViewModel StandAloneHierarchyGridViewModel { get; } =
         new()
@@ -222,20 +194,20 @@ public class DataViewModel : BaseViewModel
         {
             ManageBusyState(disposables);
 
-            this.WhenAnyValue(x => x.UseLogarithmicAxis)
+            _yAxesHelper = this.WhenAnyValue(x => x.UseLogarithmicAxis)
                 .Select<bool, ICartesianAxis[]>(isLog =>
                     isLog ? [new LogarithmicAxis(10)] : [new Axis()]
                 )
-                .ToPropertyEx(this, x => x.YAxes, scheduler: RxApp.MainThreadScheduler)
+                .ToProperty(this, x => x.YAxes, scheduler: RxApp.MainThreadScheduler)
                 .DisposeWith(disposables);
 
-            this.WhenAnyValue(x => x.DataSet, x => x.ChartSeries)
+            _hasNoDataHelper = this.WhenAnyValue(x => x.DataSet, x => x.ChartSeries)
                 .Select(t =>
                 {
                     var (ods, css) = t;
                     return ods.IsSome && css.IsEmpty;
                 })
-                .ToPropertyEx(this, x => x.HasNoData, scheduler: RxApp.MainThreadScheduler)
+                .ToProperty(this, x => x.HasNoData, scheduler: RxApp.MainThreadScheduler)
                 .DisposeWith(disposables);
 
             this.WhenAnyValue(x => x.HighlightedPoint)
@@ -282,6 +254,8 @@ public class DataViewModel : BaseViewModel
         });
     }
 
+    public void Add(SeriesRequest request) { }
+
     public ReactiveCommand<Option<DateTime>, bool> HighlightGrid { get; }
 
     private ReactiveCommand<
@@ -298,7 +272,11 @@ public class DataViewModel : BaseViewModel
             return seq.ToLineSeries(startDate, endDate);
         });
 
-        cmd.ToPropertyEx(this, x => x.LineSeries, scheduler: RxApp.MainThreadScheduler);
+        _lineSeriesHelper = cmd.ToProperty(
+            this,
+            x => x.LineSeries,
+            scheduler: RxApp.MainThreadScheduler
+        );
         this.WhenAnyValue(x => x.ChartSeries, x => x.StartDate, x => x.EndDate)
             .Throttle(TimeSpan.FromMilliseconds(50))
             .InvokeCommand(cmd);
@@ -317,7 +295,7 @@ public class DataViewModel : BaseViewModel
             }
         );
 
-        cmd.ToPropertyEx(this, x => x.XAxes, scheduler: RxApp.MainThreadScheduler);
+        _xAxesHelper = cmd.ToProperty(this, x => x.XAxes, scheduler: RxApp.MainThreadScheduler);
         this.WhenAnyValue(x => x.ChartSeries).Where(seq => !seq.IsEmpty).InvokeCommand(cmd);
 
         return cmd;
@@ -342,7 +320,7 @@ public class DataViewModel : BaseViewModel
             .Throttle(TimeSpan.FromMilliseconds(50))
             .InvokeCommand(cmd);
 
-        cmd.ToPropertyEx(
+        _standAloneHierarchyDefinitionsHelper = cmd.ToProperty(
             this,
             x => x.StandAloneHierarchyDefinitions,
             scheduler: RxApp.MainThreadScheduler
@@ -370,7 +348,7 @@ public class DataViewModel : BaseViewModel
             .Throttle(TimeSpan.FromMilliseconds(50))
             .InvokeCommand(cmd);
 
-        cmd.ToPropertyEx(
+        _linkedHierarchyDefinitionsHelper = cmd.ToProperty(
             this,
             x => x.LinkedHierarchyDefinitions,
             scheduler: RxApp.MainThreadScheduler
@@ -413,10 +391,8 @@ public class DataViewModel : BaseViewModel
             Qualify = o =>
                 o switch
                 {
-                    Option<double> d => d.Match(
-                        x => Qualification.Normal,
-                        () => Qualification.Empty
-                    ),
+                    Option<double> d
+                        => d.Match(x => Qualification.Normal, () => Qualification.Empty),
                     _ => Qualification.Empty,
                 },
         });
@@ -447,27 +423,24 @@ public class DataViewModel : BaseViewModel
                 Consumer = o =>
                     o switch
                     {
-                        ChartSeries s => from x in data.Find(s.Key, d)
-                        from v in x
-                        select Tuple.Create(v, s.Format),
+                        ChartSeries s
+                            => from x in data.Find(s.Key, d)
+                            from v in x
+                            select Tuple.Create(v, s.Format),
                         _ => Option<Tuple<double, string>>.None,
                     },
                 Formatter = o =>
                     o switch
                     {
-                        Option<Tuple<double, string>> t => t.Match(
-                            x => x.Item1.ToString(x.Item2),
-                            () => string.Empty
-                        ),
+                        Option<Tuple<double, string>> t
+                            => t.Match(x => x.Item1.ToString(x.Item2), () => string.Empty),
                         _ => string.Empty,
                     },
                 Qualify = o =>
                     o switch
                     {
-                        Option<Tuple<double, string>> d => d.Match(
-                            x => Qualification.Normal,
-                            () => Qualification.Empty
-                        ),
+                        Option<Tuple<double, string>> d
+                            => d.Match(x => Qualification.Normal, () => Qualification.Empty),
                         _ => Qualification.Empty,
                     },
                 Tag = d,
@@ -478,18 +451,18 @@ public class DataViewModel : BaseViewModel
 
     private void ManageBusyState(CompositeDisposable disposables)
     {
-        RetrieveData
+        _isBusyHelper = RetrieveData
             .IsExecuting.CombineLatest(TransformData.IsExecuting)
             .Throttle(TimeSpan.FromMilliseconds(25))
             .Select(t => t.First || t.Second)
-            .ToPropertyEx(this, x => x.IsBusy, scheduler: RxApp.MainThreadScheduler)
+            .ToProperty(this, x => x.IsBusy, scheduler: RxApp.MainThreadScheduler)
             .DisposeWith(disposables);
 
-        RetrieveData
+        _busyMessageHelper = RetrieveData
             .IsExecuting.Where(x => x)
             .Select(_ => "Retrieving data")
             .Merge(TransformData.IsExecuting.Where(x => x).Select(_ => "Parsing results"))
-            .ToPropertyEx(this, x => x.BusyMessage, scheduler: RxApp.MainThreadScheduler)
+            .ToProperty(this, x => x.BusyMessage, scheduler: RxApp.MainThreadScheduler)
             .DisposeWith(disposables);
     }
 
@@ -499,7 +472,11 @@ public class DataViewModel : BaseViewModel
             (DataSet ds) => ds.Data.Map(s => new ChartSeries(s))
         );
 
-        cmd.ToPropertyEx(this, x => x.ChartSeries, scheduler: RxApp.MainThreadScheduler);
+        _chartSeriesHelper = cmd.ToProperty(
+            this,
+            x => x.ChartSeries,
+            scheduler: RxApp.MainThreadScheduler
+        );
 
         this.WhenAnyValue(x => x.DataSet)
             .Select(d => d.Match(Observable.Return, Observable.Empty<DataSet>))
@@ -543,7 +520,7 @@ public class DataViewModel : BaseViewModel
             return dataSet.ToModel();
         });
 
-        cmd.ToPropertyEx(this, x => x.DataSet, scheduler: RxApp.MainThreadScheduler);
+        _dataSetHelper = cmd.ToProperty(this, x => x.DataSet, scheduler: RxApp.MainThreadScheduler);
 
         this.WhenAnyValue(x => x.Source)
             .CombineLatest(this.WhenAnyValue(x => x.Flow), this.WhenAnyValue(x => x.Key))
@@ -627,5 +604,16 @@ public class DataViewModel : BaseViewModel
             .InvokeCommand(LinkedHierarchyGridViewModel, x => x.DrawGridCommand);
 
         return false;
+    }
+
+    private async Task<Option<DataSet>> RetrieveDataSetImpl(
+        SeriesRequest seriesRequest,
+        ClientFactory clientFactory,
+        ResiliencePipeline pipeline
+    )
+    {
+        var dataSet = await clientFactory.GetClient().GetDataAsync((KeyRequest)seriesRequest);
+
+        return dataSet.ToModel();
     }
 }

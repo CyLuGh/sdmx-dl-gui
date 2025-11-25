@@ -9,7 +9,7 @@ public readonly record struct CodeList
     public HashMap<string, string> Codes { get; init; }
 
     [SetsRequiredMembers]
-    public CodeList(Sdmxdl.Format.Protobuf.Codelist codeList)
+    public CodeList(Sdmxdl.Format.Protobuf.CodelistDto codeList)
     {
         Ref = codeList.Ref;
         Codes = codeList.Codes.Select(x => (x.Key, x.Value)).ToHashMap();

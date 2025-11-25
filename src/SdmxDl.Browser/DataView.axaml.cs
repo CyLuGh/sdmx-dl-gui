@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Linq;
 using System.Reactive.Disposables;
+using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
 using Avalonia.Controls;
-using Avalonia.ReactiveUI;
 using LanguageExt;
 using LiveChartsCore;
 using LiveChartsCore.Drawing;
 using LiveChartsCore.Kernel;
 using ReactiveUI;
+using ReactiveUI.Avalonia;
 using SdmxDl.Browser.ViewModels;
 
 namespace SdmxDl.Browser;

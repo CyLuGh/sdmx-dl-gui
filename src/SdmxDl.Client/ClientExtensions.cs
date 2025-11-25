@@ -11,8 +11,8 @@ public static class ClientExtensions
         CancellationToken token
     )
     {
-        var rawSources = new List<Sdmxdl.Format.Protobuf.Web.WebSource>();
-        using var response = client.GetSources(new Empty(), cancellationToken: token);
+        var rawSources = new List<Sdmxdl.Format.Protobuf.Web.WebSourceDto>();
+        using var response = client.GetSources(new EmptyDto(), cancellationToken: token);
         while (await response.ResponseStream.MoveNext(token))
         {
             var source = response.ResponseStream.Current;
@@ -28,9 +28,9 @@ public static class ClientExtensions
         CancellationToken token
     )
     {
-        var rawFlows = new List<Sdmxdl.Format.Protobuf.Flow>();
+        var rawFlows = new List<Sdmxdl.Format.Protobuf.FlowDto>();
         using var response = client.GetFlows(
-            new DatabaseRequest() { Source = source.Id },
+            new DatabaseRequestDto() { Source = source.Id },
             cancellationToken: token
         );
 

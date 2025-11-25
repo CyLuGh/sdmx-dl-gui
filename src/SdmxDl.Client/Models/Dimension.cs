@@ -10,11 +10,11 @@ public readonly record struct Dimension
     public required int Position { get; init; }
 
     [SetsRequiredMembers]
-    public Dimension(Sdmxdl.Format.Protobuf.Dimension dimension)
+    public Dimension(Sdmxdl.Format.Protobuf.DimensionDto dimension, int position = 0)
     {
         Id = dimension.Id;
         Name = dimension.Name;
         CodeList = new(dimension.Codelist);
-        Position = dimension.Position;
+        Position = position;
     }
 }

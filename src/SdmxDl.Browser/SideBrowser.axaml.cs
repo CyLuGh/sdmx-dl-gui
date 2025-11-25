@@ -1,4 +1,4 @@
-﻿using Avalonia;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using ReactiveUI.Avalonia;
@@ -6,9 +6,9 @@ using SdmxDl.Browser.ViewModels;
 
 namespace SdmxDl.Browser;
 
-public partial class PositionedDimensionView : ReactiveUserControl<PositionedDimensionViewModel>
+public partial class SideBrowser : ReactiveUserControl<BrowserViewModel>
 {
-    public PositionedDimensionView()
+    public SideBrowser()
     {
         InitializeComponent();
     }

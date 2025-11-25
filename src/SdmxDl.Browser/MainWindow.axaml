@@ -8,8 +8,8 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="SdmxDl.Browser.MainWindow"
         Title="SDMX-DL GUI"
-        ShowTitlebarBackground="False"
-        ShowBottomBorder="False"
+        ShowTitlebarBackground="True"
+        ShowBottomBorder="True"
         BackgroundStyle="Bubble"
         UseLayoutRounding="True"
         Closing="Window_OnClosing">
@@ -68,6 +68,6 @@
         </Button>
     </suki:SukiWindow.RightWindowTitleBarControls>
     
-    <browser:Browser ViewModel="{x:Static browser:ViewModelLocator.BrowserViewModel}"
-                     Margin="5"/>
+    <browser:SeriesTabContainer ViewModel="{x:Static browser:ViewModelLocator.BrowserViewModel}"
+                                Margin="5"/>
 </suki:SukiWindow>

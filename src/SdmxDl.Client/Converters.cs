@@ -4,12 +4,12 @@ namespace SdmxDl.Client;
 
 public static class Converters
 {
-    public static Query ToModel(this Sdmxdl.Format.Protobuf.Query input)
+    public static Query ToModel(this Sdmxdl.Format.Protobuf.QueryDto input)
     {
         return new Query() { Key = input.Key, Detail = (Detail)input.Detail };
     }
 
-    public static Obs ToModel(this Sdmxdl.Format.Protobuf.Obs input)
+    public static Obs ToModel(this Sdmxdl.Format.Protobuf.ObsDto input)
     {
         return new Obs()
         {
@@ -19,7 +19,7 @@ public static class Converters
         };
     }
 
-    public static Series ToModel(this Sdmxdl.Format.Protobuf.Series input)
+    public static Series ToModel(this Sdmxdl.Format.Protobuf.SeriesDto input)
     {
         return new Series()
         {
@@ -29,7 +29,7 @@ public static class Converters
         };
     }
 
-    public static DataSet ToModel(this Sdmxdl.Format.Protobuf.DataSet input)
+    public static DataSet ToModel(this Sdmxdl.Format.Protobuf.DataSetDto input)
     {
         return new DataSet()
         {
@@ -39,7 +39,7 @@ public static class Converters
         };
     }
 
-    public static Sdmxdl.Grpc.KeyRequest ToDto(this KeyRequest request) =>
+    public static Sdmxdl.Grpc.KeyRequestDto ToDto(this KeyRequest request) =>
         new()
         {
             Source = request.Source,

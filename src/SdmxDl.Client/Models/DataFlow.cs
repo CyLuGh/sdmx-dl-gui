@@ -14,7 +14,7 @@ public readonly record struct DataFlow
     public required string Description { get; init; }
 
     [SetsRequiredMembers]
-    public DataFlow(Sdmxdl.Format.Protobuf.Flow flow)
+    public DataFlow(Sdmxdl.Format.Protobuf.FlowDto flow)
     {
         Ref = flow.Ref;
         StructureRef = flow.StructureRef;

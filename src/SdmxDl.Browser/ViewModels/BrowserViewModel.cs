@@ -10,7 +10,7 @@ using LanguageExt.UnsafeValueAccess;
 using Microsoft.Extensions.Configuration;
 using Polly;
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
+using ReactiveUI.SourceGenerators;
 using SdmxDl.Browser.Infrastructure;
 using SdmxDl.Browser.Models;
 using SdmxDl.Client;
@@ -20,54 +20,39 @@ using Splat;
 
 namespace SdmxDl.Browser.ViewModels;
 
-public class BrowserViewModel : BaseViewModel
+public partial class BrowserViewModel : BaseViewModel
 {
     public IConfiguration Configuration { get; }
 
     /// <summary>
     /// Indicates if a server is available.
     /// </summary>
-    public bool ServerIsRunning
-    {
-        [ObservableAsProperty]
-        get;
-    }
+    [ObservableAsProperty(ReadOnly = false)]
+    private bool _serverIsRunning;
 
     /// <summary>
     /// Indicates server status.
     /// </summary>
-    public BrowserStatus Status
-    {
-        [ObservableAsProperty]
-        get;
-    }
+    [ObservableAsProperty(ReadOnly = false)]
+    private BrowserStatus _status;
 
     /// <summary>
     /// Running SDMX-DL server version.
     /// </summary>
-    public string? Version
-    {
-        [ObservableAsProperty]
-        get;
-    }
+    [ObservableAsProperty(ReadOnly = false)]
+    private string? _version;
 
-    public bool IsBusy
-    {
-        [ObservableAsProperty]
-        get;
-    }
+    [ObservableAsProperty(ReadOnly = false)]
+    private bool _isBusy;
 
-    public string? BusyMessage
-    {
-        [ObservableAsProperty]
-        get;
-    }
+    [ObservableAsProperty(ReadOnly = false)]
+    private string? _busyMessage;
 
     [Reactive]
-    public string SelectionKey { get; set; }
+    public partial string SelectionKey { get; set; }
 
     [Reactive]
-    public string? Argument { get; set; }
+    public partial string? Argument { get; set; }
 
     public RxCommand ConfigureServer { get; }
     public RxInteraction ConfigureServerInteraction { get; } = new(RxApp.MainThreadScheduler);
@@ -187,12 +172,6 @@ public class BrowserViewModel : BaseViewModel
                 dataFlowSelectorViewModel,
                 disposables
             );
-            FetchDimensionsOnSourceAndFlowSelection(
-                sourceSelectorViewModel,
-                dataFlowSelectorViewModel,
-                dimensionsSelectorViewModel,
-                disposables
-            );
 
             ManageBusyStatus(
                 sourceSelectorViewModel,
@@ -284,7 +263,7 @@ public class BrowserViewModel : BaseViewModel
         CompositeDisposable disposables
     )
     {
-        sourceSelectorViewModel
+        _isBusyHelper = sourceSelectorViewModel
             .RetrieveData.IsExecuting.CombineLatest(
                 dataFlowSelectorViewModel.RetrieveData.IsExecuting,
                 dimensionsSelectorViewModel.RetrieveDimensions.IsExecuting
@@ -294,10 +273,10 @@ public class BrowserViewModel : BaseViewModel
                 var (isRetrievingSources, isRetrievingFlows, isRetrievingDimensions) = t;
                 return isRetrievingSources || isRetrievingFlows || isRetrievingDimensions;
             })
-            .ToPropertyEx(this, x => x.IsBusy, scheduler: RxApp.MainThreadScheduler)
+            .ToProperty(this, x => x.IsBusy, scheduler: RxApp.MainThreadScheduler)
             .DisposeWith(disposables);
 
-        sourceSelectorViewModel
+        _busyMessageHelper = sourceSelectorViewModel
             .RetrieveData.IsExecuting.Where(x => x)
             .Select(_ => "Retrieving sources...")
             .Merge(
@@ -310,7 +289,7 @@ public class BrowserViewModel : BaseViewModel
                     .RetrieveDimensions.IsExecuting.Where(x => x)
                     .Select(_ => "Retrieving dimensions...")
             )
-            .ToPropertyEx(this, x => x.BusyMessage, scheduler: RxApp.MainThreadScheduler)
+            .ToProperty(this, x => x.BusyMessage, scheduler: RxApp.MainThreadScheduler)
             .DisposeWith(disposables);
     }
 
@@ -348,41 +327,6 @@ public class BrowserViewModel : BaseViewModel
             .Where(x => x.IsNone)
             .Select(_ => RxUnit.Default)
             .InvokeCommand(ConfigureServer)
-            .DisposeWith(disposables);
-    }
-
-    private static void FetchDimensionsOnSourceAndFlowSelection(
-        SourceSelectorViewModel sourceSelectorViewModel,
-        DataFlowSelectorViewModel dataFlowSelectorViewModel,
-        DimensionsSelectorViewModel dimensionsSelectorViewModel,
-        CompositeDisposable disposables
-    )
-    {
-        sourceSelectorViewModel
-            .WhenAnyValue(x => x.Selection)
-            .Do(_ =>
-                Observable
-                    .Return(RxUnit.Default)
-                    .InvokeCommand(dimensionsSelectorViewModel, x => x.Clear)
-            )
-            .CombineLatest(
-                dataFlowSelectorViewModel
-                    .WhenAnyValue(x => x.Selection)
-                    .Do(_ =>
-                        Observable
-                            .Return(RxUnit.Default)
-                            .InvokeCommand(dimensionsSelectorViewModel, x => x.Clear)
-                    )
-            )
-            .Throttle(TimeSpan.FromMilliseconds(200))
-            .Select(t =>
-            {
-                var (source, flow) = t;
-                var o = from s in source from f in flow select (s, f);
-                return o.Some(Observable.Return).None(Observable.Empty<(SdmxWebSource, DataFlow)>);
-            })
-            .Switch()
-            .InvokeCommand(dimensionsSelectorViewModel, x => x.RetrieveDimensions)
             .DisposeWith(disposables);
     }
 
@@ -433,9 +377,9 @@ public class BrowserViewModel : BaseViewModel
                 return settings.IsHosting ? BrowserStatus.Hosting : BrowserStatus.Connecting;
             });
 
-        Observable
+        _statusHelper = Observable
             .Merge(startingUp, isConnected, isOffline, isFailed)
-            .ToPropertyEx(
+            .ToProperty(
                 this,
                 x => x.Status,
                 initialValue: BrowserStatus.Offline,
@@ -462,9 +406,9 @@ public class BrowserViewModel : BaseViewModel
 
     private void UpdateServerRunningStatus()
     {
-        this.WhenAnyValue(x => x.Status)
+        _serverIsRunningHelper = this.WhenAnyValue(x => x.Status)
             .Select(s => s is BrowserStatus.Connected or BrowserStatus.Hosting)
-            .ToPropertyEx(
+            .ToProperty(
                 this,
                 x => x.ServerIsRunning,
                 initialValue: false,
@@ -491,11 +435,11 @@ public class BrowserViewModel : BaseViewModel
     {
         var command = ReactiveCommand.CreateRunInBackground(() =>
         {
-            var about = pipeline.Execute(() => clientFactory.GetClient().GetAbout(new Empty()));
+            var about = pipeline.Execute(() => clientFactory.GetClient().GetAbout(new EmptyDto()));
             return $"{about.Name} {about.Version}";
         });
 
-        command.ToPropertyEx(
+        _versionHelper = command.ToProperty(
             this,
             x => x.Version,
             initialValue: string.Empty,

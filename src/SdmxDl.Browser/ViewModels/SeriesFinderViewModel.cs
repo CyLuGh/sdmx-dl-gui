@@ -10,7 +10,7 @@ using Avalonia.Input;
 using LanguageExt;
 using Polly;
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
+using ReactiveUI.SourceGenerators;
 using SdmxDl.Browser.Models;
 using SdmxDl.Client;
 using SdmxDl.Client.Models;
@@ -18,10 +18,10 @@ using Sdmxdl.Grpc;
 
 namespace SdmxDl.Browser.ViewModels;
 
-public class SeriesFinderViewModel : BaseViewModel
+public partial class SeriesFinderViewModel : BaseViewModel
 {
     [Reactive]
-    public string? Query { get; set; }
+    public partial string? Query { get; set; }
 
     public ReactiveCommand<string?, Seq<SeriesRequest>> ParseQuery { get; }
     public RxCommand Close { get; }

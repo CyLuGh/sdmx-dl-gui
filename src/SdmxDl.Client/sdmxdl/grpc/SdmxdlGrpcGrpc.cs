@@ -46,103 +46,107 @@ namespace Sdmxdl.Grpc {
     }
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Marshaller<global::Sdmxdl.Grpc.Empty> __Marshaller_sdmxdl_grpc_Empty = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Sdmxdl.Grpc.Empty.Parser));
+    static readonly grpc::Marshaller<global::Sdmxdl.Grpc.EmptyDto> __Marshaller_sdmxdl_grpc_EmptyDto = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Sdmxdl.Grpc.EmptyDto.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Marshaller<global::Sdmxdl.Format.Protobuf.About> __Marshaller_sdmxdl_format_protobuf_About = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Sdmxdl.Format.Protobuf.About.Parser));
+    static readonly grpc::Marshaller<global::Sdmxdl.Format.Protobuf.AboutDto> __Marshaller_sdmxdl_format_protobuf_AboutDto = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Sdmxdl.Format.Protobuf.AboutDto.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Marshaller<global::Sdmxdl.Format.Protobuf.Web.WebSource> __Marshaller_sdmxdl_format_protobuf_web_WebSource = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Sdmxdl.Format.Protobuf.Web.WebSource.Parser));
+    static readonly grpc::Marshaller<global::Sdmxdl.Format.Protobuf.Web.WebSourceDto> __Marshaller_sdmxdl_format_protobuf_web_WebSourceDto = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Sdmxdl.Format.Protobuf.Web.WebSourceDto.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Marshaller<global::Sdmxdl.Grpc.SourceRequest> __Marshaller_sdmxdl_grpc_SourceRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Sdmxdl.Grpc.SourceRequest.Parser));
+    static readonly grpc::Marshaller<global::Sdmxdl.Grpc.SourceRequestDto> __Marshaller_sdmxdl_grpc_SourceRequestDto = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Sdmxdl.Grpc.SourceRequestDto.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Marshaller<global::Sdmxdl.Format.Protobuf.Web.MonitorReport> __Marshaller_sdmxdl_format_protobuf_web_MonitorReport = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Sdmxdl.Format.Protobuf.Web.MonitorReport.Parser));
+    static readonly grpc::Marshaller<global::Sdmxdl.Format.Protobuf.Web.MonitorReportDto> __Marshaller_sdmxdl_format_protobuf_web_MonitorReportDto = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Sdmxdl.Format.Protobuf.Web.MonitorReportDto.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Marshaller<global::Sdmxdl.Format.Protobuf.Database> __Marshaller_sdmxdl_format_protobuf_Database = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Sdmxdl.Format.Protobuf.Database.Parser));
+    static readonly grpc::Marshaller<global::Sdmxdl.Format.Protobuf.DatabaseDto> __Marshaller_sdmxdl_format_protobuf_DatabaseDto = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Sdmxdl.Format.Protobuf.DatabaseDto.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Marshaller<global::Sdmxdl.Grpc.DatabaseRequest> __Marshaller_sdmxdl_grpc_DatabaseRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Sdmxdl.Grpc.DatabaseRequest.Parser));
+    static readonly grpc::Marshaller<global::Sdmxdl.Grpc.DatabaseRequestDto> __Marshaller_sdmxdl_grpc_DatabaseRequestDto = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Sdmxdl.Grpc.DatabaseRequestDto.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Marshaller<global::Sdmxdl.Format.Protobuf.Flow> __Marshaller_sdmxdl_format_protobuf_Flow = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Sdmxdl.Format.Protobuf.Flow.Parser));
+    static readonly grpc::Marshaller<global::Sdmxdl.Format.Protobuf.FlowDto> __Marshaller_sdmxdl_format_protobuf_FlowDto = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Sdmxdl.Format.Protobuf.FlowDto.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Marshaller<global::Sdmxdl.Grpc.FlowRequest> __Marshaller_sdmxdl_grpc_FlowRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Sdmxdl.Grpc.FlowRequest.Parser));
+    static readonly grpc::Marshaller<global::Sdmxdl.Grpc.FlowRequestDto> __Marshaller_sdmxdl_grpc_FlowRequestDto = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Sdmxdl.Grpc.FlowRequestDto.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Marshaller<global::Sdmxdl.Format.Protobuf.Structure> __Marshaller_sdmxdl_format_protobuf_Structure = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Sdmxdl.Format.Protobuf.Structure.Parser));
+    static readonly grpc::Marshaller<global::Sdmxdl.Format.Protobuf.MetaSetDto> __Marshaller_sdmxdl_format_protobuf_MetaSetDto = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Sdmxdl.Format.Protobuf.MetaSetDto.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Marshaller<global::Sdmxdl.Grpc.KeyRequest> __Marshaller_sdmxdl_grpc_KeyRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Sdmxdl.Grpc.KeyRequest.Parser));
+    static readonly grpc::Marshaller<global::Sdmxdl.Grpc.KeyRequestDto> __Marshaller_sdmxdl_grpc_KeyRequestDto = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Sdmxdl.Grpc.KeyRequestDto.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Marshaller<global::Sdmxdl.Format.Protobuf.DataSet> __Marshaller_sdmxdl_format_protobuf_DataSet = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Sdmxdl.Format.Protobuf.DataSet.Parser));
+    static readonly grpc::Marshaller<global::Sdmxdl.Format.Protobuf.DataSetDto> __Marshaller_sdmxdl_format_protobuf_DataSetDto = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Sdmxdl.Format.Protobuf.DataSetDto.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Marshaller<global::Sdmxdl.Format.Protobuf.Series> __Marshaller_sdmxdl_format_protobuf_Series = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Sdmxdl.Format.Protobuf.Series.Parser));
+    static readonly grpc::Marshaller<global::Sdmxdl.Format.Protobuf.SeriesDto> __Marshaller_sdmxdl_format_protobuf_SeriesDto = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Sdmxdl.Format.Protobuf.SeriesDto.Parser));
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Marshaller<global::Sdmxdl.Grpc.KeyDimensionRequestDto> __Marshaller_sdmxdl_grpc_KeyDimensionRequestDto = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Sdmxdl.Grpc.KeyDimensionRequestDto.Parser));
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Marshaller<global::Sdmxdl.Grpc.DimensionCodesDto> __Marshaller_sdmxdl_grpc_DimensionCodesDto = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Sdmxdl.Grpc.DimensionCodesDto.Parser));
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Method<global::Sdmxdl.Grpc.Empty, global::Sdmxdl.Format.Protobuf.About> __Method_GetAbout = new grpc::Method<global::Sdmxdl.Grpc.Empty, global::Sdmxdl.Format.Protobuf.About>(
+    static readonly grpc::Method<global::Sdmxdl.Grpc.EmptyDto, global::Sdmxdl.Format.Protobuf.AboutDto> __Method_GetAbout = new grpc::Method<global::Sdmxdl.Grpc.EmptyDto, global::Sdmxdl.Format.Protobuf.AboutDto>(
         grpc::MethodType.Unary,
         __ServiceName,
         "GetAbout",
-        __Marshaller_sdmxdl_grpc_Empty,
-        __Marshaller_sdmxdl_format_protobuf_About);
+        __Marshaller_sdmxdl_grpc_EmptyDto,
+        __Marshaller_sdmxdl_format_protobuf_AboutDto);
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Method<global::Sdmxdl.Grpc.Empty, global::Sdmxdl.Format.Protobuf.Web.WebSource> __Method_GetSources = new grpc::Method<global::Sdmxdl.Grpc.Empty, global::Sdmxdl.Format.Protobuf.Web.WebSource>(
+    static readonly grpc::Method<global::Sdmxdl.Grpc.EmptyDto, global::Sdmxdl.Format.Protobuf.Web.WebSourceDto> __Method_GetSources = new grpc::Method<global::Sdmxdl.Grpc.EmptyDto, global::Sdmxdl.Format.Protobuf.Web.WebSourceDto>(
         grpc::MethodType.ServerStreaming,
         __ServiceName,
         "GetSources",
-        __Marshaller_sdmxdl_grpc_Empty,
-        __Marshaller_sdmxdl_format_protobuf_web_WebSource);
+        __Marshaller_sdmxdl_grpc_EmptyDto,
+        __Marshaller_sdmxdl_format_protobuf_web_WebSourceDto);
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Method<global::Sdmxdl.Grpc.SourceRequest, global::Sdmxdl.Format.Protobuf.Web.MonitorReport> __Method_GetMonitorReport = new grpc::Method<global::Sdmxdl.Grpc.SourceRequest, global::Sdmxdl.Format.Protobuf.Web.MonitorReport>(
+    static readonly grpc::Method<global::Sdmxdl.Grpc.SourceRequestDto, global::Sdmxdl.Format.Protobuf.Web.MonitorReportDto> __Method_GetMonitorReport = new grpc::Method<global::Sdmxdl.Grpc.SourceRequestDto, global::Sdmxdl.Format.Protobuf.Web.MonitorReportDto>(
         grpc::MethodType.Unary,
         __ServiceName,
         "GetMonitorReport",
-        __Marshaller_sdmxdl_grpc_SourceRequest,
-        __Marshaller_sdmxdl_format_protobuf_web_MonitorReport);
+        __Marshaller_sdmxdl_grpc_SourceRequestDto,
+        __Marshaller_sdmxdl_format_protobuf_web_MonitorReportDto);
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Method<global::Sdmxdl.Grpc.SourceRequest, global::Sdmxdl.Format.Protobuf.Database> __Method_GetDatabases = new grpc::Method<global::Sdmxdl.Grpc.SourceRequest, global::Sdmxdl.Format.Protobuf.Database>(
+    static readonly grpc::Method<global::Sdmxdl.Grpc.SourceRequestDto, global::Sdmxdl.Format.Protobuf.DatabaseDto> __Method_GetDatabases = new grpc::Method<global::Sdmxdl.Grpc.SourceRequestDto, global::Sdmxdl.Format.Protobuf.DatabaseDto>(
         grpc::MethodType.ServerStreaming,
         __ServiceName,
         "GetDatabases",
-        __Marshaller_sdmxdl_grpc_SourceRequest,
-        __Marshaller_sdmxdl_format_protobuf_Database);
+        __Marshaller_sdmxdl_grpc_SourceRequestDto,
+        __Marshaller_sdmxdl_format_protobuf_DatabaseDto);
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Method<global::Sdmxdl.Grpc.DatabaseRequest, global::Sdmxdl.Format.Protobuf.Flow> __Method_GetFlows = new grpc::Method<global::Sdmxdl.Grpc.DatabaseRequest, global::Sdmxdl.Format.Protobuf.Flow>(
+    static readonly grpc::Method<global::Sdmxdl.Grpc.DatabaseRequestDto, global::Sdmxdl.Format.Protobuf.FlowDto> __Method_GetFlows = new grpc::Method<global::Sdmxdl.Grpc.DatabaseRequestDto, global::Sdmxdl.Format.Protobuf.FlowDto>(
         grpc::MethodType.ServerStreaming,
         __ServiceName,
         "GetFlows",
-        __Marshaller_sdmxdl_grpc_DatabaseRequest,
-        __Marshaller_sdmxdl_format_protobuf_Flow);
+        __Marshaller_sdmxdl_grpc_DatabaseRequestDto,
+        __Marshaller_sdmxdl_format_protobuf_FlowDto);
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Method<global::Sdmxdl.Grpc.FlowRequest, global::Sdmxdl.Format.Protobuf.Flow> __Method_GetFlow = new grpc::Method<global::Sdmxdl.Grpc.FlowRequest, global::Sdmxdl.Format.Protobuf.Flow>(
+    static readonly grpc::Method<global::Sdmxdl.Grpc.FlowRequestDto, global::Sdmxdl.Format.Protobuf.MetaSetDto> __Method_GetMeta = new grpc::Method<global::Sdmxdl.Grpc.FlowRequestDto, global::Sdmxdl.Format.Protobuf.MetaSetDto>(
         grpc::MethodType.Unary,
         __ServiceName,
-        "GetFlow",
-        __Marshaller_sdmxdl_grpc_FlowRequest,
-        __Marshaller_sdmxdl_format_protobuf_Flow);
+        "GetMeta",
+        __Marshaller_sdmxdl_grpc_FlowRequestDto,
+        __Marshaller_sdmxdl_format_protobuf_MetaSetDto);
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Method<global::Sdmxdl.Grpc.FlowRequest, global::Sdmxdl.Format.Protobuf.Structure> __Method_GetStructure = new grpc::Method<global::Sdmxdl.Grpc.FlowRequest, global::Sdmxdl.Format.Protobuf.Structure>(
-        grpc::MethodType.Unary,
-        __ServiceName,
-        "GetStructure",
-        __Marshaller_sdmxdl_grpc_FlowRequest,
-        __Marshaller_sdmxdl_format_protobuf_Structure);
-
-    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Method<global::Sdmxdl.Grpc.KeyRequest, global::Sdmxdl.Format.Protobuf.DataSet> __Method_GetData = new grpc::Method<global::Sdmxdl.Grpc.KeyRequest, global::Sdmxdl.Format.Protobuf.DataSet>(
+    static readonly grpc::Method<global::Sdmxdl.Grpc.KeyRequestDto, global::Sdmxdl.Format.Protobuf.DataSetDto> __Method_GetData = new grpc::Method<global::Sdmxdl.Grpc.KeyRequestDto, global::Sdmxdl.Format.Protobuf.DataSetDto>(
         grpc::MethodType.Unary,
         __ServiceName,
         "GetData",
-        __Marshaller_sdmxdl_grpc_KeyRequest,
-        __Marshaller_sdmxdl_format_protobuf_DataSet);
+        __Marshaller_sdmxdl_grpc_KeyRequestDto,
+        __Marshaller_sdmxdl_format_protobuf_DataSetDto);
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Method<global::Sdmxdl.Grpc.KeyRequest, global::Sdmxdl.Format.Protobuf.Series> __Method_GetDataStream = new grpc::Method<global::Sdmxdl.Grpc.KeyRequest, global::Sdmxdl.Format.Protobuf.Series>(
+    static readonly grpc::Method<global::Sdmxdl.Grpc.KeyRequestDto, global::Sdmxdl.Format.Protobuf.SeriesDto> __Method_GetDataStream = new grpc::Method<global::Sdmxdl.Grpc.KeyRequestDto, global::Sdmxdl.Format.Protobuf.SeriesDto>(
         grpc::MethodType.ServerStreaming,
         __ServiceName,
         "GetDataStream",
-        __Marshaller_sdmxdl_grpc_KeyRequest,
-        __Marshaller_sdmxdl_format_protobuf_Series);
+        __Marshaller_sdmxdl_grpc_KeyRequestDto,
+        __Marshaller_sdmxdl_format_protobuf_SeriesDto);
+
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Method<global::Sdmxdl.Grpc.KeyDimensionRequestDto, global::Sdmxdl.Grpc.DimensionCodesDto> __Method_GetAvailability = new grpc::Method<global::Sdmxdl.Grpc.KeyDimensionRequestDto, global::Sdmxdl.Grpc.DimensionCodesDto>(
+        grpc::MethodType.ServerStreaming,
+        __ServiceName,
+        "GetAvailability",
+        __Marshaller_sdmxdl_grpc_KeyDimensionRequestDto,
+        __Marshaller_sdmxdl_grpc_DimensionCodesDto);
 
     /// <summary>Service descriptor</summary>
     public static global::Google.Protobuf.Reflection.ServiceDescriptor Descriptor
@@ -178,144 +182,134 @@ namespace Sdmxdl.Grpc {
       }
 
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::Sdmxdl.Format.Protobuf.About GetAbout(global::Sdmxdl.Grpc.Empty request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      public virtual global::Sdmxdl.Format.Protobuf.AboutDto GetAbout(global::Sdmxdl.Grpc.EmptyDto request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
       {
         return GetAbout(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::Sdmxdl.Format.Protobuf.About GetAbout(global::Sdmxdl.Grpc.Empty request, grpc::CallOptions options)
+      public virtual global::Sdmxdl.Format.Protobuf.AboutDto GetAbout(global::Sdmxdl.Grpc.EmptyDto request, grpc::CallOptions options)
       {
         return CallInvoker.BlockingUnaryCall(__Method_GetAbout, null, options, request);
       }
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncUnaryCall<global::Sdmxdl.Format.Protobuf.About> GetAboutAsync(global::Sdmxdl.Grpc.Empty request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      public virtual grpc::AsyncUnaryCall<global::Sdmxdl.Format.Protobuf.AboutDto> GetAboutAsync(global::Sdmxdl.Grpc.EmptyDto request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
       {
         return GetAboutAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncUnaryCall<global::Sdmxdl.Format.Protobuf.About> GetAboutAsync(global::Sdmxdl.Grpc.Empty request, grpc::CallOptions options)
+      public virtual grpc::AsyncUnaryCall<global::Sdmxdl.Format.Protobuf.AboutDto> GetAboutAsync(global::Sdmxdl.Grpc.EmptyDto request, grpc::CallOptions options)
       {
         return CallInvoker.AsyncUnaryCall(__Method_GetAbout, null, options, request);
       }
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncServerStreamingCall<global::Sdmxdl.Format.Protobuf.Web.WebSource> GetSources(global::Sdmxdl.Grpc.Empty request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      public virtual grpc::AsyncServerStreamingCall<global::Sdmxdl.Format.Protobuf.Web.WebSourceDto> GetSources(global::Sdmxdl.Grpc.EmptyDto request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
       {
         return GetSources(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncServerStreamingCall<global::Sdmxdl.Format.Protobuf.Web.WebSource> GetSources(global::Sdmxdl.Grpc.Empty request, grpc::CallOptions options)
+      public virtual grpc::AsyncServerStreamingCall<global::Sdmxdl.Format.Protobuf.Web.WebSourceDto> GetSources(global::Sdmxdl.Grpc.EmptyDto request, grpc::CallOptions options)
       {
         return CallInvoker.AsyncServerStreamingCall(__Method_GetSources, null, options, request);
       }
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::Sdmxdl.Format.Protobuf.Web.MonitorReport GetMonitorReport(global::Sdmxdl.Grpc.SourceRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      public virtual global::Sdmxdl.Format.Protobuf.Web.MonitorReportDto GetMonitorReport(global::Sdmxdl.Grpc.SourceRequestDto request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
       {
         return GetMonitorReport(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::Sdmxdl.Format.Protobuf.Web.MonitorReport GetMonitorReport(global::Sdmxdl.Grpc.SourceRequest request, grpc::CallOptions options)
+      public virtual global::Sdmxdl.Format.Protobuf.Web.MonitorReportDto GetMonitorReport(global::Sdmxdl.Grpc.SourceRequestDto request, grpc::CallOptions options)
       {
         return CallInvoker.BlockingUnaryCall(__Method_GetMonitorReport, null, options, request);
       }
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncUnaryCall<global::Sdmxdl.Format.Protobuf.Web.MonitorReport> GetMonitorReportAsync(global::Sdmxdl.Grpc.SourceRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      public virtual grpc::AsyncUnaryCall<global::Sdmxdl.Format.Protobuf.Web.MonitorReportDto> GetMonitorReportAsync(global::Sdmxdl.Grpc.SourceRequestDto request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
       {
         return GetMonitorReportAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncUnaryCall<global::Sdmxdl.Format.Protobuf.Web.MonitorReport> GetMonitorReportAsync(global::Sdmxdl.Grpc.SourceRequest request, grpc::CallOptions options)
+      public virtual grpc::AsyncUnaryCall<global::Sdmxdl.Format.Protobuf.Web.MonitorReportDto> GetMonitorReportAsync(global::Sdmxdl.Grpc.SourceRequestDto request, grpc::CallOptions options)
       {
         return CallInvoker.AsyncUnaryCall(__Method_GetMonitorReport, null, options, request);
       }
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncServerStreamingCall<global::Sdmxdl.Format.Protobuf.Database> GetDatabases(global::Sdmxdl.Grpc.SourceRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      public virtual grpc::AsyncServerStreamingCall<global::Sdmxdl.Format.Protobuf.DatabaseDto> GetDatabases(global::Sdmxdl.Grpc.SourceRequestDto request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
       {
         return GetDatabases(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncServerStreamingCall<global::Sdmxdl.Format.Protobuf.Database> GetDatabases(global::Sdmxdl.Grpc.SourceRequest request, grpc::CallOptions options)
+      public virtual grpc::AsyncServerStreamingCall<global::Sdmxdl.Format.Protobuf.DatabaseDto> GetDatabases(global::Sdmxdl.Grpc.SourceRequestDto request, grpc::CallOptions options)
       {
         return CallInvoker.AsyncServerStreamingCall(__Method_GetDatabases, null, options, request);
       }
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncServerStreamingCall<global::Sdmxdl.Format.Protobuf.Flow> GetFlows(global::Sdmxdl.Grpc.DatabaseRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      public virtual grpc::AsyncServerStreamingCall<global::Sdmxdl.Format.Protobuf.FlowDto> GetFlows(global::Sdmxdl.Grpc.DatabaseRequestDto request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
       {
         return GetFlows(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncServerStreamingCall<global::Sdmxdl.Format.Protobuf.Flow> GetFlows(global::Sdmxdl.Grpc.DatabaseRequest request, grpc::CallOptions options)
+      public virtual grpc::AsyncServerStreamingCall<global::Sdmxdl.Format.Protobuf.FlowDto> GetFlows(global::Sdmxdl.Grpc.DatabaseRequestDto request, grpc::CallOptions options)
       {
         return CallInvoker.AsyncServerStreamingCall(__Method_GetFlows, null, options, request);
       }
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::Sdmxdl.Format.Protobuf.Flow GetFlow(global::Sdmxdl.Grpc.FlowRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      public virtual global::Sdmxdl.Format.Protobuf.MetaSetDto GetMeta(global::Sdmxdl.Grpc.FlowRequestDto request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
       {
-        return GetFlow(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+        return GetMeta(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::Sdmxdl.Format.Protobuf.Flow GetFlow(global::Sdmxdl.Grpc.FlowRequest request, grpc::CallOptions options)
+      public virtual global::Sdmxdl.Format.Protobuf.MetaSetDto GetMeta(global::Sdmxdl.Grpc.FlowRequestDto request, grpc::CallOptions options)
       {
-        return CallInvoker.BlockingUnaryCall(__Method_GetFlow, null, options, request);
+        return CallInvoker.BlockingUnaryCall(__Method_GetMeta, null, options, request);
       }
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncUnaryCall<global::Sdmxdl.Format.Protobuf.Flow> GetFlowAsync(global::Sdmxdl.Grpc.FlowRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      public virtual grpc::AsyncUnaryCall<global::Sdmxdl.Format.Protobuf.MetaSetDto> GetMetaAsync(global::Sdmxdl.Grpc.FlowRequestDto request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
       {
-        return GetFlowAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+        return GetMetaAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncUnaryCall<global::Sdmxdl.Format.Protobuf.Flow> GetFlowAsync(global::Sdmxdl.Grpc.FlowRequest request, grpc::CallOptions options)
+      public virtual grpc::AsyncUnaryCall<global::Sdmxdl.Format.Protobuf.MetaSetDto> GetMetaAsync(global::Sdmxdl.Grpc.FlowRequestDto request, grpc::CallOptions options)
       {
-        return CallInvoker.AsyncUnaryCall(__Method_GetFlow, null, options, request);
+        return CallInvoker.AsyncUnaryCall(__Method_GetMeta, null, options, request);
       }
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::Sdmxdl.Format.Protobuf.Structure GetStructure(global::Sdmxdl.Grpc.FlowRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
-      {
-        return GetStructure(request, new grpc::CallOptions(headers, deadline, cancellationToken));
-      }
-      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::Sdmxdl.Format.Protobuf.Structure GetStructure(global::Sdmxdl.Grpc.FlowRequest request, grpc::CallOptions options)
-      {
-        return CallInvoker.BlockingUnaryCall(__Method_GetStructure, null, options, request);
-      }
-      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncUnaryCall<global::Sdmxdl.Format.Protobuf.Structure> GetStructureAsync(global::Sdmxdl.Grpc.FlowRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
-      {
-        return GetStructureAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
-      }
-      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncUnaryCall<global::Sdmxdl.Format.Protobuf.Structure> GetStructureAsync(global::Sdmxdl.Grpc.FlowRequest request, grpc::CallOptions options)
-      {
-        return CallInvoker.AsyncUnaryCall(__Method_GetStructure, null, options, request);
-      }
-      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::Sdmxdl.Format.Protobuf.DataSet GetData(global::Sdmxdl.Grpc.KeyRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      public virtual global::Sdmxdl.Format.Protobuf.DataSetDto GetData(global::Sdmxdl.Grpc.KeyRequestDto request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
       {
         return GetData(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::Sdmxdl.Format.Protobuf.DataSet GetData(global::Sdmxdl.Grpc.KeyRequest request, grpc::CallOptions options)
+      public virtual global::Sdmxdl.Format.Protobuf.DataSetDto GetData(global::Sdmxdl.Grpc.KeyRequestDto request, grpc::CallOptions options)
       {
         return CallInvoker.BlockingUnaryCall(__Method_GetData, null, options, request);
       }
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncUnaryCall<global::Sdmxdl.Format.Protobuf.DataSet> GetDataAsync(global::Sdmxdl.Grpc.KeyRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      public virtual grpc::AsyncUnaryCall<global::Sdmxdl.Format.Protobuf.DataSetDto> GetDataAsync(global::Sdmxdl.Grpc.KeyRequestDto request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
       {
         return GetDataAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncUnaryCall<global::Sdmxdl.Format.Protobuf.DataSet> GetDataAsync(global::Sdmxdl.Grpc.KeyRequest request, grpc::CallOptions options)
+      public virtual grpc::AsyncUnaryCall<global::Sdmxdl.Format.Protobuf.DataSetDto> GetDataAsync(global::Sdmxdl.Grpc.KeyRequestDto request, grpc::CallOptions options)
       {
         return CallInvoker.AsyncUnaryCall(__Method_GetData, null, options, request);
       }
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncServerStreamingCall<global::Sdmxdl.Format.Protobuf.Series> GetDataStream(global::Sdmxdl.Grpc.KeyRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      public virtual grpc::AsyncServerStreamingCall<global::Sdmxdl.Format.Protobuf.SeriesDto> GetDataStream(global::Sdmxdl.Grpc.KeyRequestDto request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
       {
         return GetDataStream(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncServerStreamingCall<global::Sdmxdl.Format.Protobuf.Series> GetDataStream(global::Sdmxdl.Grpc.KeyRequest request, grpc::CallOptions options)
+      public virtual grpc::AsyncServerStreamingCall<global::Sdmxdl.Format.Protobuf.SeriesDto> GetDataStream(global::Sdmxdl.Grpc.KeyRequestDto request, grpc::CallOptions options)
       {
         return CallInvoker.AsyncServerStreamingCall(__Method_GetDataStream, null, options, request);
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncServerStreamingCall<global::Sdmxdl.Grpc.DimensionCodesDto> GetAvailability(global::Sdmxdl.Grpc.KeyDimensionRequestDto request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return GetAvailability(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+      public virtual grpc::AsyncServerStreamingCall<global::Sdmxdl.Grpc.DimensionCodesDto> GetAvailability(global::Sdmxdl.Grpc.KeyDimensionRequestDto request, grpc::CallOptions options)
+      {
+        return CallInvoker.AsyncServerStreamingCall(__Method_GetAvailability, null, options, request);
       }
       /// <summary>Creates a new instance of client from given <c>ClientBaseConfiguration</c>.</summary>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]

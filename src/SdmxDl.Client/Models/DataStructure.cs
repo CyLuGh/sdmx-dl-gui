@@ -13,10 +13,10 @@ public readonly record struct DataStructure
     public required string Name { get; init; }
 
     [SetsRequiredMembers]
-    public DataStructure(Sdmxdl.Format.Protobuf.Structure structure)
+    public DataStructure(Sdmxdl.Format.Protobuf.StructureDto structure)
     {
         Ref = structure.Ref;
-        Dimensions = structure.Dimensions.Map(d => new Dimension(d)).ToSeq().Strict();
+        Dimensions = structure.Dimensions.Select((d, i) => new Dimension(d, i)).ToSeq().Strict();
         Attributes = structure.Attributes.Map(a => new Attribute(a)).ToSeq().Strict();
         if (structure.HasTimeDimensionId)
             TimeDimensionId = structure.TimeDimensionId;

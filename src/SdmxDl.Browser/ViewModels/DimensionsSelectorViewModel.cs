@@ -7,7 +7,7 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using LanguageExt;
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
+using ReactiveUI.SourceGenerators;
 using SdmxDl.Client;
 using SdmxDl.Client.Models;
 using Sdmxdl.Grpc;
@@ -15,28 +15,19 @@ using static System.Int32;
 
 namespace SdmxDl.Browser.ViewModels;
 
-public class DimensionsSelectorViewModel : BaseViewModel
+public partial class DimensionsSelectorViewModel : BaseViewModel
 {
     [Reactive]
-    public HierarchicalDimensionViewModel? SelectedDimension { get; set; }
+    public partial HierarchicalDimensionViewModel? SelectedDimension { get; set; }
 
-    public Option<DataStructure> DataStructure
-    {
-        [ObservableAsProperty]
-        get;
-    }
+    [ObservableAsProperty(ReadOnly = false)]
+    private Option<DataStructure> _dataStructure;
 
-    public Seq<PositionedDimensionViewModel> PositionedDimensions
-    {
-        [ObservableAsProperty]
-        get;
-    }
+    [ObservableAsProperty(ReadOnly = false)]
+    private Seq<PositionedDimensionViewModel> _positionedDimensions;
 
-    public Seq<HierarchicalDimensionViewModel> HierarchicalDimensions
-    {
-        [ObservableAsProperty]
-        get;
-    }
+    [ObservableAsProperty(ReadOnly = false)]
+    private Seq<HierarchicalDimensionViewModel> _hierarchicalDimensions;
 
     public ReactiveCommand<
         (SdmxWebSource, DataFlow),
@@ -44,14 +35,20 @@ public class DimensionsSelectorViewModel : BaseViewModel
     > RetrieveDimensions { get; }
     public ReactiveCommand<RxUnit, Option<DataStructure>> Clear { get; }
 
-    public DimensionsSelectorViewModel(ClientFactory clientFactory)
+    public DimensionsSelectorViewModel(
+        SourceSelectorViewModel sourceSelectorViewModel,
+        DataFlowSelectorViewModel dataFlowSelectorViewModel,
+        ClientFactory clientFactory
+    )
     {
-        RetrieveDimensions = CreateCommandRetrieveDimensions(clientFactory);
         Clear = ReactiveCommand.Create(() => Option<DataStructure>.None);
 
-        RetrieveDimensions
-            .Merge(Clear)
-            .ToPropertyEx(this, x => x.DataStructure, scheduler: RxApp.MainThreadScheduler);
+        RetrieveDimensions = CreateCommandRetrieveDimensions(
+            sourceSelectorViewModel,
+            dataFlowSelectorViewModel,
+            clientFactory,
+            Clear
+        );
 
         this.WhenActivated(disposables =>
         {
@@ -77,7 +74,7 @@ public class DimensionsSelectorViewModel : BaseViewModel
             .Select(x => x.IsSome);
 
         // Generate sorted list when receiving data or when ordering again
-        this.WhenAnyValue(x => x.DataStructure)
+        _positionedDimensionsHelper = this.WhenAnyValue(x => x.DataStructure)
             .Select(o =>
             {
                 var dimensions = o.Match(ds => ds.Dimensions, () => Seq<Dimension>.Empty);
@@ -88,20 +85,20 @@ public class DimensionsSelectorViewModel : BaseViewModel
                     .Strict();
             })
             .Merge(positionChanged.Select(_ => SortDimensions(PositionedDimensions)))
-            .ToPropertyEx(this, x => x.PositionedDimensions, scheduler: RxApp.MainThreadScheduler)
+            .ToProperty(this, x => x.PositionedDimensions, scheduler: RxApp.MainThreadScheduler)
             .DisposeWith(disposables);
     }
 
     private void UpdateHierarchy(CompositeDisposable disposables)
     {
-        this.WhenAnyValue(x => x.PositionedDimensions)
+        _hierarchicalDimensionsHelper = this.WhenAnyValue(x => x.PositionedDimensions)
             .Throttle(TimeSpan.FromMilliseconds(150))
             .Select(seq =>
                 seq.Length == 0
                     ? Seq<HierarchicalDimensionViewModel>.Empty
                     : HierarchicalDimensionViewModel.BuildHierarchy(seq, HashMap<int, string>.Empty)
             )
-            .ToPropertyEx(this, x => x.HierarchicalDimensions, scheduler: RxApp.MainThreadScheduler)
+            .ToProperty(this, x => x.HierarchicalDimensions, scheduler: RxApp.MainThreadScheduler)
             .DisposeWith(disposables);
     }
 
@@ -141,32 +138,70 @@ public class DimensionsSelectorViewModel : BaseViewModel
     private ReactiveCommand<
         (SdmxWebSource, DataFlow),
         Option<DataStructure>
-    > CreateCommandRetrieveDimensions(ClientFactory clientFactory)
+    > CreateCommandRetrieveDimensions(
+        SourceSelectorViewModel sourceSelectorViewModel,
+        DataFlowSelectorViewModel dataFlowSelectorViewModel,
+        ClientFactory clientFactory,
+        ReactiveCommand<RxUnit, Option<DataStructure>> clear
+    )
     {
-        var command = ReactiveCommand.CreateFromTask(
+        var cmd = ReactiveCommand.CreateFromTask(
             async ((SdmxWebSource, DataFlow) t) =>
             {
                 var (source, flow) = t;
-                var ds = await FetchDimensions(clientFactory, source, flow).ConfigureAwait(false);
+                var ds = await DoRetrieveDimensions(clientFactory, source, flow)
+                    .ConfigureAwait(false);
                 return Option<DataStructure>.Some(ds);
             }
         );
 
-        return command;
+        sourceSelectorViewModel
+            .WhenAnyValue(x => x.Selection)
+            .Do(_ => Observable.Return(RxUnit.Default).InvokeCommand(clear))
+            .CombineLatest(
+                dataFlowSelectorViewModel
+                    .WhenAnyValue(x => x.Selection)
+                    .Do(_ => Observable.Return(RxUnit.Default).InvokeCommand(clear))
+            )
+            .Throttle(TimeSpan.FromMilliseconds(200))
+            .Select(t =>
+            {
+                var (source, flow) = t;
+                var o = from s in source from f in flow select (s, f);
+                return o.Some(Observable.Return).None(Observable.Empty<(SdmxWebSource, DataFlow)>);
+            })
+            .Switch()
+            .InvokeCommand(cmd);
+
+        _dataStructureHelper = cmd.Merge(clear)
+            .ToProperty(this, x => x.DataStructure, scheduler: RxApp.MainThreadScheduler);
+
+        return cmd;
     }
 
-    private static async Task<DataStructure> FetchDimensions(
+    private static async Task<DataStructure> DoRetrieveDimensions(
         ClientFactory clientFactory,
         SdmxWebSource source,
         DataFlow dataFlow
     )
     {
         var client = clientFactory.GetClient();
-
-        var dataStructure = await client.GetStructureAsync(
-            new FlowRequest() { Source = source.Id, Flow = dataFlow.Ref }
+        var metaSet = await client.GetMetaAsync(
+            new FlowRequestDto() { Source = source.Id, Flow = dataFlow.Ref }
         );
-
-        return new DataStructure(dataStructure);
+        return new DataStructure(metaSet.Structure);
     }
+
+    //private static async Task<Seq<string>> DoFetchAvailableValues(
+    //    ClientFactory clientFactory,
+    //    SdmxWebSource source,
+    //    DataFlow dataFlow,
+    //    Dimension dimension
+    //)
+    //{
+    //    var client = clientFactory.GetClient();
+    //    var request = client.GetAvailability(
+    //        new KeyDimensionRequestDto() { Source = source.Id, Flow = dataFlow.Ref }
+    //    );
+    //}
 }

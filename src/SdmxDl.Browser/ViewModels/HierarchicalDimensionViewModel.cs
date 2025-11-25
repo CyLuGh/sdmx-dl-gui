@@ -4,20 +4,20 @@ using System.Linq;
 using System.Reactive.Linq;
 using LanguageExt;
 using ReactiveUI;
-using ReactiveUI.Fody.Helpers;
+using ReactiveUI.SourceGenerators;
 
 namespace SdmxDl.Browser.ViewModels;
 
-public class HierarchicalDimensionViewModel : BaseViewModel
+public partial class HierarchicalDimensionViewModel : BaseViewModel
 {
     private readonly int _level;
     private readonly Seq<PositionedDimensionViewModel> _positionedDimensions;
 
     [Reactive]
-    public Seq<HierarchicalDimensionViewModel> Children { get; private set; }
+    public partial Seq<HierarchicalDimensionViewModel> Children { get; private set; }
 
     [Reactive]
-    public bool IsExpanded { get; set; }
+    public partial bool IsExpanded { get; set; }
 
     public static HierarchicalDimensionViewModel None { get; } =
         new HierarchicalDimensionViewModel();

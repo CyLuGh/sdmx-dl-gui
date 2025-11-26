@@ -30,6 +30,7 @@ public static class FrequencyExtensions
             "P1Y" => Frequency.Yearly,
             "P1D" => Frequency.Daily,
             "P3M" => Frequency.Quarterly,
+            "P6M" => Frequency.HalfYearly,
             _ => Frequency.Unknown,
         };
 

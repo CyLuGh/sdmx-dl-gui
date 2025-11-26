@@ -1,99 +1,109 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:suki="https://github.com/kikipoulet/SukiUI"
-             xmlns:system="clr-namespace:System;assembly=System.Runtime"
-             xmlns:viewModels="clr-namespace:SdmxDl.Browser.ViewModels"
-             xmlns:converters="clr-namespace:SdmxDl.Browser.Infrastructure.Converters"
-             xmlns:models="clr-namespace:SdmxDl.Client.Models;assembly=SdmxDl.Client"
-             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="SdmxDl.Browser.SourceSelector"
-             x:DataType="viewModels:SourceSelectorViewModel">
-  <UserControl.Resources>
-    <converters:SelectorToggleTextConverter x:Key="SelectorToggleTextConverter" />
-    <converters:SdmxWebSourceConverter x:Key="SdmxWebSourceConverter" />
-  </UserControl.Resources>
-  <Grid IsEnabled="{Binding !AllData.IsEmpty}">
-    <ToggleButton Name="ToggleSearch"
-                  IsChecked="{Binding IsSearching}"
-                  IsVisible="{Binding !IsSearching}"
-                  HorizontalAlignment="Stretch">
-      <TextBlock Text="{Binding Selection,Converter={StaticResource SelectorToggleTextConverter}}"/>
-      <Interaction.Behaviors>
-        <ButtonClickEventTriggerBehavior>
-          <FocusControlAction TargetControl="TextBoxSource" />
-        </ButtonClickEventTriggerBehavior>
-      </Interaction.Behaviors>
-    </ToggleButton>
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:suki="https://github.com/kikipoulet/SukiUI"
+			 xmlns:system="clr-namespace:System;assembly=System.Runtime"
+			 xmlns:viewModels="clr-namespace:SdmxDl.Browser.ViewModels"
+			 xmlns:converters="clr-namespace:SdmxDl.Browser.Infrastructure.Converters"
+			 xmlns:models="clr-namespace:SdmxDl.Client.Models;assembly=SdmxDl.Client"
+			 xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+			 x:Class="SdmxDl.Browser.SourceSelector"
+			 x:DataType="viewModels:SourceSelectorViewModel">
+	<UserControl.Resources>
+		<converters:SelectorToggleTextConverter x:Key="SelectorToggleTextConverter" />
+		<converters:SdmxWebSourceConverter x:Key="SdmxWebSourceConverter" />
+	</UserControl.Resources>
+	<Grid IsEnabled="{Binding !AllData.IsEmpty}">
+		<ToggleButton Name="ToggleSearch"
+					  IsChecked="{Binding IsSearching}"
+					  IsVisible="{Binding !IsSearching}"
+					  HorizontalAlignment="Stretch">
+			<TextBlock Text="{Binding Selection,Converter={StaticResource SelectorToggleTextConverter}}"/>
+			<Interaction.Behaviors>
+				<ButtonClickEventTriggerBehavior>
+					<FocusControlAction TargetControl="TextBoxSource" />
+				</ButtonClickEventTriggerBehavior>
+			</Interaction.Behaviors>
+		</ToggleButton>
 
-    <TextBox Name="TextBoxSource"
-             Text="{Binding CurrentInput}"
-             Watermark="Source"
-             suki:TextBoxExtensions.AddDeleteButton="True"
-             IsVisible="{Binding #ToggleSearch.IsChecked}">
-      <Interaction.Behaviors>
-        <EventTriggerBehavior EventName="KeyDown">
-          <InvokeCommandAction Command="{Binding CheckTextBoxInput}"
-                               PassEventArgsToCommand="True" />
-        </EventTriggerBehavior>
-        <EventTriggerBehavior EventName="TextInput">
-          <InvokeCommandAction Command="{Binding CheckTextBoxInput}"
-                               PassEventArgsToCommand="True" />
-        </EventTriggerBehavior>
-      </Interaction.Behaviors>
-    </TextBox>
-    <Popup PlacementTarget="TextBoxSource"
-           Placement="RightEdgeAlignedTop"
-           PlacementConstraintAdjustment="FlipX"
-           IsOpen="{Binding IsSearching}">
-      <Interaction.Behaviors>
-        <EventTriggerBehavior EventName="KeyDown">
-          <InvokeCommandAction Command="{Binding CheckTextBoxInput}"
-                               PassEventArgsToCommand="True" />
-        </EventTriggerBehavior>
-      </Interaction.Behaviors>
-      <suki:GlassCard Classes="Standard"
-                      IsOpaque="True"
-                      MinWidth="400"
-                      MaxWidth="800"
-                      MinHeight="500"
-                      MaxHeight="700">
-        <Grid RowDefinitions="*,Auto">
-          <ListBox SelectedItem="{Binding CurrentSelection}"
-                   ItemsSource="{Binding CurrentSources}">
-            <Interaction.Behaviors>
-              <EventTriggerBehavior EventName="DoubleTapped">
-                <InvokeCommandAction Command="{Binding ValidateSelection}" />
-              </EventTriggerBehavior>
-            </Interaction.Behaviors>
-            <ListBox.DataTemplates>
-              <DataTemplate DataType="models:SdmxWebSource">
-                <Grid>
-                  <TextBlock Text="{Binding .,Converter={StaticResource SdmxWebSourceConverter}}" TextTrimming="CharacterEllipsis"/>
-                </Grid>
-              </DataTemplate>
-            </ListBox.DataTemplates>
-          </ListBox>
+		<TextBox Name="TextBoxSource"
+				 Text="{Binding CurrentInput}"
+				 Watermark="Source"
+				 suki:TextBoxExtensions.AddDeleteButton="True"
+				 IsVisible="{Binding #ToggleSearch.IsChecked}">
+			<Interaction.Behaviors>
+				<EventTriggerBehavior EventName="KeyDown">
+					<InvokeCommandAction Command="{Binding CheckTextBoxInput}"
+										 PassEventArgsToCommand="True" />
+				</EventTriggerBehavior>
+				<EventTriggerBehavior EventName="TextInput">
+					<InvokeCommandAction Command="{Binding CheckTextBoxInput}"
+										 PassEventArgsToCommand="True" />
+				</EventTriggerBehavior>
+			</Interaction.Behaviors>
+		</TextBox>
+		<Popup PlacementTarget="TextBoxSource"
+			   Placement="RightEdgeAlignedTop"
+			   PlacementConstraintAdjustment="FlipX"
+			   IsOpen="{Binding IsSearching}">
+			<Interaction.Behaviors>
+				<EventTriggerBehavior EventName="KeyDown">
+					<InvokeCommandAction Command="{Binding CheckTextBoxInput}"
+										 PassEventArgsToCommand="True" />
+				</EventTriggerBehavior>
+			</Interaction.Behaviors>
+			<Panel>
+				<Border Margin="20"
+						BoxShadow="{DynamicResource SukiPopupShadow}"
+						CornerRadius="20"/>
 
-          <UniformGrid Margin="0 5 0 0"
-                       HorizontalAlignment="Right"
-                       Rows="1"
-                       Grid.Row="1">
-            <Button Command="{Binding CancelSelection}"
-                    Content="{materialIcons:MaterialIconTextExt Kind=Cancel, Text=CANCEL}">
-            </Button>
-            <Button Command="{Binding ValidateSelection}"
-                    Content="{materialIcons:MaterialIconTextExt Kind=CheckboxMarkedCircleOutline, Text=USE SOURCE}"
-                    Classes="Flat"
-                    Margin="5 0 0 0">
-            </Button>
-          </UniformGrid>
+				<Border MinWidth="400"
+						MaxWidth="800"
+						MinHeight="500"
+						MaxHeight="700"
+						Margin="20"
+						Background="{DynamicResource SukiCardBackground}"
+						BorderBrush="{DynamicResource SukiLightBorderBrush}"
+						BorderThickness="1"
+						ClipToBounds="True"
+						CornerRadius="15">
+					<Border Padding="15" Background="{DynamicResource PopupGradientBrush}">
+						<Grid RowDefinitions="*,Auto">
+							<ListBox SelectedItem="{Binding CurrentSelection}"
+									 ItemsSource="{Binding CurrentSources}">
+								<Interaction.Behaviors>
+									<EventTriggerBehavior EventName="DoubleTapped">
+										<InvokeCommandAction Command="{Binding ValidateSelection}" />
+									</EventTriggerBehavior>
+								</Interaction.Behaviors>
+								<ListBox.DataTemplates>
+									<DataTemplate DataType="models:SdmxWebSource">
+										<Grid>
+											<TextBlock Text="{Binding .,Converter={StaticResource SdmxWebSourceConverter}}" TextTrimming="CharacterEllipsis"/>
+										</Grid>
+									</DataTemplate>
+								</ListBox.DataTemplates>
+							</ListBox>
 
-        </Grid>
-      </suki:GlassCard>
-    </Popup>
-  </Grid>
-
+							<UniformGrid Margin="0 5 0 0"
+										 HorizontalAlignment="Right"
+										 Rows="1"
+										 Grid.Row="1">
+								<Button Command="{Binding CancelSelection}"
+										Content="{materialIcons:MaterialIconTextExt Kind=Cancel, Text=CANCEL}">
+								</Button>
+								<Button Command="{Binding ValidateSelection}"
+										Content="{materialIcons:MaterialIconTextExt Kind=CheckboxMarkedCircleOutline, Text=USE SOURCE}"
+										Classes="Flat"
+										Margin="5 0 0 0">
+								</Button>
+							</UniformGrid>
+						</Grid>
+					</Border>
+				</Border>
+			</Panel>
+		</Popup>
+	</Grid>
 </UserControl>

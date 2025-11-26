@@ -16,7 +16,9 @@
               Margin="20">
                 <suki:GlassCard Margin="20, 20, 0, 10" 
                                 IsAnimated="False"
+                                IsInteractive="True"
                                 IsVisible="{Binding ServerIsRunning}"
+                                Padding="20 30 20 20"
                                 Grid.Row="0">
                     <browser:SourceSelector
                         ViewModel="{x:Static browser:ViewModelLocator.SourceSelectorViewModel}"

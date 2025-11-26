@@ -173,7 +173,7 @@ public partial class SeriesTabContainer : ReactiveUserControl<BrowserViewModel>
                 {
                     browserWindow = new SukiWindow()
                     {
-                        Title = "Series Browser",
+                        Title = "Series Explorer",
                         Content = new SideBrowser() { ViewModel = viewModel },
                         CanMaximize = false,
                         CanMinimize = false,
@@ -183,6 +183,7 @@ public partial class SeriesTabContainer : ReactiveUserControl<BrowserViewModel>
                         BackgroundStyle = SukiBackgroundStyle.Bubble,
                         MinHeight = 700,
                         MinWidth = 350,
+                        Width = 450,
                         MaxWidthScreenRatio = .75,
                     };
                     browserWindow.Closed += (_, _) => browserWindow = null;

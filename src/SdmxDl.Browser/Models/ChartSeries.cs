@@ -4,6 +4,7 @@ using System.Linq;
 using LanguageExt;
 using LiveChartsCore.Defaults;
 using LiveChartsCore.SkiaSharpView;
+using ScottPlot;
 using SdmxDl.Client.Models;
 
 namespace SdmxDl.Browser.Models;
@@ -125,6 +126,35 @@ public class ChartSeries
         }
     }
 
+    public PlotSeries ToPlotSeries(DateTimeOffset start, DateTimeOffset end) =>
+        new()
+        {
+            Name = Title,
+            Points = Values
+                .Where(x => x.Key >= start && x.Key <= end)
+                .OrderBy(x => x.Key)
+                .Select(x => new Coordinates(
+                    x.Key.ToOADate(),
+                    x.Value.Match(v => v, () => double.NaN)
+                ))
+                .ToSeq()
+                .Strict()
+        };
+
+    public PlotSeries ToPlotSeries() =>
+        new()
+        {
+            Name = Title,
+            Points = Values
+                .OrderBy(x => x.Key)
+                .Select(x => new Coordinates(
+                    x.Key.ToOADate(),
+                    x.Value.Match(v => v, () => double.NaN)
+                ))
+                .ToSeq()
+                .Strict()
+        };
+
     public LineSeries<DateTimePoint> ToLineSeries(DateTimeOffset start, DateTimeOffset end) =>
         new LineSeries<DateTimePoint>()
         {
@@ -163,6 +193,15 @@ public class ChartSeries
 
 public static class ChartSeriesExtensions
 {
+    public static Seq<PlotSeries> ToPlotSeries(
+        this Seq<ChartSeries> series,
+        DateTimeOffset start,
+        DateTimeOffset end
+    ) => series.Map(s => s.ToPlotSeries(start, end)).Strict();
+
+    public static Seq<PlotSeries> ToPlotSeries(this Seq<ChartSeries> series) =>
+        series.Map(s => s.ToPlotSeries()).Strict();
+
     public static Seq<LineSeries<DateTimePoint>> ToLineSeries(
         this Seq<ChartSeries> series,
         DateTimeOffset start,

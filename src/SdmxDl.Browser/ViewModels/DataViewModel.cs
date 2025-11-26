@@ -78,10 +78,6 @@ public partial class DataViewModel : BaseViewModel
     [ObservableAsProperty(ReadOnly = false)]
     private HierarchyDefinitions? _linkedHierarchyDefinitions;
 
-    private ReactiveCommand<Seq<ChartSeries>, RxUnit> DrawStandAloneChart { get; }
-    public Interaction<Seq<ChartSeries>, RxUnit> DrawStandAloneChartInteraction { get; } =
-        new(RxApp.MainThreadScheduler);
-
     public HierarchyGridViewModel StandAloneHierarchyGridViewModel { get; } =
         new()
         {
@@ -124,6 +120,14 @@ public partial class DataViewModel : BaseViewModel
         (Seq<ChartSeries>, DateTimeOffset, DateTimeOffset),
         HierarchyDefinitions
     > BuildLinkedGrid { get; }
+
+    public ReactiveCommand<
+        (Seq<ChartSeries>, DateTimeOffset, DateTimeOffset),
+        RxUnit
+    > DrawStandAloneChart { get; }
+    public Interaction<Seq<PlotSeries>, RxUnit> DrawStandAloneChartInteraction { get; } =
+        new(RxApp.MainThreadScheduler);
+
     public ReactiveCommand<Seq<ChartSeries>, ICartesianAxis[]> SetAxes { get; }
 
     public ReactiveCommand<
@@ -152,6 +156,8 @@ public partial class DataViewModel : BaseViewModel
         CopyToClipboard = ReactiveCommand.CreateFromObservable(
             (string s) => CopyToClipboardInteraction.Handle(s)
         );
+
+        DrawStandAloneChart = CreateCommandDrawStandAloneChart();
 
         HighlightGrid = ReactiveCommand.Create((Option<DateTime> o) => HighlightGridImpl(o));
 
@@ -335,6 +341,29 @@ public partial class DataViewModel : BaseViewModel
 
     private ReactiveCommand<
         (Seq<ChartSeries>, DateTimeOffset, DateTimeOffset),
+        RxUnit
+    > CreateCommandDrawStandAloneChart()
+    {
+        DrawStandAloneChartInteraction.RegisterHandler(ctx => ctx.SetOutput(RxUnit.Default));
+        var cmd = ReactiveCommand.CreateFromTask(
+            async ((Seq<ChartSeries>, DateTimeOffset, DateTimeOffset) t) =>
+            {
+                var (series, start, end) = t;
+                await DrawStandAloneChartInteraction.Handle(series.ToPlotSeries(start, end));
+            }
+        );
+
+        this.WhenAnyValue(x => x.ChartSeries)
+            .Where(seq => !seq.IsEmpty)
+            .CombineLatest(this.WhenAnyValue(x => x.StartDate), this.WhenAnyValue(x => x.EndDate))
+            .Throttle(TimeSpan.FromMilliseconds(50))
+            .InvokeCommand(cmd);
+
+        return cmd;
+    }
+
+    private ReactiveCommand<
+        (Seq<ChartSeries>, DateTimeOffset, DateTimeOffset),
         HierarchyDefinitions
     > CreateCommandLinkedAloneGrid()
     {
@@ -395,10 +424,8 @@ public partial class DataViewModel : BaseViewModel
             Qualify = o =>
                 o switch
                 {
-                    Option<double> d => d.Match(
-                        x => Qualification.Normal,
-                        () => Qualification.Empty
-                    ),
+                    Option<double> d
+                        => d.Match(x => Qualification.Normal, () => Qualification.Empty),
                     _ => Qualification.Empty,
                 },
         });
@@ -429,27 +456,24 @@ public partial class DataViewModel : BaseViewModel
                 Consumer = o =>
                     o switch
                     {
-                        ChartSeries s => from x in data.Find(s.Key, d)
-                        from v in x
-                        select Tuple.Create(v, s.Format),
+                        ChartSeries s
+                            => from x in data.Find(s.Key, d)
+                            from v in x
+                            select Tuple.Create(v, s.Format),
                         _ => Option<Tuple<double, string>>.None,
                     },
                 Formatter = o =>
                     o switch
                     {
-                        Option<Tuple<double, string>> t => t.Match(
-                            x => x.Item1.ToString(x.Item2),
-                            () => string.Empty
-                        ),
+                        Option<Tuple<double, string>> t
+                            => t.Match(x => x.Item1.ToString(x.Item2), () => string.Empty),
                         _ => string.Empty,
                     },
                 Qualify = o =>
                     o switch
                     {
-                        Option<Tuple<double, string>> d => d.Match(
-                            x => Qualification.Normal,
-                            () => Qualification.Empty
-                        ),
+                        Option<Tuple<double, string>> d
+                            => d.Match(x => Qualification.Normal, () => Qualification.Empty),
                         _ => Qualification.Empty,
                     },
                 Tag = d,

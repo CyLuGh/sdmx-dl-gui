@@ -78,6 +78,10 @@ public partial class DataViewModel : BaseViewModel
     [ObservableAsProperty(ReadOnly = false)]
     private HierarchyDefinitions? _linkedHierarchyDefinitions;
 
+    private ReactiveCommand<Seq<ChartSeries>, RxUnit> DrawStandAloneChart { get; }
+    public Interaction<Seq<ChartSeries>, RxUnit> DrawStandAloneChartInteraction { get; } =
+        new(RxApp.MainThreadScheduler);
+
     public HierarchyGridViewModel StandAloneHierarchyGridViewModel { get; } =
         new()
         {

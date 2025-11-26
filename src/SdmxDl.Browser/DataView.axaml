@@ -5,6 +5,7 @@
              xmlns:suki="https://github.com/kikipoulet/SukiUI"
              xmlns:viewModels="clr-namespace:SdmxDl.Browser.ViewModels"
              xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.Avalonia;assembly=LiveChartsCore.SkiaSharpView.Avalonia"
+             xmlns:scottPlot="clr-namespace:ScottPlot.Avalonia;assembly=ScottPlot.Avalonia"
              xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              xmlns:hierarchyGrid="using:HierarchyGrid.Avalonia"
              xmlns:browser="clr-namespace:SdmxDl.Browser"
@@ -36,9 +37,7 @@
                 <TabControl TabStripPlacement="Top"
                             IsVisible="{Binding !IsSplitView}">
                     <TabItem Header="Chart">
-                        <lvc:CartesianChart Series="{Binding LineSeries}"
-                                            XAxes="{Binding XAxes}"
-                                            LegendPosition="Bottom" />
+                        <scottPlot:AvaPlot x:Name="StandAloneAvaPlot" />
                     </TabItem>
 
                     <TabItem Header="Grid">

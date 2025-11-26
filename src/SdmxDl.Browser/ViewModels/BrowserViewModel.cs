@@ -173,9 +173,11 @@ public partial class BrowserViewModel : BaseViewModel
                 disposables
             );
 
+            /* Update key when selection is changed in dimensions selector */
             dimensionsSelectorViewModel
                 .WhenAnyValue(x => x.SelectionKey)
-                .Subscribe(key => SelectionKey = key)
+                .Where(s => !string.IsNullOrEmpty(s))
+                .Subscribe(key => SelectionKey = key!)
                 .DisposeWith(disposables);
 
             this.WhenAnyValue(x => x.Argument)

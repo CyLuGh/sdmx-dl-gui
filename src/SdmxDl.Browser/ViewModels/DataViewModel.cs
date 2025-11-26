@@ -73,10 +73,10 @@ public partial class DataViewModel : BaseViewModel
     public partial Option<DateTime> HighlightedPoint { get; set; }
 
     [ObservableAsProperty(ReadOnly = false)]
-    private HierarchyDefinitions _standAloneHierarchyDefinitions;
+    private HierarchyDefinitions? _standAloneHierarchyDefinitions;
 
     [ObservableAsProperty(ReadOnly = false)]
-    private HierarchyDefinitions _linkedHierarchyDefinitions;
+    private HierarchyDefinitions? _linkedHierarchyDefinitions;
 
     public HierarchyGridViewModel StandAloneHierarchyGridViewModel { get; } =
         new()
@@ -391,8 +391,10 @@ public partial class DataViewModel : BaseViewModel
             Qualify = o =>
                 o switch
                 {
-                    Option<double> d
-                        => d.Match(x => Qualification.Normal, () => Qualification.Empty),
+                    Option<double> d => d.Match(
+                        x => Qualification.Normal,
+                        () => Qualification.Empty
+                    ),
                     _ => Qualification.Empty,
                 },
         });
@@ -423,24 +425,27 @@ public partial class DataViewModel : BaseViewModel
                 Consumer = o =>
                     o switch
                     {
-                        ChartSeries s
-                            => from x in data.Find(s.Key, d)
-                            from v in x
-                            select Tuple.Create(v, s.Format),
+                        ChartSeries s => from x in data.Find(s.Key, d)
+                        from v in x
+                        select Tuple.Create(v, s.Format),
                         _ => Option<Tuple<double, string>>.None,
                     },
                 Formatter = o =>
                     o switch
                     {
-                        Option<Tuple<double, string>> t
-                            => t.Match(x => x.Item1.ToString(x.Item2), () => string.Empty),
+                        Option<Tuple<double, string>> t => t.Match(
+                            x => x.Item1.ToString(x.Item2),
+                            () => string.Empty
+                        ),
                         _ => string.Empty,
                     },
                 Qualify = o =>
                     o switch
                     {
-                        Option<Tuple<double, string>> d
-                            => d.Match(x => Qualification.Normal, () => Qualification.Empty),
+                        Option<Tuple<double, string>> d => d.Match(
+                            x => Qualification.Normal,
+                            () => Qualification.Empty
+                        ),
                         _ => Qualification.Empty,
                     },
                 Tag = d,

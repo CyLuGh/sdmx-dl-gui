@@ -5,8 +5,6 @@ using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
 using Avalonia.Controls;
 using LanguageExt;
-using LiveChartsCore;
-using LiveChartsCore.Drawing;
 using LiveChartsCore.Kernel;
 using ReactiveUI;
 using ReactiveUI.Avalonia;

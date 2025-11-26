@@ -157,9 +157,8 @@ public partial class SeriesTabContainer : ReactiveUserControl<BrowserViewModel>
                     if (info is not null)
                     {
                         await mgr.DownloadUpdatesAsync(info);
+                        mgr.ApplyUpdatesAndRestart(info);
                     }
-
-                    mgr.ApplyUpdatesAndRestart(info);
                 }
 
                 ctx.SetOutput(RxUnit.Default);

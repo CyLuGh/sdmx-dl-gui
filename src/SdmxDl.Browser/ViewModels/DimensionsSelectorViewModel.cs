@@ -45,7 +45,7 @@ public partial class DimensionsSelectorViewModel : BaseViewModel
     > BuildSelectionKey { get; }
 
     [ObservableAsProperty(ReadOnly = false)]
-    private string _selectionKey;
+    private string? _selectionKey;
 
     public ReactiveCommand<
         (SdmxWebSource, DataFlow, string, int),
@@ -335,7 +335,7 @@ public partial class DimensionsSelectorViewModel : BaseViewModel
                 Source = source.Id,
                 Flow = dataFlow.Ref,
                 Key = key,
-                Dimension = dimensionPosition
+                Dimension = dimensionPosition,
             }
         );
 

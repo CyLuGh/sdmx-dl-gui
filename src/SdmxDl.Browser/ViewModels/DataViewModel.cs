@@ -9,6 +9,7 @@ using LanguageExt;
 using Polly;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
+using ScottPlot.Plottables;
 using SdmxDl.Browser.Infrastructure;
 using SdmxDl.Browser.Models;
 using SdmxDl.Client;
@@ -54,8 +55,11 @@ public partial class DataViewModel : BaseViewModel
     [ObservableAsProperty(ReadOnly = false)]
     private bool _hasNoData;
 
-    [Reactive]
-    public partial Option<DateTime> HighlightedPoint { get; set; }
+    //[Reactive]
+    //public partial Option<(DateTime,Scatter)> HighlightedPoint { get; set; }
+
+    [ObservableAsProperty(ReadOnly = false)]
+    private Option<(DateTime, Scatter)> _highlightedPoint;
 
     [ObservableAsProperty(ReadOnly = false)]
     private HierarchyDefinitions? _standAloneHierarchyDefinitions;
@@ -106,13 +110,16 @@ public partial class DataViewModel : BaseViewModel
         HierarchyDefinitions
     > BuildLinkedGrid { get; }
 
+    [ObservableAsProperty(ReadOnly = false)]
+    private Seq<Scatter> _linkedSeries;
+
     public ReactiveCommand<
         (Seq<ChartSeries>, DateTimeOffset, DateTimeOffset),
-        RxUnit
+        Seq<Scatter>
     > DrawCharts { get; }
     public Interaction<Seq<PlotSeries>, RxUnit> DrawStandAloneChartInteraction { get; } =
         new(RxApp.MainThreadScheduler);
-    public Interaction<Seq<PlotSeries>, RxUnit> DrawLinkedChartInteraction { get; } =
+    public Interaction<Seq<PlotSeries>, Seq<Scatter>> DrawLinkedChartInteraction { get; } =
         new(RxApp.MainThreadScheduler);
 
     public ReactiveCommand<string, RxUnit> CopyToClipboard { get; }
@@ -121,8 +128,8 @@ public partial class DataViewModel : BaseViewModel
 
     //public ReactiveCommand<HoverCommandArgs, RxUnit> HoveredPointsChanged { get; }
 
-    public ReactiveCommand<Option<DateTime>, RxUnit> HighlightChart { get; }
-    public Interaction<Option<DateTime>, RxUnit> HighlightChartInteraction { get; } =
+    public ReactiveCommand<Option<(DateTime, Scatter)>, RxUnit> HighlightChart { get; }
+    public Interaction<Option<(DateTime, Scatter)>, RxUnit> HighlightChartInteraction { get; } =
         new(RxApp.MainThreadScheduler);
 
     public DataViewModel(ClientFactory clientFactory, ResiliencePipeline pipeline)
@@ -143,7 +150,7 @@ public partial class DataViewModel : BaseViewModel
         HighlightGrid = ReactiveCommand.Create((Option<DateTime> o) => HighlightGridImpl(o));
 
         HighlightChart = ReactiveCommand.CreateFromObservable(
-            (Option<DateTime> o) => HighlightChartInteraction.Handle(o)
+            (Option<(DateTime, Scatter)> o) => HighlightChartInteraction.Handle(o)
         );
 
         this.WhenAnyValue(x => x.ChartSeries)
@@ -175,12 +182,12 @@ public partial class DataViewModel : BaseViewModel
                 .ToProperty(this, x => x.HasNoData, scheduler: RxApp.MainThreadScheduler)
                 .DisposeWith(disposables);
 
-            this.WhenAnyValue(x => x.HighlightedPoint)
-                .DistinctUntilChanged()
-                .Throttle(TimeSpan.FromMilliseconds(50))
-                .ObserveOn(RxApp.MainThreadScheduler)
-                .InvokeCommand(HighlightGrid)
-                .DisposeWith(disposables);
+            //this.WhenAnyValue(x => x.HighlightedPoint)
+            //    .DistinctUntilChanged()
+            //    .Throttle(TimeSpan.FromMilliseconds(50))
+            //    .ObserveOn(RxApp.MainThreadScheduler)
+            //    .InvokeCommand(HighlightGrid)
+            //    .DisposeWith(disposables);
 
             // this.WhenAnyValue(x => x.HighlightedPoint)
             //     .DistinctUntilChanged()
@@ -197,15 +204,23 @@ public partial class DataViewModel : BaseViewModel
                 .InvokeCommand(HighlightChart)
                 .DisposeWith(disposables);
 
-            LinkedHierarchyGridViewModel
+            _highlightedPointHelper = LinkedHierarchyGridViewModel
                 .WhenAnyValue(x => x.HoveredCell)
-                .Subscribe(o =>
-                {
-                    HighlightedPoint = o.Match(
-                        x => (DateTime)x.ConsumerDefinition.Tag!,
-                        () => Option<DateTime>.None
-                    );
-                });
+                .Throttle(TimeSpan.FromMilliseconds(50)) // Add some delay so we don't stack refreshes
+                .DistinctUntilChanged()
+                .Select(o =>
+                    o.Match(
+                        pc =>
+                            pc.ConsumerDefinition.Tag is DateTime period
+                            && pc.ProducerDefinition.Content is string title
+                                ? from x in LinkedSeries.Find(s => s.LegendText.Equals(title))
+                                select (period, x)
+                                : Option<(DateTime, Scatter)>.None,
+                        () => Option<(DateTime, Scatter)>.None
+                    )
+                )
+                .ToProperty(this, x => x.HighlightedPoint)
+                .DisposeWith(disposables);
 
             this.WhenAnyValue(x => x.StandAloneHierarchyDefinitions)
                 .WhereNotNull()
@@ -219,7 +234,10 @@ public partial class DataViewModel : BaseViewModel
         });
     }
 
-    public void Add(SeriesRequest request) { }
+    public void Add(SeriesRequest request)
+    {
+        //TODO
+    }
 
     public ReactiveCommand<Option<DateTime>, bool> HighlightGrid { get; }
 
@@ -253,20 +271,23 @@ public partial class DataViewModel : BaseViewModel
 
     private ReactiveCommand<
         (Seq<ChartSeries>, DateTimeOffset, DateTimeOffset),
-        RxUnit
+        Seq<Scatter>
     > CreateCommandDrawCharts()
     {
         DrawStandAloneChartInteraction.RegisterHandler(ctx => ctx.SetOutput(RxUnit.Default));
-        DrawLinkedChartInteraction.RegisterHandler(ctx => ctx.SetOutput(RxUnit.Default));
+        DrawLinkedChartInteraction.RegisterHandler(ctx => ctx.SetOutput(Seq<Scatter>.Empty));
         var cmd = ReactiveCommand.CreateFromTask(
             async ((Seq<ChartSeries>, DateTimeOffset, DateTimeOffset) t) =>
             {
                 var (series, start, end) = t;
                 var plotSeries = series.ToPlotSeries(start, end);
                 await DrawStandAloneChartInteraction.Handle(plotSeries);
-                await DrawLinkedChartInteraction.Handle(plotSeries);
+                var scatters = await DrawLinkedChartInteraction.Handle(plotSeries);
+                return scatters;
             }
         );
+
+        _linkedSeriesHelper = cmd.ToProperty(this, x => x.LinkedSeries);
 
         this.WhenAnyValue(x => x.ChartSeries)
             .Where(seq => !seq.IsEmpty)
@@ -339,10 +360,8 @@ public partial class DataViewModel : BaseViewModel
             Qualify = o =>
                 o switch
                 {
-                    Option<double> d => d.Match(
-                        x => Qualification.Normal,
-                        () => Qualification.Empty
-                    ),
+                    Option<double> d
+                        => d.Match(x => Qualification.Normal, () => Qualification.Empty),
                     _ => Qualification.Empty,
                 },
         });
@@ -373,27 +392,24 @@ public partial class DataViewModel : BaseViewModel
                 Consumer = o =>
                     o switch
                     {
-                        ChartSeries s => from x in data.Find(s.Key, d)
-                        from v in x
-                        select Tuple.Create(v, s.Format),
+                        ChartSeries s
+                            => from x in data.Find(s.Key, d)
+                            from v in x
+                            select Tuple.Create(v, s.Format),
                         _ => Option<Tuple<double, string>>.None,
                     },
                 Formatter = o =>
                     o switch
                     {
-                        Option<Tuple<double, string>> t => t.Match(
-                            x => x.Item1.ToString(x.Item2),
-                            () => string.Empty
-                        ),
+                        Option<Tuple<double, string>> t
+                            => t.Match(x => x.Item1.ToString(x.Item2), () => string.Empty),
                         _ => string.Empty,
                     },
                 Qualify = o =>
                     o switch
                     {
-                        Option<Tuple<double, string>> d => d.Match(
-                            x => Qualification.Normal,
-                            () => Qualification.Empty
-                        ),
+                        Option<Tuple<double, string>> d
+                            => d.Match(x => Qualification.Normal, () => Qualification.Empty),
                         _ => Qualification.Empty,
                     },
                 Tag = d,
@@ -405,9 +421,15 @@ public partial class DataViewModel : BaseViewModel
     private void ManageBusyState(CompositeDisposable disposables)
     {
         _isBusyHelper = RetrieveData
-            .IsExecuting.CombineLatest(TransformData.IsExecuting)
-            .Throttle(TimeSpan.FromMilliseconds(25))
-            .Select(t => t.First || t.Second)
+            .IsExecuting.CombineLatest(
+                TransformData.IsExecuting,
+                BuildStandAloneGrid.IsExecuting,
+                BuildLinkedGrid.IsExecuting,
+                DrawCharts.IsExecuting
+            )
+            .Throttle(TimeSpan.FromMilliseconds(50))
+            .Select(t => t.First || t.Second || t.Third || t.Fourth || t.Fifth)
+            .DistinctUntilChanged()
             .ToProperty(this, x => x.IsBusy, scheduler: RxApp.MainThreadScheduler)
             .DisposeWith(disposables);
 

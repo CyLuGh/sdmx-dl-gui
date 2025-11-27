@@ -10,8 +10,8 @@ internal readonly record struct PlotDecorations
         Crosshair = crosshair;
         crosshair.IsVisible = false;
 
-        highlightMarker.Shape = MarkerShape.OpenCircle;
-        highlightMarker.Size = 17;
+        highlightMarker.Shape = MarkerShape.FilledCircle;
+        highlightMarker.Size = 8;
         highlightMarker.LineWidth = 2;
         HighlightMarker = highlightMarker;
         highlightMarker.IsVisible = false;

@@ -58,6 +58,7 @@ internal static class AvaPlotExtensions
     )
     {
         plot.HideDecorations(interactivity);
+        plot.Refresh();
         evt.Handled = true;
     }
 
@@ -153,9 +154,12 @@ internal static class AvaPlotExtensions
     /// <summary>
     /// Hide the crosshair, marker and text when no point is selected
     /// </summary>
-    private static void HideDecorations(this AvaPlot plot, PlotInteractivity interactivity)
+    internal static void HideDecorations(this AvaPlot plot, PlotInteractivity interactivity)
     {
-        if (interactivity.Decorations.Crosshair?.IsVisible == true)
+        if (
+            interactivity.Decorations.HighlightMarker?.IsVisible == true
+            || interactivity.Decorations.HighlightText?.IsVisible == true
+        )
         {
             interactivity.Decorations.Crosshair.IsVisible = false;
             interactivity.Decorations.HighlightMarker.IsVisible = false;
@@ -215,14 +219,7 @@ internal static class AvaPlotExtensions
         // place the crosshair, marker and text over the selected point
         var scatter = series[scatterIndex];
         DataPoint point = nearestPoint.Match(p => p, () => default);
-
-        interactivity.ShowCrosshair(point.Coordinates, scatter.MarkerStyle.FillColor);
-
-        interactivity.Decorations.HighlightMarker.IsVisible = true;
-        interactivity.Decorations.HighlightMarker.Location = point.Coordinates;
-        interactivity.Decorations.HighlightMarker.MarkerStyle.OutlineColor = scatter
-            .MarkerStyle
-            .FillColor;
+        HighlightPoint(interactivity, scatter, point.Coordinates);
 
         interactivity.ShowText(
             plot,
@@ -231,14 +228,30 @@ internal static class AvaPlotExtensions
             interactivity.IsTimeSeries
                 ? $"{DateTime.FromOADate(point.X):yyyy-MM-dd}: {point.Y:N}"
                 : $"{point.X:0}: {point.Y:N}",
-            scatter.MarkerStyle.FillColor,
-            Option<Color>.None
+            Color.FromHex("f7f8fa").WithAlpha(180),
+            scatter.MarkerStyle.FillColor
         );
 
         plot.Refresh();
     }
 
-    private static void ShowText(
+    public static void HighlightPoint(
+        this PlotInteractivity interactivity,
+        Scatter scatter,
+        Coordinates coordinates
+    )
+    {
+        interactivity.Decorations.HighlightMarker.IsVisible = true;
+        interactivity.Decorations.HighlightMarker.Location = coordinates;
+        interactivity.Decorations.HighlightMarker.MarkerStyle.OutlineColor = scatter
+            .MarkerStyle
+            .FillColor;
+        interactivity.Decorations.HighlightMarker.MarkerStyle.FillColor = scatter
+            .MarkerStyle
+            .FillColor;
+    }
+
+    public static void ShowText(
         this PlotInteractivity interactivity,
         AvaPlot plot,
         Coordinates mouseLocation,
@@ -255,7 +268,7 @@ internal static class AvaPlotExtensions
         var midY =
             plot.Plot.Axes.Left.Min + ((plot.Plot.Axes.Left.Max - plot.Plot.Axes.Left.Min) / 2);
 
-        const float offset = 15;
+        const float offset = 8;
 
         if (mouseLocation.Y <= midY)
         {
@@ -329,8 +342,9 @@ internal static class AvaPlotExtensions
             plot.Add.Marker(0, 0),
             plot.Add.Text("", 0, 0)
         );
-        avaPlot.Refresh();
         plot.Axes.AutoScale();
+
+        avaPlot.Refresh();
 
         return new(scatters.ToSeq(), deco, interactivityMode, true);
     }

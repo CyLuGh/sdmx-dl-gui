@@ -229,8 +229,8 @@ internal static class AvaPlotExtensions
             mouseLocation,
             point.Coordinates,
             interactivity.IsTimeSeries
-                ? $"{DateTime.FromOADate(point.X):yyyy-MM}: {point.Y:N0}"
-                : $"{point.X:0}: {point.Y:N0}",
+                ? $"{DateTime.FromOADate(point.X):yyyy-MM-dd}: {point.Y:N}"
+                : $"{point.X:0}: {point.Y:N}",
             scatter.MarkerStyle.FillColor,
             Option<Color>.None
         );

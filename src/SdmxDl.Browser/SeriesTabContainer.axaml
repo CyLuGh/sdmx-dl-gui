@@ -25,15 +25,17 @@
 
         <StackPanel Orientation="Horizontal"
                     HorizontalAlignment="Left"
-                    VerticalAlignment="Bottom" Grid.Row="1">
+                    VerticalAlignment="Bottom" 
+                    Spacing="5"
+                    Grid.Row="1">
             <Button Command="{Binding Path=OpenBrowser}" 
+                    ToolTip.Tip="Explore sources and dataflows to find series"
                     Classes="Rounded Flat" 
-                    Content="{materialIcons:MaterialIconTextExt Kind=Explore, Text=BROWSE}"
-                    Margin="0 0 2.5 0"/>
+                    Content="{materialIcons:MaterialIconTextExt Kind=Explore, Text=BROWSE}"/>
             <Button Command="{Binding LookupSeries}"
+                    ToolTip.Tip="Retrieve series through their identifier"
                     Content="{materialIcons:MaterialIconTextExt Kind=TagFind, Text=LOOKUP SERIES}"
-                    Classes="Rounded Flat"
-                    Margin="2.5 0 0 0"/>
+                    Classes="Rounded Flat"/>
 
         </StackPanel>
 

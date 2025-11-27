@@ -28,7 +28,7 @@
                     Spacing="5"
                     Margin="0 15 0 0">
             <Button Content="CANCEL" 
-                    Classes="Rounded" 
+                    Classes="Rounded Discrete" 
                     Command="{Binding Close}"
                     />
             <Button Content="{materialIcons:MaterialIconTextExt Kind=Download, Text=RETRIEVE SERIES}"

@@ -1,15 +1,13 @@
 ﻿using System;
-using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
 using Avalonia.Controls;
 using Avalonia.Input;
-using LanguageExt;
-using LiveChartsCore.Kernel;
 using ReactiveUI;
 using ReactiveUI.Avalonia;
 using ScottPlot;
+using ScottPlot.Avalonia;
 using SdmxDl.Browser.Infrastructure.Plots;
 using SdmxDl.Browser.ViewModels;
 
@@ -18,6 +16,7 @@ namespace SdmxDl.Browser;
 public partial class DataView : ReactiveUserControl<DataViewModel>
 {
     private PlotInteractivity _standAloneInteractivity;
+    private PlotInteractivity _linkedInteractivity;
 
     public DataView()
     {
@@ -62,36 +61,31 @@ public partial class DataView : ReactiveUserControl<DataViewModel>
             })
             .DisposeWith(disposables);
 
-        Observable
-            .FromEventPattern<EventHandler<PointerEventArgs>, PointerEventArgs>(
-                _ =>
-                    (_, args) =>
-                        view.StandAloneAvaPlot.HandleMouseOver(args, view._standAloneInteractivity),
-                handler => view.StandAloneAvaPlot.PointerMoved += handler,
-                handler => view.StandAloneAvaPlot.PointerMoved -= handler
-            )
-            .ObserveOn(RxApp.MainThreadScheduler)
-            .Subscribe()
+        viewModel
+            .DrawLinkedChartInteraction.RegisterHandler(ctx =>
+            {
+                view._linkedInteractivity = view.LinkedAvaPlot.DrawScatterLines(
+                    InteractivityMode.SingleSeries,
+                    ctx.Input
+                );
+                ctx.SetOutput(RxUnit.Default);
+            })
             .DisposeWith(disposables);
 
-        Observable
-            .FromEventPattern<EventHandler<PointerEventArgs>, PointerEventArgs>(
-                _ =>
-                    (_, args) =>
-                        view.StandAloneAvaPlot.HandleMouseLeft(args, view._standAloneInteractivity),
-                handler => view.StandAloneAvaPlot.PointerExited += handler,
-                handler => view.StandAloneAvaPlot.PointerExited -= handler
-            )
-            .ObserveOn(RxApp.MainThreadScheduler)
-            .Subscribe()
-            .DisposeWith(disposables);
+        InitializePointerEvents(
+            [
+                (view.StandAloneAvaPlot, view._standAloneInteractivity),
+                (view.LinkedAvaPlot, view._linkedInteractivity),
+            ],
+            disposables
+        );
 
         viewModel
             .HighlightChartInteraction.RegisterHandler(ctx =>
             {
                 var odt = ctx.Input;
-
-                var dateTimePoints = odt.Match(
+                //TODO
+                /*var dateTimePoints = odt.Match(
                     date =>
                         view.LinkedChart.Series.ToSeq()
                             .Map(s =>
@@ -110,10 +104,39 @@ public partial class DataView : ReactiveUserControl<DataViewModel>
                 if (dateTimePoints.IsEmpty)
                     view.LinkedChart.Tooltip?.Hide(view.LinkedChart.CoreChart);
                 else
-                    view.LinkedChart.Tooltip?.Show(dateTimePoints, view.LinkedChart.CoreChart);
+                    view.LinkedChart.Tooltip?.Show(dateTimePoints, view.LinkedChart.CoreChart);*/
 
                 ctx.SetOutput(RxUnit.Default);
             })
             .DisposeWith(disposables);
+    }
+
+    private static void InitializePointerEvents(
+        ReadOnlySpan<(AvaPlot, PlotInteractivity)> plots,
+        CompositeDisposable disposables
+    )
+    {
+        foreach (var (avaPlot, interactivity) in plots)
+        {
+            Observable
+                .FromEventPattern<EventHandler<PointerEventArgs>, PointerEventArgs>(
+                    _ => (_, args) => avaPlot.HandleMouseOver(args, interactivity),
+                    handler => avaPlot.PointerMoved += handler,
+                    handler => avaPlot.PointerMoved -= handler
+                )
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Subscribe()
+                .DisposeWith(disposables);
+
+            Observable
+                .FromEventPattern<EventHandler<PointerEventArgs>, PointerEventArgs>(
+                    _ => (_, args) => avaPlot.HandleMouseLeft(args, interactivity),
+                    handler => avaPlot.PointerExited += handler,
+                    handler => avaPlot.PointerExited -= handler
+                )
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .Subscribe()
+                .DisposeWith(disposables);
+        }
     }
 }

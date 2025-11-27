@@ -6,10 +6,6 @@ using System.Reactive.Linq;
 using System.Threading.Tasks;
 using HierarchyGrid.Definitions;
 using LanguageExt;
-using LiveChartsCore.Defaults;
-using LiveChartsCore.Kernel.Events;
-using LiveChartsCore.Kernel.Sketches;
-using LiveChartsCore.SkiaSharpView;
 using Polly;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
@@ -54,17 +50,6 @@ public partial class DataViewModel : BaseViewModel
 
     [ObservableAsProperty(ReadOnly = false)]
     private Seq<ChartSeries> _chartSeries;
-
-    [ObservableAsProperty(ReadOnly = false)]
-    private Seq<LineSeries<DateTimePoint>> _lineSeries;
-
-    [ObservableAsProperty(ReadOnly = false)]
-    private ICartesianAxis[]? _xAxes;
-
-    [ObservableAsProperty(ReadOnly = false)]
-    private ICartesianAxis[]? _yAxes;
-
-    public LiveChartsCore.Measure.Margin Margins { get; } = new(10, 50);
 
     [ObservableAsProperty(ReadOnly = false)]
     private bool _hasNoData;
@@ -124,21 +109,17 @@ public partial class DataViewModel : BaseViewModel
     public ReactiveCommand<
         (Seq<ChartSeries>, DateTimeOffset, DateTimeOffset),
         RxUnit
-    > DrawStandAloneChart { get; }
+    > DrawCharts { get; }
     public Interaction<Seq<PlotSeries>, RxUnit> DrawStandAloneChartInteraction { get; } =
         new(RxApp.MainThreadScheduler);
+    public Interaction<Seq<PlotSeries>, RxUnit> DrawLinkedChartInteraction { get; } =
+        new(RxApp.MainThreadScheduler);
 
-    public ReactiveCommand<Seq<ChartSeries>, ICartesianAxis[]> SetAxes { get; }
-
-    public ReactiveCommand<
-        (Seq<ChartSeries>, DateTimeOffset, DateTimeOffset),
-        Seq<LineSeries<DateTimePoint>>
-    > SetLinesSeries { get; }
     public ReactiveCommand<string, RxUnit> CopyToClipboard { get; }
     public Interaction<string, RxUnit> CopyToClipboardInteraction { get; } =
         new(RxApp.MainThreadScheduler);
 
-    public ReactiveCommand<HoverCommandArgs, RxUnit> HoveredPointsChanged { get; }
+    //public ReactiveCommand<HoverCommandArgs, RxUnit> HoveredPointsChanged { get; }
 
     public ReactiveCommand<Option<DateTime>, RxUnit> HighlightChart { get; }
     public Interaction<Option<DateTime>, RxUnit> HighlightChartInteraction { get; } =
@@ -157,32 +138,13 @@ public partial class DataViewModel : BaseViewModel
             (string s) => CopyToClipboardInteraction.Handle(s)
         );
 
-        DrawStandAloneChart = CreateCommandDrawStandAloneChart();
+        DrawCharts = CreateCommandDrawCharts();
 
         HighlightGrid = ReactiveCommand.Create((Option<DateTime> o) => HighlightGridImpl(o));
 
         HighlightChart = ReactiveCommand.CreateFromObservable(
             (Option<DateTime> o) => HighlightChartInteraction.Handle(o)
         );
-
-        HoveredPointsChanged = ReactiveCommand.Create(
-            (HoverCommandArgs args) =>
-            {
-                if (args.NewPoints?.Count() > 0)
-                {
-                    HighlightedPoint = new DateTime(
-                        (long)args.NewPoints.ToArray()[0].Coordinate.SecondaryValue
-                    );
-                }
-                else
-                {
-                    HighlightedPoint = Option<DateTime>.None;
-                }
-            }
-        );
-
-        SetLinesSeries = CreateCommandSetLinesSeries();
-        SetAxes = CreateCommandSetAxes();
 
         this.WhenAnyValue(x => x.ChartSeries)
             .Where(x => !x.IsEmpty)
@@ -204,13 +166,6 @@ public partial class DataViewModel : BaseViewModel
         {
             ManageBusyState(disposables);
 
-            _yAxesHelper = this.WhenAnyValue(x => x.UseLogarithmicAxis)
-                .Select<bool, ICartesianAxis[]>(isLog =>
-                    isLog ? [new LogarithmicAxis(10)] : [new Axis()]
-                )
-                .ToProperty(this, x => x.YAxes, scheduler: RxApp.MainThreadScheduler)
-                .DisposeWith(disposables);
-
             _hasNoDataHelper = this.WhenAnyValue(x => x.DataSet, x => x.ChartSeries)
                 .Select(t =>
                 {
@@ -227,14 +182,14 @@ public partial class DataViewModel : BaseViewModel
                 .InvokeCommand(HighlightGrid)
                 .DisposeWith(disposables);
 
-            this.WhenAnyValue(x => x.HighlightedPoint)
-                .DistinctUntilChanged()
-                .CombineLatest(HighlightGrid.Where(x => x))
-                .Select(t => t.First)
-                .Throttle(TimeSpan.FromMilliseconds(50))
-                .ObserveOn(RxApp.MainThreadScheduler)
-                .InvokeCommand(HighlightGrid)
-                .DisposeWith(disposables);
+            // this.WhenAnyValue(x => x.HighlightedPoint)
+            //     .DistinctUntilChanged()
+            //     .CombineLatest(HighlightGrid.Where(x => x))
+            //     .Select(t => t.First)
+            //     .Throttle(TimeSpan.FromMilliseconds(50))
+            //     .ObserveOn(RxApp.MainThreadScheduler)
+            //     .InvokeCommand(HighlightGrid)
+            //     .DisposeWith(disposables);
 
             this.WhenAnyValue(x => x.HighlightedPoint)
                 .DistinctUntilChanged()
@@ -270,49 +225,6 @@ public partial class DataViewModel : BaseViewModel
 
     private ReactiveCommand<
         (Seq<ChartSeries>, DateTimeOffset, DateTimeOffset),
-        Seq<LineSeries<DateTimePoint>>
-    > CreateCommandSetLinesSeries()
-    {
-        var cmd = ReactiveCommand.CreateRunInBackground<
-            (Seq<ChartSeries>, DateTimeOffset, DateTimeOffset),
-            Seq<LineSeries<DateTimePoint>>
-        >(x =>
-        {
-            var (seq, startDate, endDate) = x;
-            return seq.ToLineSeries(startDate, endDate);
-        });
-
-        _lineSeriesHelper = cmd.ToProperty(
-            this,
-            x => x.LineSeries,
-            scheduler: RxApp.MainThreadScheduler
-        );
-        this.WhenAnyValue(x => x.ChartSeries, x => x.StartDate, x => x.EndDate)
-            .Throttle(TimeSpan.FromMilliseconds(50))
-            .InvokeCommand(cmd);
-        return cmd;
-    }
-
-    private ReactiveCommand<Seq<ChartSeries>, ICartesianAxis[]> CreateCommandSetAxes()
-    {
-        var cmd = ReactiveCommand.CreateRunInBackground<Seq<ChartSeries>, ICartesianAxis[]>(
-            series =>
-            {
-                var highestFreq = series.GetHighestFreq();
-                var unit = TimeSpan.FromDays(365.25 / (int)highestFreq);
-                var formatter = highestFreq.GetFormatter();
-                return new[] { new DateTimeAxis(unit, formatter) };
-            }
-        );
-
-        _xAxesHelper = cmd.ToProperty(this, x => x.XAxes, scheduler: RxApp.MainThreadScheduler);
-        this.WhenAnyValue(x => x.ChartSeries).Where(seq => !seq.IsEmpty).InvokeCommand(cmd);
-
-        return cmd;
-    }
-
-    private ReactiveCommand<
-        (Seq<ChartSeries>, DateTimeOffset, DateTimeOffset),
         HierarchyDefinitions
     > CreateCommandBuildStandAloneGrid()
     {
@@ -342,14 +254,17 @@ public partial class DataViewModel : BaseViewModel
     private ReactiveCommand<
         (Seq<ChartSeries>, DateTimeOffset, DateTimeOffset),
         RxUnit
-    > CreateCommandDrawStandAloneChart()
+    > CreateCommandDrawCharts()
     {
         DrawStandAloneChartInteraction.RegisterHandler(ctx => ctx.SetOutput(RxUnit.Default));
+        DrawLinkedChartInteraction.RegisterHandler(ctx => ctx.SetOutput(RxUnit.Default));
         var cmd = ReactiveCommand.CreateFromTask(
             async ((Seq<ChartSeries>, DateTimeOffset, DateTimeOffset) t) =>
             {
                 var (series, start, end) = t;
-                await DrawStandAloneChartInteraction.Handle(series.ToPlotSeries(start, end));
+                var plotSeries = series.ToPlotSeries(start, end);
+                await DrawStandAloneChartInteraction.Handle(plotSeries);
+                await DrawLinkedChartInteraction.Handle(plotSeries);
             }
         );
 
@@ -424,8 +339,10 @@ public partial class DataViewModel : BaseViewModel
             Qualify = o =>
                 o switch
                 {
-                    Option<double> d
-                        => d.Match(x => Qualification.Normal, () => Qualification.Empty),
+                    Option<double> d => d.Match(
+                        x => Qualification.Normal,
+                        () => Qualification.Empty
+                    ),
                     _ => Qualification.Empty,
                 },
         });
@@ -456,24 +373,27 @@ public partial class DataViewModel : BaseViewModel
                 Consumer = o =>
                     o switch
                     {
-                        ChartSeries s
-                            => from x in data.Find(s.Key, d)
-                            from v in x
-                            select Tuple.Create(v, s.Format),
+                        ChartSeries s => from x in data.Find(s.Key, d)
+                        from v in x
+                        select Tuple.Create(v, s.Format),
                         _ => Option<Tuple<double, string>>.None,
                     },
                 Formatter = o =>
                     o switch
                     {
-                        Option<Tuple<double, string>> t
-                            => t.Match(x => x.Item1.ToString(x.Item2), () => string.Empty),
+                        Option<Tuple<double, string>> t => t.Match(
+                            x => x.Item1.ToString(x.Item2),
+                            () => string.Empty
+                        ),
                         _ => string.Empty,
                     },
                 Qualify = o =>
                     o switch
                     {
-                        Option<Tuple<double, string>> d
-                            => d.Match(x => Qualification.Normal, () => Qualification.Empty),
+                        Option<Tuple<double, string>> d => d.Match(
+                            x => Qualification.Normal,
+                            () => Qualification.Empty
+                        ),
                         _ => Qualification.Empty,
                     },
                 Tag = d,

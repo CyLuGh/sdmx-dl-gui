@@ -1,64 +1,79 @@
 <UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:suki="https://github.com/kikipoulet/SukiUI"
-             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-             xmlns:viewModels="clr-namespace:SdmxDl.Browser.ViewModels"
-             xmlns:converters="clr-namespace:SdmxDl.Browser.Infrastructure.Converters"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="SdmxDl.Browser.SeriesTabContainer"
-             x:DataType="viewModels:BrowserViewModel">
-    <UserControl.Resources>
-        <converters:BrowserStatusConverter x:Key="BrowserStatusConverter" />
-    </UserControl.Resources>
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:local="using:SdmxDl.Browser"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:suki="https://github.com/kikipoulet/SukiUI"
+			 xmlns:rxui="clr-namespace:ReactiveUI.Avalonia;assembly=ReactiveUI.Avalonia"
+			 xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+			 xmlns:viewModels="clr-namespace:SdmxDl.Browser.ViewModels"
+			 xmlns:converters="clr-namespace:SdmxDl.Browser.Infrastructure.Converters"
+			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+			 x:Class="SdmxDl.Browser.SeriesTabContainer"
+			 x:DataType="viewModels:BrowserViewModel">
+	<UserControl.Resources>
+		<converters:BrowserStatusConverter x:Key="BrowserStatusConverter" />
+	</UserControl.Resources>
 
-    <Grid RowDefinitions="*,Auto" Margin="5">
-        <Image Source="{SvgImage /assets/SDMX_logo.svg}"
-               MaxWidth="800"
-               IsVisible="{Binding !ItemCount, ElementName=TabControlResults}"
-               Grid.Row="0" />
+	<Grid RowDefinitions="*,Auto" Margin="5">
+		<Image Source="{SvgImage /assets/SDMX_logo.svg}"
+			   MaxWidth="800"
+			   IsVisible="{Binding !DataViews.Count}"
+			   Grid.Row="0" />
 
-        <TabControl x:Name="TabControlResults"
-                    Margin="0 0 0 10"
-                    Grid.Row="0" />
+		<TabControl ItemsSource="{Binding DataViews}"
+					SelectedItem="{Binding SelectedView}"
+					Margin="0 0 0 10"
+					Grid.Row="0">
+			<TabControl.ItemTemplate>
+				<DataTemplate>
+					<TextBlock Text="{Binding Title}"/>
+				</DataTemplate>
+			</TabControl.ItemTemplate>
+			<TabControl.ContentTemplate>
+				<DataTemplate x:DataType="viewModels:DataViewModel">
+					<!--<local:DataView ViewModel="{Binding}"/>-->
+					<rxui:ViewModelViewHost ViewModel="{Binding}"/>
+			</DataTemplate>
+			</TabControl.ContentTemplate>
+		</TabControl>
 
-        <StackPanel Orientation="Horizontal"
-                    HorizontalAlignment="Left"
-                    VerticalAlignment="Bottom" 
-                    Spacing="5"
-                    Grid.Row="1">
-            <Button Command="{Binding Path=OpenBrowser}" 
-                    ToolTip.Tip="Explore sources and dataflows to find series"
-                    Classes="Rounded Flat" 
-                    Content="{materialIcons:MaterialIconTextExt Kind=Explore, Text=BROWSE}"/>
-            <Button Command="{Binding LookupSeries}"
-                    ToolTip.Tip="Retrieve series through their identifier"
-                    Content="{materialIcons:MaterialIconTextExt Kind=TagFind, Text=LOOKUP SERIES}"
-                    Classes="Rounded Flat"/>
+		<StackPanel Orientation="Horizontal"
+					HorizontalAlignment="Left"
+					VerticalAlignment="Bottom"
+					Spacing="5"
+					Grid.Row="1">
+			<Button Command="{Binding Path=OpenBrowser}"
+					ToolTip.Tip="Explore sources and dataflows to find series"
+					Classes="Rounded Flat"
+					Content="{materialIcons:MaterialIconTextExt Kind=Explore, Text=BROWSE}"/>
+			<Button Command="{Binding LookupSeries}"
+					ToolTip.Tip="Retrieve series through their identifier"
+					Content="{materialIcons:MaterialIconTextExt Kind=TagFind, Text=LOOKUP SERIES}"
+					Classes="Rounded Flat"/>
 
-        </StackPanel>
+		</StackPanel>
 
-        <StackPanel HorizontalAlignment="Right"
-                    VerticalAlignment="Bottom"
-                    Orientation="Horizontal"
-                    Grid.Row="1">
-            <TextBlock
-                Text="{Binding Path=Status, Converter={StaticResource BrowserStatusConverter},FallbackValue=STATUS}"
-                Classes="Accent"
-                IsVisible="{Binding Path=!ServerIsRunning}" />
+		<StackPanel HorizontalAlignment="Right"
+					VerticalAlignment="Bottom"
+					Orientation="Horizontal"
+					Grid.Row="1">
+			<TextBlock
+			Text="{Binding Path=Status, Converter={StaticResource BrowserStatusConverter},FallbackValue=STATUS}"
+			Classes="Accent"
+			IsVisible="{Binding Path=!ServerIsRunning}" />
 
-            <TextBlock
-                Text="{Binding Path=Status, Converter={StaticResource BrowserStatusConverter},FallbackValue=STATUS}"
-                Classes="Primary"
-                IsVisible="{Binding Path=ServerIsRunning}" />
+			<TextBlock
+			Text="{Binding Path=Status, Converter={StaticResource BrowserStatusConverter},FallbackValue=STATUS}"
+			Classes="Primary"
+			IsVisible="{Binding Path=ServerIsRunning}" />
 
-            <TextBlock Text="{Binding Version}"
-                       FontStretch="Condensed"
-                       FontWeight="SemiBold"
-                       Classes="H6"
-                       Margin="5 0"
-                       IsVisible="{Binding Path=ServerIsRunning}" />
-        </StackPanel>
-    </Grid>
+			<TextBlock Text="{Binding Version}"
+					   FontStretch="Condensed"
+					   FontWeight="SemiBold"
+					   Classes="H6"
+					   Margin="5 0"
+					   IsVisible="{Binding Path=ServerIsRunning}" />
+		</StackPanel>
+	</Grid>
 </UserControl>

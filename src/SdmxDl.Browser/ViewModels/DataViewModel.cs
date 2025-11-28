@@ -20,6 +20,9 @@ namespace SdmxDl.Browser.ViewModels;
 public partial class DataViewModel : BaseViewModel
 {
     [Reactive]
+    public partial string Title { get; set; } = string.Empty;
+
+    [Reactive]
     public partial Option<SdmxWebSource> Source { get; set; }
 
     [Reactive]
@@ -58,9 +61,6 @@ public partial class DataViewModel : BaseViewModel
     [Reactive]
     public partial Option<(DateTime, Scatter)> HighlightedPoint { get; set; }
 
-    //[ObservableAsProperty(ReadOnly = false)]
-    //private Option<(DateTime, Scatter)> _highlightedPoint;
-
     [ObservableAsProperty(ReadOnly = false)]
     private HierarchyDefinitions? _standAloneHierarchyDefinitions;
 
@@ -86,7 +86,6 @@ public partial class DataViewModel : BaseViewModel
     public static string BuildTitle(SdmxWebSource source, DataFlow flow, string key) =>
         $"{source.Id} {flow.Ref} {key}";
 
-    public string Title => BuildTitle(Source, Flow, Key).Match(s => s, () => string.Empty);
     public string Uri => BuildUri(Source, Flow, Key).Match(s => s, () => string.Empty);
     public string SourceId => Source.Match(s => s.Id, () => string.Empty);
     public string FlowRef => Flow.Match(s => s.Ref, () => string.Empty);
@@ -130,13 +129,16 @@ public partial class DataViewModel : BaseViewModel
     public Interaction<Option<(DateTime, Scatter)>, RxUnit> HighlightChartInteraction { get; } =
         new(RxApp.MainThreadScheduler);
 
+    public ReactiveCommand<SeriesRequest, Seq<ChartSeries>> AddRequest { get; }
+
     public DataViewModel(ClientFactory clientFactory, ResiliencePipeline pipeline)
     {
         StartDate = new DateTimeOffset(new DateTime(1900, 1, 1));
         EndDate = new DateTimeOffset(new DateTime(9999, 12, 31));
 
         RetrieveData = CreateCommandRetrieveData(clientFactory, pipeline);
-        TransformData = CreateCommandTransformData();
+        AddRequest = CreateCommandAddRequest(clientFactory, pipeline);
+        TransformData = CreateCommandTransformData(AddRequest);
         BuildStandAloneGrid = CreateCommandBuildStandAloneGrid();
         BuildLinkedGrid = CreateCommandLinkedAloneGrid();
         CopyToClipboard = ReactiveCommand.CreateFromObservable(
@@ -148,7 +150,7 @@ public partial class DataViewModel : BaseViewModel
         HighlightGrid = ReactiveCommand.Create(
             (Option<(DateTime, Scatter)> o) => DoHighlightGrid(o)
         );
-
+        HighlightChartInteraction.RegisterHandler(ctx => ctx.SetOutput(RxUnit.Default));
         HighlightChart = ReactiveCommand.CreateFromObservable(
             (Option<(DateTime, Scatter)> o) => HighlightChartInteraction.Handle(o)
         );
@@ -219,7 +221,6 @@ public partial class DataViewModel : BaseViewModel
                         () => Option<(DateTime, Scatter)>.None
                     )
                 )
-                //.ToProperty(this, x => x.HighlightedPoint)
                 .DisposeWith(disposables);
 
             this.WhenAnyValue(x => x.StandAloneHierarchyDefinitions)
@@ -231,12 +232,41 @@ public partial class DataViewModel : BaseViewModel
                 .WhereNotNull()
                 .Subscribe(defs => LinkedHierarchyGridViewModel.Set(defs))
                 .DisposeWith(disposables);
+
+            this.WhenAnyValue(x => x.ChartSeries)
+                .Where(seq => !seq.IsEmpty)
+                .CombineLatest(
+                    this.WhenAnyValue(x => x.StartDate),
+                    this.WhenAnyValue(x => x.EndDate)
+                )
+                .Throttle(TimeSpan.FromMilliseconds(150))
+                .InvokeCommand(DrawCharts)
+                .DisposeWith(disposables);
         });
     }
 
-    public void Add(SeriesRequest request)
+    private ReactiveCommand<SeriesRequest, Seq<ChartSeries>> CreateCommandAddRequest(
+        ClientFactory clientFactory,
+        ResiliencePipeline pipeline
+    )
+    {
+        var cmd = ReactiveCommand.CreateFromTask(
+            async (SeriesRequest req) =>
+            {
+                var o = await DoRetrieveDataSet(req, clientFactory, pipeline);
+                return o.Match(
+                    dataSet => dataSet.Data.Map(s => new ChartSeries(s)),
+                    () => Seq<ChartSeries>.Empty
+                );
+            }
+        );
+        return cmd;
+    }
+
+    public async Task Add(SeriesRequest request)
     {
         //TODO
+        //var dataSet = await DoRetrieveDataSet(request,Clientf);
     }
 
     public ReactiveCommand<Option<(DateTime, Scatter)>, bool> HighlightGrid { get; }
@@ -289,12 +319,6 @@ public partial class DataViewModel : BaseViewModel
         );
 
         _linkedSeriesHelper = cmd.ToProperty(this, x => x.LinkedSeries);
-
-        this.WhenAnyValue(x => x.ChartSeries)
-            .Where(seq => !seq.IsEmpty)
-            .CombineLatest(this.WhenAnyValue(x => x.StartDate), this.WhenAnyValue(x => x.EndDate))
-            .Throttle(TimeSpan.FromMilliseconds(150))
-            .InvokeCommand(cmd);
 
         return cmd;
     }
@@ -442,17 +466,24 @@ public partial class DataViewModel : BaseViewModel
             .DisposeWith(disposables);
     }
 
-    private ReactiveCommand<DataSet, Seq<ChartSeries>> CreateCommandTransformData()
+    private ReactiveCommand<DataSet, Seq<ChartSeries>> CreateCommandTransformData(
+        ReactiveCommand<SeriesRequest, Seq<ChartSeries>> addRequest
+    )
     {
         var cmd = ReactiveCommand.CreateRunInBackground(
             (DataSet ds) => ds.Data.Map(s => new ChartSeries(s))
         );
 
-        _chartSeriesHelper = cmd.ToProperty(
-            this,
-            x => x.ChartSeries,
-            scheduler: RxApp.MainThreadScheduler
-        );
+        var addRequests = addRequest.Aggregate(Seq<ChartSeries>.Empty, (o, p) => o.Append(p));
+
+        _chartSeriesHelper = cmd
+        //.CombineLatest(addRequests)
+        //.Select(t =>
+        //{
+        //    var (transformed, reqs) = t;
+        //    return transformed.Append(reqs);
+        //})
+        .ToProperty(this, x => x.ChartSeries, scheduler: RxApp.MainThreadScheduler);
 
         this.WhenAnyValue(x => x.DataSet)
             .Select(d => d.Match(Observable.Return, Observable.Empty<DataSet>))
@@ -617,14 +648,13 @@ public partial class DataViewModel : BaseViewModel
         return false;
     }
 
-    private async Task<Option<DataSet>> RetrieveDataSetImpl(
+    private async Task<Option<DataSet>> DoRetrieveDataSet(
         SeriesRequest seriesRequest,
         ClientFactory clientFactory,
         ResiliencePipeline pipeline
     )
     {
         var dataSet = await clientFactory.GetClient().GetDataAsync((KeyRequest)seriesRequest);
-
         return dataSet.ToModel();
     }
 }

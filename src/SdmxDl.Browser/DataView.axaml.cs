@@ -190,15 +190,5 @@ public partial class DataView : ReactiveUserControl<DataViewModel>
                 ctx.SetOutput(RxUnit.Default);
             })
             .DisposeWith(disposables);
-
-        //if ( !viewModel.ChartSeries.IsEmpty)
-        //{
-        //    var start = viewModel.ChartSeries.Min(x=>x.Values)
-        //}
-
-        //Observable
-        //    .Return((viewModel.ChartSeries, viewModel.StartDate, viewModel.EndDate))
-        //    .InvokeCommand(viewModel, x => x.DrawCharts)
-        //    .DisposeWith(disposables);
     }
 }

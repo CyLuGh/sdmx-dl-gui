@@ -96,7 +96,7 @@
 										Content="{materialIcons:MaterialIconTextExt Kind=Cancel, Text=CANCEL}">
 								</Button>
 								<Button Command="{Binding ValidateSelection}"
-										Content="{materialIcons:MaterialIconTextExt Kind=CheckboxMarkedCircleOutline, Text=USE SOURCE}"
+										Content="{materialIcons:MaterialIconTextExt Kind=CheckboxMarkedCircleOutline, Text=USE FLOW}"
 										Classes="Flat"
 										Margin="5 0 0 0">
 								</Button>

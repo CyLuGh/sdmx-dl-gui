@@ -1,126 +1,159 @@
 <UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:suki="https://github.com/kikipoulet/SukiUI"
-             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-             xmlns:viewModels="clr-namespace:SdmxDl.Browser.ViewModels"
-             xmlns:browser="clr-namespace:SdmxDl.Browser"
-             mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="850"
-             x:DataType="viewModels:BrowserViewModel"
-             x:Class="SdmxDl.Browser.SideBrowser">
-    <suki:BusyArea IsBusy="{Binding IsBusy}"
-                   BusyText="{Binding BusyMessage}">
-        <Grid RowDefinitions="Auto,Auto,*,Auto"
-              Margin="20">
-            <suki:GlassCard Margin="20, 20, 0, 10"
-                            IsAnimated="False"
-                            IsOpaque="True"
-                            IsVisible="{Binding ServerIsRunning}"
-                            Padding="20 30 20 20"
-                            Grid.Row="0">
-                <browser:SourceSelector
-                    ViewModel="{x:Static browser:ViewModelLocator.SourceSelectorViewModel}"
-                    Margin="5" />
-            </suki:GlassCard>
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:suki="https://github.com/kikipoulet/SukiUI"
+			 xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+			 xmlns:viewModels="clr-namespace:SdmxDl.Browser.ViewModels"
+			 xmlns:browser="clr-namespace:SdmxDl.Browser"
+			 mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="850"
+			 x:DataType="viewModels:BrowserViewModel"
+			 x:Class="SdmxDl.Browser.SideBrowser">
+	<suki:BusyArea IsBusy="{Binding IsBusy}"
+				   BusyText="{Binding BusyMessage}">
+		<Grid RowDefinitions="Auto,Auto,*,Auto"
+			  Margin="20">
+			<suki:GlassCard Margin="20, 20, 0, 10"
+							IsAnimated="False"
+							IsOpaque="True"
+							IsVisible="{Binding ServerIsRunning}"
+							Padding="20 30 20 20"
+							Grid.Row="0">
+				<browser:SourceSelector
+				ViewModel="{x:Static browser:ViewModelLocator.SourceSelectorViewModel}"
+				Margin="5" />
+			</suki:GlassCard>
 
-            <Border Background="{DynamicResource SukiPrimaryColor}"
-                    IsVisible="{Binding ServerIsRunning}"
-                    CornerRadius="5"
-                    Padding="10"
-                    VerticalAlignment="Top"
-                    HorizontalAlignment="Left"
-                    Grid.Row="0">
-                <TextBlock Text="Source"
-                           Foreground="{DynamicResource SukiStrongBackground}"
-                           FontSize="18"
-                           FontWeight="DemiBold" />
-            </Border>
+			<Border Background="{DynamicResource SukiPrimaryColor}"
+					IsVisible="{Binding ServerIsRunning}"
+					CornerRadius="5"
+					Padding="10"
+					VerticalAlignment="Top"
+					HorizontalAlignment="Left"
+					Grid.Row="0">
+				<TextBlock Text="Source"
+						   Foreground="{DynamicResource SukiStrongBackground}"
+						   FontSize="18"
+						   FontWeight="DemiBold" />
+			</Border>
 
-            <suki:GlassCard Margin="20, 20, 0, 10"
-                            IsAnimated="False"
-                            IsOpaque="True"
-                            IsVisible="{Binding Source={x:Static browser:ViewModelLocator.SourceSelectorViewModel}, Path=Selection.IsSome}"
-                            Padding="20 30 20 20"
-                            Grid.Row="1">
-                <browser:DataFlowSelector
-                    ViewModel="{x:Static browser:ViewModelLocator.DataFlowSelectorViewModel}"
-                    Margin="5" />
-            </suki:GlassCard>
+			<suki:GlassCard Margin="20, 20, 0, 10"
+							IsAnimated="False"
+							IsOpaque="True"
+							IsVisible="{Binding Source={x:Static browser:ViewModelLocator.SourceSelectorViewModel}, Path=Selection.IsSome}"
+							Padding="20 30 20 20"
+							Grid.Row="1">
+				<browser:DataFlowSelector ViewModel="{x:Static browser:ViewModelLocator.DataFlowSelectorViewModel}"
+										  Margin="5" />
+			</suki:GlassCard>
 
-            <Border Background="{DynamicResource SukiPrimaryColor}"
-                    IsVisible="{Binding Source={x:Static browser:ViewModelLocator.SourceSelectorViewModel}, Path=Selection.IsSome}"
-                    CornerRadius="5"
-                    Padding="10"
-                    VerticalAlignment="Top"
-                    HorizontalAlignment="Left"
-                    Grid.Row="1">
-                <TextBlock Text="Flow"
-                           Foreground="{DynamicResource SukiStrongBackground}"
-                           FontSize="18"
-                           FontWeight="DemiBold" />
-            </Border>
+			<Border Background="{DynamicResource SukiPrimaryColor}"
+					IsVisible="{Binding Source={x:Static browser:ViewModelLocator.SourceSelectorViewModel}, Path=Selection.IsSome}"
+					CornerRadius="5"
+					Padding="10"
+					VerticalAlignment="Top"
+					HorizontalAlignment="Left"
+					Grid.Row="1">
+				<TextBlock Text="Flow"
+						   Foreground="{DynamicResource SukiStrongBackground}"
+						   FontSize="18"
+						   FontWeight="DemiBold" />
+			</Border>
 
-            <suki:GlassCard Margin="20, 20, 0, 10"
-                            IsAnimated="False"
-                            IsOpaque="True"
-                            IsVisible="{Binding Source={x:Static browser:ViewModelLocator.DataFlowSelectorViewModel}, Path=Selection.IsSome}"
-                            Padding="20 30 20 20"
-                            Grid.Row="2">
-                <browser:DimensionsBrowser
-                    ViewModel="{x:Static browser:ViewModelLocator.DimensionsSelectorViewModel}"
-                    Margin="5" />
-            </suki:GlassCard>
+			<suki:GlassCard Margin="20, 20, 0, 10"
+							IsAnimated="False"
+							IsOpaque="True"
+							IsVisible="{Binding Source={x:Static browser:ViewModelLocator.DataFlowSelectorViewModel}, Path=Selection.IsSome}"
+							Padding="20 30 20 20"
+							Grid.Row="2">
+				<browser:DimensionsBrowser
+				ViewModel="{x:Static browser:ViewModelLocator.DimensionsSelectorViewModel}"
+				Margin="5" />
+			</suki:GlassCard>
 
-            <Border Background="{DynamicResource SukiPrimaryColor}"
-                    IsVisible="{Binding Source={x:Static browser:ViewModelLocator.DataFlowSelectorViewModel}, Path=Selection.IsSome}"
-                    CornerRadius="5"
-                    Padding="10"
-                    VerticalAlignment="Top"
-                    HorizontalAlignment="Left"
-                    Grid.Row="2">
-                <TextBlock Text="Dimensions"
-                           Foreground="{DynamicResource SukiStrongBackground}"
-                           FontSize="18"
-                           FontWeight="DemiBold" />
-            </Border>
+			<Border Background="{DynamicResource SukiPrimaryColor}"
+					IsVisible="{Binding Source={x:Static browser:ViewModelLocator.DataFlowSelectorViewModel}, Path=Selection.IsSome}"
+					CornerRadius="5"
+					Padding="10"
+					VerticalAlignment="Top"
+					HorizontalAlignment="Left"
+					Grid.Row="2">
+				<TextBlock Text="Dimensions"
+						   Foreground="{DynamicResource SukiStrongBackground}"
+						   FontSize="18"
+						   FontWeight="DemiBold" />
+			</Border>
 
-            <suki:GlassCard Grid.Row="3"
-                            IsOpaque="True"
-                            IsVisible="{Binding Source={x:Static browser:ViewModelLocator.DataFlowSelectorViewModel}, Path=Selection.IsSome}"
-                            Margin="20, 20, 0, 15"
-                            Padding="20 30"
-                            IsAnimated="False">
-                <TextBox Text="{Binding SelectionKey,FallbackValue=KEY.KEY.KEY.KEY}" DockPanel.Dock="Left">
-                    <Interaction.Behaviors>
-                        <EventTriggerBehavior EventName="KeyDown">
-                            <InvokeCommandAction Command="{Binding CheckKeyTextBox}"
-                                                 PassEventArgsToCommand="True" />
-                        </EventTriggerBehavior>
-                    </Interaction.Behaviors>
-                </TextBox>
-            </suki:GlassCard>
+			<suki:GlassCard Grid.Row="3"
+							IsOpaque="True"
+							IsVisible="{Binding Source={x:Static browser:ViewModelLocator.DataFlowSelectorViewModel}, Path=Selection.IsSome}"
+							Margin="20, 20, 0, 15"
+							Padding="20 30"
+							IsAnimated="False">
+				<TextBox Text="{Binding SelectionKey,FallbackValue=KEY.KEY.KEY.KEY}" DockPanel.Dock="Left">
+					<Interaction.Behaviors>
+						<EventTriggerBehavior EventName="KeyDown">
+							<InvokeCommandAction Command="{Binding CheckKeyTextBox}"
+												 PassEventArgsToCommand="True" />
+						</EventTriggerBehavior>
+					</Interaction.Behaviors>
+				</TextBox>
+			</suki:GlassCard>
 
-            <Button Command="{Binding ShowResults}"
-                    Content="{materialIcons:MaterialIconTextExt Kind=Download, Text=RETRIEVE SERIES}"
-                    Classes="Rounded Flat"
-                    IsVisible="{Binding Source={x:Static browser:ViewModelLocator.DataFlowSelectorViewModel}, Path=Selection.IsSome}"
-                    VerticalAlignment="Bottom"
-                    HorizontalAlignment="Center"
-                    Grid.Row="3" />
 
-            <Border Background="{DynamicResource SukiPrimaryColor}"
-                    IsVisible="{Binding Source={x:Static browser:ViewModelLocator.DataFlowSelectorViewModel}, Path=Selection.IsSome}"
-                    CornerRadius="5"
-                    Padding="10"
-                    VerticalAlignment="Top"
-                    HorizontalAlignment="Left"
-                    Grid.Row="3">
-                <TextBlock Text="Key"
-                           Foreground="{DynamicResource SukiStrongBackground}"
-                           FontSize="18"
-                           FontWeight="DemiBold" />
-            </Border>
-        </Grid>
-    </suki:BusyArea>
+			<StackPanel Orientation="Horizontal"
+						HorizontalAlignment="Center"
+						VerticalAlignment="Bottom"
+						Spacing="5"
+						IsVisible="{Binding Source={x:Static browser:ViewModelLocator.DataFlowSelectorViewModel}, Path=Selection.IsSome}"
+						Grid.Row="3">
+				<Button x:Name="ButtonShowResults"
+						Command="{Binding ShowResults}"
+						Content="{materialIcons:MaterialIconTextExt Kind=Download, Text=RETRIEVE SERIES}"
+						Classes="Rounded Flat"
+						VerticalAlignment="Bottom"
+						HorizontalAlignment="Center" />
+				<Button Content="{materialIcons:MaterialIconExt Kind=ChevronDown}"
+						Classes="Small Rounded Flat"
+						VerticalAlignment="Bottom"
+						HorizontalAlignment="Center"
+						Height="{Binding #ButtonShowResults.Height}">
+					<Button.Flyout>
+						<Flyout>
+							<MenuFlyoutPresenter>
+
+								<MenuItem Header="Retrieve series"
+										  Command="{Binding ShowResults}"/>
+								<MenuItem Header="Retrieve series and add to existing display"
+										  IsEnabled="{Binding !!DataViews.Count}"
+										  ItemsSource="{Binding DataViews}">
+									<MenuItem.ItemContainerTheme>
+										<ControlTheme TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}"
+													  x:DataType="viewModels:DataViewModel">
+											<Setter Property="Header" Value="{Binding Title}"/>
+										</ControlTheme>
+									</MenuItem.ItemContainerTheme>
+								</MenuItem>
+							</MenuFlyoutPresenter>
+						</Flyout>
+					</Button.Flyout>
+				</Button>
+			</StackPanel >
+
+
+
+			<Border Background="{DynamicResource SukiPrimaryColor}"
+					IsVisible="{Binding Source={x:Static browser:ViewModelLocator.DataFlowSelectorViewModel}, Path=Selection.IsSome}"
+					CornerRadius="5"
+					Padding="10"
+					VerticalAlignment="Top"
+					HorizontalAlignment="Left"
+					Grid.Row="3">
+				<TextBlock Text="Key"
+						   Foreground="{DynamicResource SukiStrongBackground}"
+						   FontSize="18"
+						   FontWeight="DemiBold" />
+			</Border>
+		</Grid>
+	</suki:BusyArea>
 </UserControl>

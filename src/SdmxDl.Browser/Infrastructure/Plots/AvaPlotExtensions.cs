@@ -62,7 +62,7 @@ internal static class AvaPlotExtensions
         evt.Handled = true;
     }
 
-    internal static void HandleMouseOver(
+    internal static Option<(Scatter, DataPoint)> HandleMouseOver(
         this AvaPlot plot,
         PointerEventArgs evt,
         PlotInteractivity interactivity
@@ -73,16 +73,19 @@ internal static class AvaPlotExtensions
         Coordinates mouseLocation = plot.Plot.GetCoordinates(mousePixel);
         var series = interactivity.Series;
 
+        var hoveredInfo = Option<(Scatter, DataPoint)>.None;
+
         switch (interactivity.InteractivityMode)
         {
             case InteractivityMode.SingleSeries:
-                SingleSeriesMouseOver(plot, interactivity, mouseLocation, series);
+                hoveredInfo = SingleSeriesMouseOver(plot, interactivity, mouseLocation, series);
                 break;
             case InteractivityMode.AllSeries:
                 AllSeriesMouseOver(plot, interactivity, mouseLocation, series);
                 break;
         }
         evt.Handled = true;
+        return hoveredInfo;
     }
 
     private static void ShowCrosshair(
@@ -200,7 +203,7 @@ internal static class AvaPlotExtensions
         return (scatterIndex, nearestPoints.Find(scatterIndex));
     }
 
-    private static void SingleSeriesMouseOver(
+    private static Option<(Scatter, DataPoint)> SingleSeriesMouseOver(
         AvaPlot plot,
         PlotInteractivity interactivity,
         Coordinates mouseLocation,
@@ -213,7 +216,7 @@ internal static class AvaPlotExtensions
         if (scatterIndex == -1 || nearestPoint.IsNone)
         {
             plot.HideDecorations(interactivity);
-            return;
+            return Option<(Scatter, DataPoint)>.None;
         }
 
         // place the crosshair, marker and text over the selected point
@@ -233,6 +236,8 @@ internal static class AvaPlotExtensions
         );
 
         plot.Refresh();
+
+        return (scatter, point);
     }
 
     public static void HighlightPoint(

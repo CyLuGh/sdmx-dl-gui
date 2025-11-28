@@ -8,9 +8,6 @@ using LanguageExt;
 using ReactiveUI;
 using ReactiveUI.Avalonia;
 using ScottPlot;
-using ScottPlot.Avalonia;
-using ScottPlot.DataSources;
-using ScottPlot.Plottables;
 using SdmxDl.Browser.Infrastructure.Plots;
 using SdmxDl.Browser.ViewModels;
 
@@ -104,7 +101,26 @@ public partial class DataView : ReactiveUserControl<DataViewModel>
             .FromEventPattern<EventHandler<PointerEventArgs>, PointerEventArgs>(
                 _ =>
                     (_, args) =>
-                        view.LinkedAvaPlot.HandleMouseOver(args, view._linkedInteractivity),
+                    {
+                        var hoveredInfo = view.LinkedAvaPlot.HandleMouseOver(
+                            args,
+                            view._linkedInteractivity
+                        );
+
+                        hoveredInfo
+                            .Some(info =>
+                            {
+                                var date = DateTime.FromOADate(info.Item2.X);
+                                viewModel.HighlightedPoint = (date, info.Item1);
+                            })
+                            .None(() =>
+                            {
+                                viewModel.HighlightedPoint = Option<(
+                                    DateTime,
+                                    ScottPlot.Plottables.Scatter
+                                )>.None;
+                            });
+                    },
                 handler => view.LinkedAvaPlot.PointerMoved += handler,
                 handler => view.LinkedAvaPlot.PointerMoved -= handler
             )
@@ -116,7 +132,13 @@ public partial class DataView : ReactiveUserControl<DataViewModel>
             .FromEventPattern<EventHandler<PointerEventArgs>, PointerEventArgs>(
                 _ =>
                     (_, args) =>
-                        view.LinkedAvaPlot.HandleMouseLeft(args, view._linkedInteractivity),
+                    {
+                        view.LinkedAvaPlot.HandleMouseLeft(args, view._linkedInteractivity);
+                        viewModel.HighlightedPoint = Option<(
+                            DateTime,
+                            ScottPlot.Plottables.Scatter
+                        )>.None;
+                    },
                 handler => view.LinkedAvaPlot.PointerExited += handler,
                 handler => view.LinkedAvaPlot.PointerExited -= handler
             )
@@ -168,5 +190,15 @@ public partial class DataView : ReactiveUserControl<DataViewModel>
                 ctx.SetOutput(RxUnit.Default);
             })
             .DisposeWith(disposables);
+
+        //if ( !viewModel.ChartSeries.IsEmpty)
+        //{
+        //    var start = viewModel.ChartSeries.Min(x=>x.Values)
+        //}
+
+        //Observable
+        //    .Return((viewModel.ChartSeries, viewModel.StartDate, viewModel.EndDate))
+        //    .InvokeCommand(viewModel, x => x.DrawCharts)
+        //    .DisposeWith(disposables);
     }
 }

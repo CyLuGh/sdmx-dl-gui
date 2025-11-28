@@ -55,11 +55,11 @@ public partial class DataViewModel : BaseViewModel
     [ObservableAsProperty(ReadOnly = false)]
     private bool _hasNoData;
 
-    //[Reactive]
-    //public partial Option<(DateTime,Scatter)> HighlightedPoint { get; set; }
+    [Reactive]
+    public partial Option<(DateTime, Scatter)> HighlightedPoint { get; set; }
 
-    [ObservableAsProperty(ReadOnly = false)]
-    private Option<(DateTime, Scatter)> _highlightedPoint;
+    //[ObservableAsProperty(ReadOnly = false)]
+    //private Option<(DateTime, Scatter)> _highlightedPoint;
 
     [ObservableAsProperty(ReadOnly = false)]
     private HierarchyDefinitions? _standAloneHierarchyDefinitions;
@@ -126,8 +126,6 @@ public partial class DataViewModel : BaseViewModel
     public Interaction<string, RxUnit> CopyToClipboardInteraction { get; } =
         new(RxApp.MainThreadScheduler);
 
-    //public ReactiveCommand<HoverCommandArgs, RxUnit> HoveredPointsChanged { get; }
-
     public ReactiveCommand<Option<(DateTime, Scatter)>, RxUnit> HighlightChart { get; }
     public Interaction<Option<(DateTime, Scatter)>, RxUnit> HighlightChartInteraction { get; } =
         new(RxApp.MainThreadScheduler);
@@ -147,7 +145,9 @@ public partial class DataViewModel : BaseViewModel
 
         DrawCharts = CreateCommandDrawCharts();
 
-        HighlightGrid = ReactiveCommand.Create((Option<DateTime> o) => HighlightGridImpl(o));
+        HighlightGrid = ReactiveCommand.Create(
+            (Option<(DateTime, Scatter)> o) => DoHighlightGrid(o)
+        );
 
         HighlightChart = ReactiveCommand.CreateFromObservable(
             (Option<(DateTime, Scatter)> o) => HighlightChartInteraction.Handle(o)
@@ -182,21 +182,21 @@ public partial class DataViewModel : BaseViewModel
                 .ToProperty(this, x => x.HasNoData, scheduler: RxApp.MainThreadScheduler)
                 .DisposeWith(disposables);
 
-            //this.WhenAnyValue(x => x.HighlightedPoint)
-            //    .DistinctUntilChanged()
-            //    .Throttle(TimeSpan.FromMilliseconds(50))
-            //    .ObserveOn(RxApp.MainThreadScheduler)
-            //    .InvokeCommand(HighlightGrid)
-            //    .DisposeWith(disposables);
+            this.WhenAnyValue(x => x.HighlightedPoint)
+                .DistinctUntilChanged()
+                .Throttle(TimeSpan.FromMilliseconds(50))
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .InvokeCommand(HighlightGrid)
+                .DisposeWith(disposables);
 
-            // this.WhenAnyValue(x => x.HighlightedPoint)
-            //     .DistinctUntilChanged()
-            //     .CombineLatest(HighlightGrid.Where(x => x))
-            //     .Select(t => t.First)
-            //     .Throttle(TimeSpan.FromMilliseconds(50))
-            //     .ObserveOn(RxApp.MainThreadScheduler)
-            //     .InvokeCommand(HighlightGrid)
-            //     .DisposeWith(disposables);
+            this.WhenAnyValue(x => x.HighlightedPoint)
+                .DistinctUntilChanged()
+                .CombineLatest(HighlightGrid.Where(x => x))
+                .Select(t => t.First)
+                .Throttle(TimeSpan.FromMilliseconds(50))
+                .ObserveOn(RxApp.MainThreadScheduler)
+                .InvokeCommand(HighlightGrid)
+                .DisposeWith(disposables);
 
             this.WhenAnyValue(x => x.HighlightedPoint)
                 .DistinctUntilChanged()
@@ -204,12 +204,12 @@ public partial class DataViewModel : BaseViewModel
                 .InvokeCommand(HighlightChart)
                 .DisposeWith(disposables);
 
-            _highlightedPointHelper = LinkedHierarchyGridViewModel
+            LinkedHierarchyGridViewModel
                 .WhenAnyValue(x => x.HoveredCell)
                 .Throttle(TimeSpan.FromMilliseconds(50)) // Add some delay so we don't stack refreshes
                 .DistinctUntilChanged()
-                .Select(o =>
-                    o.Match(
+                .Subscribe(o =>
+                    HighlightedPoint = o.Match(
                         pc =>
                             pc.ConsumerDefinition.Tag is DateTime period
                             && pc.ProducerDefinition.Content is string title
@@ -219,7 +219,7 @@ public partial class DataViewModel : BaseViewModel
                         () => Option<(DateTime, Scatter)>.None
                     )
                 )
-                .ToProperty(this, x => x.HighlightedPoint)
+                //.ToProperty(this, x => x.HighlightedPoint)
                 .DisposeWith(disposables);
 
             this.WhenAnyValue(x => x.StandAloneHierarchyDefinitions)
@@ -239,7 +239,7 @@ public partial class DataViewModel : BaseViewModel
         //TODO
     }
 
-    public ReactiveCommand<Option<DateTime>, bool> HighlightGrid { get; }
+    public ReactiveCommand<Option<(DateTime, Scatter)>, bool> HighlightGrid { get; }
 
     private ReactiveCommand<
         (Seq<ChartSeries>, DateTimeOffset, DateTimeOffset),
@@ -276,6 +276,7 @@ public partial class DataViewModel : BaseViewModel
     {
         DrawStandAloneChartInteraction.RegisterHandler(ctx => ctx.SetOutput(RxUnit.Default));
         DrawLinkedChartInteraction.RegisterHandler(ctx => ctx.SetOutput(Seq<Scatter>.Empty));
+
         var cmd = ReactiveCommand.CreateFromTask(
             async ((Seq<ChartSeries>, DateTimeOffset, DateTimeOffset) t) =>
             {
@@ -292,7 +293,7 @@ public partial class DataViewModel : BaseViewModel
         this.WhenAnyValue(x => x.ChartSeries)
             .Where(seq => !seq.IsEmpty)
             .CombineLatest(this.WhenAnyValue(x => x.StartDate), this.WhenAnyValue(x => x.EndDate))
-            .Throttle(TimeSpan.FromMilliseconds(50))
+            .Throttle(TimeSpan.FromMilliseconds(150))
             .InvokeCommand(cmd);
 
         return cmd;
@@ -527,13 +528,15 @@ public partial class DataViewModel : BaseViewModel
         Option<string> key
     ) => from s in source from f in flow from k in key select BuildTitle(s, f, k);
 
-    private bool HighlightGridImpl(Option<DateTime> highlightOpt)
+    private bool DoHighlightGrid(Option<(DateTime, Scatter)> highlightOpt)
     {
         var cell = highlightOpt.Match(
             o =>
             {
+                var (period, scatter) = o;
                 return from pCell in LinkedHierarchyGridViewModel.DrawnCells.Find(pc =>
-                        pc.ConsumerDefinition.Tag!.Equals(o)
+                        pc.ConsumerDefinition.Tag!.Equals(period)
+                        && pc.ProducerDefinition.Content!.Equals(scatter.LegendText)
                     )
                     select pCell;
             },
@@ -545,15 +548,17 @@ public partial class DataViewModel : BaseViewModel
             var hOffset = highlightOpt.Match(
                 o =>
                 {
+                    var (period, scatter) = o;
+
                     if (
                         !LinkedHierarchyGridViewModel.DrawnCells.Exists(pc =>
-                            pc.ConsumerDefinition.Tag!.Equals(o)
+                            pc.ConsumerDefinition.Tag!.Equals(period)
                         )
                     )
                     {
                         return LinkedHierarchyGridViewModel
                             .ColumnsDefinitions.OfType<ConsumerDefinition>()
-                            .Find(x => x.Tag!.Equals(o))
+                            .Find(x => x.Tag!.Equals(period))
                             .Match(p => p.Position, () => -1);
                     }
 
@@ -564,13 +569,44 @@ public partial class DataViewModel : BaseViewModel
 
             if (hOffset != -1)
                 LinkedHierarchyGridViewModel.HorizontalOffset = hOffset;
-            else
-                return true; /* Trigger the method again with elements that should have been drawn */
+
+            var vOffset = highlightOpt.Match(
+                o =>
+                {
+                    var (period, scatter) = o;
+
+                    if (
+                        !LinkedHierarchyGridViewModel.DrawnCells.Exists(pc =>
+                            pc.ProducerDefinition.Content!.Equals(scatter.LegendText)
+                        )
+                    )
+                    {
+                        return LinkedHierarchyGridViewModel
+                            .RowsDefinitions.OfType<ProducerDefinition>()
+                            .Find(x => x.Content!.Equals(scatter.LegendText))
+                            .Match(p => p.Position, () => -1);
+                    }
+
+                    return -1;
+                },
+                () => -1
+            );
+
+            if (vOffset != -1)
+                LinkedHierarchyGridViewModel.VerticalOffset = vOffset;
+
+            return hOffset == -1 || vOffset == -1; /* Trigger the method again with elements that should have been drawn */
         }
 
         LinkedHierarchyGridViewModel.HoveredCell = cell;
+
         LinkedHierarchyGridViewModel.HoveredColumn = cell.Match(
             c => c.ConsumerDefinition!.Position,
+            () => -1
+        );
+
+        LinkedHierarchyGridViewModel.HoveredRow = cell.Match(
+            c => c.ProducerDefinition!.Position,
             () => -1
         );
 

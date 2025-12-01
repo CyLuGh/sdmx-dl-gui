@@ -559,4 +559,17 @@ public partial class BrowserViewModel : BaseViewModel
             }
         );
     }
+
+    internal void UpdateTitle(string original, string renamed)
+    {
+        var lookup = _dataViewsCache.Lookup(original);
+
+        if (lookup.HasValue)
+        {
+            var dvm = lookup.Value;
+            _dataViewsCache.Remove(dvm);
+            dvm.Title = renamed;
+            _dataViewsCache.AddOrUpdate(dvm);
+        }
+    }
 }

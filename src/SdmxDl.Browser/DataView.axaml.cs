@@ -10,6 +10,8 @@ using ReactiveUI.Avalonia;
 using ScottPlot;
 using SdmxDl.Browser.Infrastructure.Plots;
 using SdmxDl.Browser.ViewModels;
+using Splat;
+using SukiUI.Dialogs;
 
 namespace SdmxDl.Browser;
 
@@ -24,6 +26,22 @@ public partial class DataView : ReactiveUserControl<DataViewModel>
 
         StandAloneAvaPlot.Plot.ConfigurePlot((Orientation.Horizontal, Edge.Bottom));
         LinkedAvaPlot.Plot.ConfigurePlot((Orientation.Horizontal, Edge.Bottom));
+
+        this.WhenAnyValue(x => x.ViewModel)
+            .WhereNotNull()
+            .Subscribe(vm =>
+            {
+                vm.RenameInteraction.RegisterHandler(ctx =>
+                {
+                    var rvm = Locator.Current.GetService<RenameViewModel>()!;
+                    rvm.Original = ctx.Input;
+
+                    ViewModelLocator
+                        .DialogManager.CreateDialog()
+                        .WithContent(new RenameView() { ViewModel = rvm })
+                        .TryShow();
+                });
+            });
 
         this.WhenActivated(disposables =>
         {

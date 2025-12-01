@@ -70,6 +70,7 @@ public static class ViewModelLocator
 
         SplatRegistrations.Register<DataViewModel>();
         SplatRegistrations.Register<SeriesFinderViewModel>();
+        SplatRegistrations.Register<RenameViewModel>();
 
         var current = Locator.CurrentMutable;
 

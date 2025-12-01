@@ -134,6 +134,9 @@ public partial class DataViewModel : BaseViewModel
 
     public ReactiveCommand<Option<SeriesRequest>, Seq<ChartSeries>> AddRequest { get; }
 
+    public ReactiveCommand<string, string> Rename { get; }
+    public Interaction<string, string> RenameInteraction { get; } = new(RxApp.MainThreadScheduler);
+
     public DataViewModel(
         ClientFactory clientFactory,
         ResiliencePipeline pipeline,
@@ -161,6 +164,7 @@ public partial class DataViewModel : BaseViewModel
         HighlightChart = ReactiveCommand.CreateFromObservable(
             (Option<(DateTime, Scatter)> o) => HighlightChartInteraction.Handle(o)
         );
+        Rename = CreateCommandRename();
 
         _isSplitViewHelper = settingsViewModel
             .WhenAnyValue(x => x.IsSplitView)
@@ -270,6 +274,18 @@ public partial class DataViewModel : BaseViewModel
                 })
                 .DisposeWith(disposables);
         });
+    }
+
+    private ReactiveCommand<string, string> CreateCommandRename()
+    {
+        RenameInteraction.RegisterHandler(ctx => ctx.SetOutput(string.Empty));
+        var cmd = ReactiveCommand.CreateFromObservable(
+            (string title) => RenameInteraction.Handle(title)
+        );
+
+        cmd.Where(r => !string.IsNullOrWhiteSpace(r)).Subscribe(r => Title = r);
+
+        return cmd;
     }
 
     private ReactiveCommand<Option<SeriesRequest>, Seq<ChartSeries>> CreateCommandAddRequest(

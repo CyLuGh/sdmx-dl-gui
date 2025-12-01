@@ -246,6 +246,9 @@ internal static class AvaPlotExtensions
         Coordinates coordinates
     )
     {
+        if (interactivity.Decorations.HighlightMarker is null)
+            return;
+
         interactivity.Decorations.HighlightMarker.IsVisible = true;
         interactivity.Decorations.HighlightMarker.Location = coordinates;
         interactivity.Decorations.HighlightMarker.MarkerStyle.OutlineColor = scatter

@@ -23,9 +23,8 @@
 							IsVisible="{Binding ServerIsRunning}"
 							Padding="20 30 20 20"
 							Grid.Row="0">
-				<browser:SourceSelector
-				ViewModel="{x:Static browser:ViewModelLocator.SourceSelectorViewModel}"
-				Margin="5" />
+				<browser:SourceSelector ViewModel="{x:Static browser:ViewModelLocator.SourceSelectorViewModel}"
+										Margin="5" />
 			</suki:GlassCard>
 
 			<Border Background="{DynamicResource SukiPrimaryColor}"
@@ -145,7 +144,6 @@
 																 Path="Selection"/>
 														<Binding ElementName="ButtonExtras"
 																 Path="((viewModels:BrowserViewModel)DataContext).SelectionKey"/>
-
 													</MultiBinding>
 												</Setter.Value>
 											</Setter>

@@ -52,6 +52,16 @@
 						<TextBlock Text="{Binding Title}"
 								   VerticalAlignment="Center"
 								   Margin="5 0"/>
+						<DockPanel.ContextMenu>
+							<ContextMenu>
+								<MenuItem Header="Rename"
+										  Command="{Binding Rename}"
+										  CommandParameter="{Binding Title}"/>
+								<MenuItem Header="Close"
+										  Command="{Binding Close, Source={x:Static local:ViewModelLocator.BrowserViewModel}}"
+										  CommandParameter="{Binding Title}" />
+							</ContextMenu>
+						</DockPanel.ContextMenu>
 					</DockPanel>
 				</DataTemplate>
 			</TabControl.ItemTemplate>

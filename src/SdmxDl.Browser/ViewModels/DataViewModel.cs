@@ -32,13 +32,13 @@ public partial class DataViewModel : BaseViewModel
     public partial Option<string> Key { get; set; }
 
     [Reactive]
-    public partial bool IsSplitView { get; set; }
-
-    [Reactive]
     public partial DateTimeOffset StartDate { get; set; }
 
     [Reactive]
     public partial DateTimeOffset EndDate { get; set; }
+
+    [Reactive]
+    public partial bool Initialized { get; set; }
 
     [Reactive]
     public partial bool UseLogarithmicAxis { get; set; }
@@ -58,6 +58,9 @@ public partial class DataViewModel : BaseViewModel
     [ObservableAsProperty(ReadOnly = false)]
     private bool _hasNoData;
 
+    [ObservableAsProperty]
+    private bool _isSplitView;
+
     [Reactive]
     public partial Option<(DateTime, Scatter)> HighlightedPoint { get; set; }
 
@@ -70,7 +73,7 @@ public partial class DataViewModel : BaseViewModel
     public HierarchyGridViewModel StandAloneHierarchyGridViewModel { get; } =
         new()
         {
-            Theme = GridTheme.Instance,
+            Theme = LightGridTheme.Instance,
             DefaultColumnWidth = 250d,
             DefaultHeaderWidth = 250d,
         };
@@ -78,7 +81,7 @@ public partial class DataViewModel : BaseViewModel
     public HierarchyGridViewModel LinkedHierarchyGridViewModel { get; } =
         new()
         {
-            Theme = GridTheme.Instance,
+            Theme = LightGridTheme.Instance,
             DefaultColumnWidth = 150d,
             DefaultHeaderWidth = 250d,
         };
@@ -129,9 +132,13 @@ public partial class DataViewModel : BaseViewModel
     public Interaction<Option<(DateTime, Scatter)>, RxUnit> HighlightChartInteraction { get; } =
         new(RxApp.MainThreadScheduler);
 
-    public ReactiveCommand<SeriesRequest, Seq<ChartSeries>> AddRequest { get; }
+    public ReactiveCommand<Option<SeriesRequest>, Seq<ChartSeries>> AddRequest { get; }
 
-    public DataViewModel(ClientFactory clientFactory, ResiliencePipeline pipeline)
+    public DataViewModel(
+        ClientFactory clientFactory,
+        ResiliencePipeline pipeline,
+        SettingsViewModel settingsViewModel
+    )
     {
         StartDate = new DateTimeOffset(new DateTime(1900, 1, 1));
         EndDate = new DateTimeOffset(new DateTime(9999, 12, 31));
@@ -155,8 +162,13 @@ public partial class DataViewModel : BaseViewModel
             (Option<(DateTime, Scatter)> o) => HighlightChartInteraction.Handle(o)
         );
 
+        _isSplitViewHelper = settingsViewModel
+            .WhenAnyValue(x => x.IsSplitView)
+            .ToProperty(this, x => x.IsSplitView, scheduler: RxApp.MainThreadScheduler);
+
         this.WhenAnyValue(x => x.ChartSeries)
             .Where(x => !x.IsEmpty)
+            .Do(_ => Initialized = false)
             .ObserveOn(RxApp.MainThreadScheduler)
             .Subscribe(seq =>
             {
@@ -169,6 +181,8 @@ public partial class DataViewModel : BaseViewModel
 
                 StartDate = minDate;
                 EndDate = maxDate;
+
+                Initialized = true;
             });
 
         this.WhenActivated(disposables =>
@@ -237,27 +251,43 @@ public partial class DataViewModel : BaseViewModel
                 .Where(seq => !seq.IsEmpty)
                 .CombineLatest(
                     this.WhenAnyValue(x => x.StartDate),
-                    this.WhenAnyValue(x => x.EndDate)
+                    this.WhenAnyValue(x => x.EndDate),
+                    this.WhenAnyValue(x => x.Initialized).Where(x => x)
                 )
                 .Throttle(TimeSpan.FromMilliseconds(150))
+                .DistinctUntilChanged()
+                .Select(t => (t.First, t.Second, t.Third))
                 .InvokeCommand(DrawCharts)
+                .DisposeWith(disposables);
+
+            settingsViewModel
+                .WhenAnyValue(x => x.IsLightTheme)
+                .Subscribe(isLight =>
+                {
+                    ITheme theme = isLight ? LightGridTheme.Instance : DarkGridTheme.Instance;
+                    StandAloneHierarchyGridViewModel.Theme = theme;
+                    LinkedHierarchyGridViewModel.Theme = theme;
+                })
                 .DisposeWith(disposables);
         });
     }
 
-    private ReactiveCommand<SeriesRequest, Seq<ChartSeries>> CreateCommandAddRequest(
+    private ReactiveCommand<Option<SeriesRequest>, Seq<ChartSeries>> CreateCommandAddRequest(
         ClientFactory clientFactory,
         ResiliencePipeline pipeline
     )
     {
         var cmd = ReactiveCommand.CreateFromTask(
-            async (SeriesRequest req) =>
+            async (Option<SeriesRequest> oReq) =>
             {
-                var o = await DoRetrieveDataSet(req, clientFactory, pipeline);
-                return o.Match(
-                    dataSet => dataSet.Data.Map(s => new ChartSeries(s)),
-                    () => Seq<ChartSeries>.Empty
-                );
+                return await oReq.MatchAsync(
+                        async req => await DoRetrieveDataSet(req, clientFactory, pipeline),
+                        () => Option<DataSet>.None
+                    )
+                    .Match(
+                        dataSet => dataSet.Data.Map(s => new ChartSeries(s)),
+                        () => Seq<ChartSeries>.Empty
+                    );
             }
         );
         return cmd;
@@ -467,23 +497,16 @@ public partial class DataViewModel : BaseViewModel
     }
 
     private ReactiveCommand<DataSet, Seq<ChartSeries>> CreateCommandTransformData(
-        ReactiveCommand<SeriesRequest, Seq<ChartSeries>> addRequest
+        ReactiveCommand<Option<SeriesRequest>, Seq<ChartSeries>> addRequest
     )
     {
         var cmd = ReactiveCommand.CreateRunInBackground(
             (DataSet ds) => ds.Data.Map(s => new ChartSeries(s))
         );
 
-        var addRequests = addRequest.Aggregate(Seq<ChartSeries>.Empty, (o, p) => o.Append(p));
-
-        _chartSeriesHelper = cmd
-        //.CombineLatest(addRequests)
-        //.Select(t =>
-        //{
-        //    var (transformed, reqs) = t;
-        //    return transformed.Append(reqs);
-        //})
-        .ToProperty(this, x => x.ChartSeries, scheduler: RxApp.MainThreadScheduler);
+        _chartSeriesHelper = cmd.Merge(addRequest)
+            .Scan(Seq<ChartSeries>.Empty, (o, p) => o.Append(p).Distinct().Strict())
+            .ToProperty(this, x => x.ChartSeries, scheduler: RxApp.MainThreadScheduler);
 
         this.WhenAnyValue(x => x.DataSet)
             .Select(d => d.Match(Observable.Return, Observable.Empty<DataSet>))

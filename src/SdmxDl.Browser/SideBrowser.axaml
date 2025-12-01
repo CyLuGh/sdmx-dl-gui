@@ -6,9 +6,13 @@
 			 xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
 			 xmlns:viewModels="clr-namespace:SdmxDl.Browser.ViewModels"
 			 xmlns:browser="clr-namespace:SdmxDl.Browser"
+			 xmlns:converters="using:SdmxDl.Browser.Infrastructure.Converters"
 			 mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="850"
 			 x:DataType="viewModels:BrowserViewModel"
 			 x:Class="SdmxDl.Browser.SideBrowser">
+	<UserControl.Resources>
+		<converters:RequestMultiConverter x:Key="RequestMultiConverter"/>
+	</UserControl.Resources>
 	<suki:BusyArea IsBusy="{Binding IsBusy}"
 				   BusyText="{Binding BusyMessage}">
 		<Grid RowDefinitions="Auto,Auto,*,Auto"
@@ -113,7 +117,8 @@
 						Classes="Rounded Flat"
 						VerticalAlignment="Bottom"
 						HorizontalAlignment="Center" />
-				<Button Content="{materialIcons:MaterialIconExt Kind=ChevronDown}"
+				<Button x:Name="ButtonExtras"
+						Content="{materialIcons:MaterialIconExt Kind=ChevronDown}"
 						Classes="Small Rounded Flat"
 						VerticalAlignment="Bottom"
 						HorizontalAlignment="Center"
@@ -121,7 +126,6 @@
 					<Button.Flyout>
 						<Flyout>
 							<MenuFlyoutPresenter>
-
 								<MenuItem Header="Retrieve series"
 										  Command="{Binding ShowResults}"/>
 								<MenuItem Header="Retrieve series and add to existing display"
@@ -131,6 +135,20 @@
 										<ControlTheme TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}"
 													  x:DataType="viewModels:DataViewModel">
 											<Setter Property="Header" Value="{Binding Title}"/>
+											<Setter Property="Command" Value="{Binding AddRequest}"/>
+											<Setter Property="CommandParameter">
+												<Setter.Value>
+													<MultiBinding Converter="{StaticResource RequestMultiConverter}">
+														<Binding Source="{x:Static browser:ViewModelLocator.SourceSelectorViewModel}"
+																 Path="Selection"/>
+														<Binding Source="{x:Static browser:ViewModelLocator.DataFlowSelectorViewModel}"
+																 Path="Selection"/>
+														<Binding ElementName="ButtonExtras"
+																 Path="((viewModels:BrowserViewModel)DataContext).SelectionKey"/>
+
+													</MultiBinding>
+												</Setter.Value>
+											</Setter>
 										</ControlTheme>
 									</MenuItem.ItemContainerTheme>
 								</MenuItem>

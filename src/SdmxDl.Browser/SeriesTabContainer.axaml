@@ -15,6 +15,21 @@
 		<converters:BrowserStatusConverter x:Key="BrowserStatusConverter" />
 	</UserControl.Resources>
 
+	<UserControl.Styles>
+		<Style Selector="Button.HoverReveal">
+			<Setter Property="Opacity" Value="0.3"/>
+			<Setter Property="Transitions">
+				<Transitions>
+					<DoubleTransition Property="Opacity" Duration="0:0:0.2" />
+				</Transitions>
+			</Setter>
+		</Style>
+
+		<Style Selector="Button.HoverReveal:pointerover">
+			<Setter Property="Opacity" Value="1"/>
+		</Style>
+	</UserControl.Styles>
+
 	<Grid RowDefinitions="*,Auto" Margin="5">
 		<Image Source="{SvgImage /assets/SDMX_logo.svg}"
 			   MaxWidth="800"
@@ -27,14 +42,24 @@
 					Grid.Row="0">
 			<TabControl.ItemTemplate>
 				<DataTemplate>
-					<TextBlock Text="{Binding Title}"/>
+					<DockPanel>
+						<Button Command="{Binding Close, Source={x:Static local:ViewModelLocator.BrowserViewModel}}"
+								CommandParameter="{Binding Title}"
+								Content="{materialIcons:MaterialIconExt Kind=Close}"
+								Padding="2"
+								Classes="Small Discrete HoverReveal"
+								DockPanel.Dock="Right"/>
+						<TextBlock Text="{Binding Title}"
+								   VerticalAlignment="Center"
+								   Margin="5 0"/>
+					</DockPanel>
 				</DataTemplate>
 			</TabControl.ItemTemplate>
 			<TabControl.ContentTemplate>
 				<DataTemplate x:DataType="viewModels:DataViewModel">
 					<!--<local:DataView ViewModel="{Binding}"/>-->
 					<rxui:ViewModelViewHost ViewModel="{Binding}"/>
-			</DataTemplate>
+				</DataTemplate>
 			</TabControl.ContentTemplate>
 		</TabControl>
 

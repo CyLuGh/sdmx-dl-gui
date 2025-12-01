@@ -58,13 +58,17 @@ public static class FrequencyExtensions
         };
 }
 
-public class ChartSeries
+public sealed record ChartSeries
 {
     public string Key { get; }
     public string Title { get; }
     public HashMap<DateTime, Option<double>> Values { get; }
     public Frequency Frequency { get; }
     public string Format { get; }
+
+    public override int GetHashCode() => Key.GetHashCode();
+
+    public bool Equals(ChartSeries? cs) => cs?.Key?.Equals(Key) == true;
 
     public ChartSeries(Series series)
     {

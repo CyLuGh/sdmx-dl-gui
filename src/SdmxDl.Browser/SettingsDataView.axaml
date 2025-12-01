@@ -1,61 +1,62 @@
 <UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:viewModels="clr-namespace:SdmxDl.Browser.ViewModels"
-             xmlns:suki="https://github.com/kikipoulet/SukiUI"
-             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="SdmxDl.Browser.SettingsDataView"
-             x:DataType="viewModels:DataViewModel">
-    <Grid RowDefinitions="Auto,Auto,Auto">
-        <suki:GroupBox Header="Layout"
-                       Margin="15"
-                       Grid.Row="0">
-            <UniformGrid Columns="2" Rows="1">
-                <RadioButton Content="{materialIcons:MaterialIconTextExt Kind=Tab, Text=Tabbed view}"
-                             IsChecked="{Binding !IsSplitView}"
-                             ToolTip.Tip="Tabbed view" 
-                             Margin="20 10"/>
-                <RadioButton Content="{materialIcons:MaterialIconTextExt Kind=ViewSplitHorizontal, Text=Split view}"
-                             IsChecked="{Binding IsSplitView}"
-                             ToolTip.Tip="Split view" 
-                             Margin="20 10"/>
-            </UniformGrid>
-        </suki:GroupBox>
-        
-        <!-- <suki:GroupBox Header="{materialIcons:MaterialIconTextExt Kind=Axis, Text=Axes}" Margin="15" Grid.Row="1"> -->
-        <!--     <CheckBox Content="Logarithmic Y axis"  -->
-        <!--               IsChecked="{Binding Path=UseLogarithmicAxis}" -->
-        <!--               Margin="20 10"></CheckBox> -->
-        <!-- </suki:GroupBox> -->
-        
-        <suki:GroupBox Header="Periods" Margin="15" Grid.Row="2">
-            <UniformGrid Rows="1">
-                <Grid ColumnDefinitions="120,250">
-                    <TextBlock Text="First period:" 
-                               Margin="20 10"
-                               VerticalAlignment="Center" />
-                    
-                    <DatePicker SelectedDate="{Binding StartDate}"
-                                Margin="10"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
-                                Grid.Column="1"/>
-                </Grid>
-                
-                <Grid ColumnDefinitions="120,*">
-                    <TextBlock Text="Last period:" 
-                               Margin="20 10"
-                               VerticalAlignment="Center" />
-                    
-                    <DatePicker SelectedDate="{Binding EndDate}"
-                                Margin="10"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
-                                Grid.Column="1"/>
-                </Grid>
-            </UniformGrid>
-        </suki:GroupBox>
-    </Grid>
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:viewModels="clr-namespace:SdmxDl.Browser.ViewModels"
+			 xmlns:suki="https://github.com/kikipoulet/SukiUI"
+			 xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+			 x:Class="SdmxDl.Browser.SettingsDataView"
+			 x:DataType="viewModels:SettingsViewModel">
+	<StackPanel Spacing="20"
+				Margin="10">
+		<Border BorderThickness="1"
+				BorderBrush="{DynamicResource SukiBorderBrush}"
+				Background="{DynamicResource SukiGlassCardBackground}"
+				Padding="15"
+				CornerRadius="5"
+				BoxShadow="{DynamicResource SukiPopupShadow}">
+			<suki:GroupBox Header="{materialIcons:MaterialIconTextExt Kind=Palette, Text=Theme}">
+				<StackPanel Orientation="Horizontal"
+							HorizontalAlignment="Center">
+					<ToggleSwitch IsChecked="{Binding Path=IsLightTheme}"
+								  OnContent="Light"
+								  OffContent="Dark"
+								  HorizontalAlignment="Center"/>
+				</StackPanel>
+			</suki:GroupBox>
+		</Border>
+
+		<Border BorderThickness="1"
+				BorderBrush="{DynamicResource SukiBorderBrush}"
+				Background="{DynamicResource SukiGlassCardBackground}"
+				Padding="15"
+				CornerRadius="5"
+				BoxShadow="{DynamicResource SukiPopupShadow}">
+			<suki:GroupBox Header="{materialIcons:MaterialIconTextExt Kind=PageLayoutBody, Text=Layout}">
+				<UniformGrid Columns="2" Rows="1">
+					<RadioButton Content="{materialIcons:MaterialIconTextExt Kind=Tab, Text=Tabbed view}"
+								 IsChecked="{Binding !IsSplitView}"
+								 ToolTip.Tip="Tabbed view"
+								 Margin="20 10"/>
+					<RadioButton Content="{materialIcons:MaterialIconTextExt Kind=ViewSplitHorizontal, Text=Split view}"
+								 IsChecked="{Binding IsSplitView}"
+								 ToolTip.Tip="Split view"
+								 Margin="20 10"/>
+				</UniformGrid>
+			</suki:GroupBox>
+		</Border>
+
+	</StackPanel>
+	<!--<Grid RowDefinitions="Auto,Auto,Auto">
+	<suki:GlassCard>
+
+	</suki:GlassCard>
+	<suki:GroupBox Header="Layout"
+	Margin="15"
+	Grid.Row="0">
+
+	</suki:GroupBox>
+
+	</Grid>-->
 </UserControl>

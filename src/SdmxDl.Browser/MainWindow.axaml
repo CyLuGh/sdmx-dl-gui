@@ -19,6 +19,31 @@
     </suki:SukiWindow.Hosts>
     <suki:SukiWindow.RightWindowTitleBarControls>
         <Button Classes="WindowControlsButton"
+                Content="{materialIcons:MaterialIconExt Kind=Settings}">
+			<Button.Flyout>
+                <Flyout>
+                    <Panel>
+                        <Border Margin="20"
+                                BoxShadow="{DynamicResource SukiPopupShadow}"
+                                CornerRadius="20"/>
+                        
+                        <Border MinWidth="350"
+                                Margin="20"
+                                Background="{DynamicResource SukiCardBackground}"
+                                BorderBrush="{DynamicResource SukiLightBorderBrush}"
+                                BorderThickness="1"
+                                ClipToBounds="True"
+                                CornerRadius="15">
+                            <Border Padding="15" Background="{DynamicResource PopupGradientBrush}">
+                               <browser:SettingsDataView  ViewModel="{x:Static browser:ViewModelLocator.SettingsViewModel}"/>
+                            </Border>
+                        </Border>
+                    </Panel>
+                </Flyout>
+            </Button.Flyout>
+        </Button>
+
+        <Button Classes="WindowControlsButton"
                 Content="{materialIcons:MaterialIconExt Kind=About}">
             <Button.Flyout>
                 <Flyout>

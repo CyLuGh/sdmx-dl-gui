@@ -36,7 +36,9 @@ public static class ViewModelLocator
             .Property(x => x.JavaPath)
             .Property(x => x.JarPath)
             .Property(x => x.ServerUri)
-            .Property(x => x.UseRunningServer);
+            .Property(x => x.UseRunningServer)
+            .Property(x => x.IsSplitView)
+            .Property(x => x.IsLightTheme);
 
         SplatRegistrations.RegisterConstant(tracker);
 

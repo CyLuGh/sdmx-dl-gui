@@ -1,11 +1,13 @@
 using System;
 using System.IO;
 using System.Reactive.Linq;
+using Avalonia.Styling;
 using Jot;
 using LanguageExt;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
 using SdmxDl.Client.Models;
+using SukiUI;
 
 namespace SdmxDl.Browser.ViewModels;
 
@@ -25,6 +27,12 @@ public partial class SettingsViewModel : BaseViewModel
 
     [Reactive]
     public partial bool UseRunningServer { get; set; }
+
+    [Reactive]
+    public partial bool IsSplitView { get; set; } = true;
+
+    [Reactive]
+    public partial bool IsLightTheme { get; set; } = true;
 
     public ReactiveCommand<RxUnit, Settings> Connect { get; }
     public ReactiveCommand<RxUnit, Settings> Cancel { get; }
@@ -58,6 +66,22 @@ public partial class SettingsViewModel : BaseViewModel
 
         PickJavaPath = CreateCommandPickJavaPath();
         PickJarPath = CreateCommandPickJarPath();
+
+        this.WhenAnyValue(x => x.IsLightTheme)
+            .ObserveOn(RxApp.MainThreadScheduler)
+            .Subscribe(isLight =>
+            {
+                var theme = SukiTheme
+                    .GetInstance()
+                    .ColorThemes.Find(c => c.DisplayName.Equals("CustomTheme"))
+                    .Match(t => t, () => App.AppTheme);
+
+                SukiTheme
+                    .GetInstance()
+                    .ChangeBaseTheme(isLight ? ThemeVariant.Light : ThemeVariant.Dark);
+
+                SukiTheme.GetInstance().ChangeColorTheme(theme);
+            });
     }
 
     private ReactiveCommand<RxUnit, string?> CreateCommandPickJavaPath()

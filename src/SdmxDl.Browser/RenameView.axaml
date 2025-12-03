@@ -1,0 +1,39 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+			 xmlns:viewmodels="using:SdmxDl.Browser.ViewModels"
+			 mc:Ignorable="d"
+			 MinWidth="500" MaxWidth="850"
+			 x:Class="SdmxDl.Browser.RenameView"
+			 x:DataType="viewmodels:RenameViewModel">
+	<Interaction.Behaviors>
+        <EventTriggerBehavior EventName="KeyDown">
+            <InvokeCommandAction Command="{Binding CheckKeyboardInput}"
+                                 PassEventArgsToCommand="True" />
+        </EventTriggerBehavior>
+        <EventTriggerBehavior EventName="Loaded">
+            <FocusControlAction TargetControl="TextBoxRename" />
+        </EventTriggerBehavior>
+    </Interaction.Behaviors>
+	<StackPanel Margin="20"
+				Spacing="10">
+		<TextBlock Text="Rename" FontWeight="DemiBold" Classes="h4"/>
+		<TextBox x:Name="TextBoxRename" Text="{Binding Renamed}"/>
+		<TextBlock Text="Unable to rename view to an existing name"
+				   IsVisible="{Binding !IsValid}"
+				   FontWeight="Bold"
+				   Classes="Accent h5"/>
+		<StackPanel HorizontalAlignment="Right" Orientation="Horizontal"
+					Spacing="5"
+					Margin="0 15 0 0">
+			<Button Command="{Binding Close}"
+					Content="CANCEL"
+					Classes="Rounded Discrete" />
+			<Button Command="{Binding ParseRename}"
+					Content="{materialIcons:MaterialIconTextExt Kind=Rename, Text=RENAME VIEW}"
+					Classes="Rounded Flat" />
+		</StackPanel>
+	</StackPanel>
+</UserControl>

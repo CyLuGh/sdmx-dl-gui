@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "SdmxDl.Browser": {
+      "commandName": "Project",
+      "commandLineArgs": "sdmx-dl:/ECB/ECB,EXR,1.0/M.USD+CHF.EUR.SP00.A"
+    }
+  }
+}

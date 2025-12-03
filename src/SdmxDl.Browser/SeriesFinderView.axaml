@@ -19,16 +19,17 @@
     </Interaction.Behaviors>
     <StackPanel Margin="20"
                 Spacing="10">
-        <TextBlock Text="Find series" Classes="h4"/>
+        <TextBlock Text="Find series" FontWeight="DemiBold" Classes="h4"/>
         
         <TextBox x:Name="TextBoxQuery" Text="{Binding Query}"
                  suki:TextBoxExtensions.AddDeleteButton="True"/>
+        
         
         <StackPanel HorizontalAlignment="Right" Orientation="Horizontal"
                     Spacing="5"
                     Margin="0 15 0 0">
             <Button Content="CANCEL" 
-                    Classes="Rounded" 
+                    Classes="Rounded Discrete" 
                     Command="{Binding Close}"
                     />
             <Button Content="{materialIcons:MaterialIconTextExt Kind=Download, Text=RETRIEVE SERIES}"

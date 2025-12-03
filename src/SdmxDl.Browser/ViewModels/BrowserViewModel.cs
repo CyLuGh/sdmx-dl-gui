@@ -1,9 +1,11 @@
 using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
 using Avalonia.Input;
+using DynamicData;
 using Jot;
 using LanguageExt;
 using LanguageExt.UnsafeValueAccess;
@@ -63,6 +65,13 @@ public partial class BrowserViewModel : BaseViewModel
     public RxCommand OpenBrowser { get; }
     public RxInteraction OpenBrowserInteraction { get; } = new(RxApp.MainThreadScheduler);
 
+    private readonly SourceCache<DataViewModel, string> _dataViewsCache = new(x => x.Title);
+    private ReadOnlyObservableCollection<DataViewModel>? _dataViews;
+    public ReadOnlyObservableCollection<DataViewModel> DataViews => _dataViews!;
+
+    [Reactive]
+    public partial DataViewModel? SelectedView { get; set; }
+
     /// <summary>
     /// Ask the server to provide its version.
     /// </summary>
@@ -73,15 +82,12 @@ public partial class BrowserViewModel : BaseViewModel
 
     public ReactiveCommand<Settings, RxUnit> HostServer { get; }
 
-    public RxCommand ShowResults { get; }
+    public ReactiveCommand<RxUnit, Option<DataViewModel>> ShowResults { get; }
     public ReactiveCommand<Seq<SeriesRequest>, RxUnit> SendResults { get; }
-    public Interaction<Seq<SeriesRequest>, RxUnit> ShowResultsInteraction { get; } =
-        new(RxApp.MainThreadScheduler);
 
     public ReactiveCommand<KeyEventArgs, RxUnit> CheckKeyTextBox { get; }
 
     public ReactiveCommand<string, RxUnit> Close { get; }
-    public Interaction<string, RxUnit> CloseInteraction { get; } = new(RxApp.MainThreadScheduler);
 
     private RxCommand UpdateApplication { get; }
     internal RxInteraction UpdateApplicationInteraction { get; } = new(RxApp.MainThreadScheduler);
@@ -129,12 +135,33 @@ public partial class BrowserViewModel : BaseViewModel
             dataFlowSelectorViewModel,
             dimensionsSelectorViewModel
         );
-        SendResults = ReactiveCommand.CreateFromObservable(
-            (Seq<SeriesRequest> t) => ShowResultsInteraction.Handle(t)
+        SendResults = ReactiveCommand.Create(
+            (Seq<SeriesRequest> requests) =>
+            {
+                foreach (var req in requests)
+                {
+                    //DataViewModel.BuildTitle(req);
+                    var dvm = CreateDataViewModel(req);
+                    _dataViewsCache.AddOrUpdate(dvm);
+                    SelectedView = dvm;
+                }
+            }
         );
         CheckKeyTextBox = CreateCommandCheckKeyTextBoxInput();
 
-        Close = ReactiveCommand.CreateFromObservable((string s) => CloseInteraction.Handle(s));
+        Close = ReactiveCommand.Create(
+            (string s) =>
+            {
+                _dataViewsCache.RemoveKey(s);
+            }
+        );
+
+        _dataViewsCache
+            .Connect()
+            .ObserveOn(RxApp.MainThreadScheduler)
+            .Bind(out _dataViews)
+            .DisposeMany()
+            .Subscribe();
 
         this.WhenActivated(disposables =>
         {
@@ -203,7 +230,7 @@ public partial class BrowserViewModel : BaseViewModel
         SelectionKey = string.Empty;
     }
 
-    private RxCommand CreateCommandShowResults(
+    private ReactiveCommand<RxUnit, Option<DataViewModel>> CreateCommandShowResults(
         SourceSelectorViewModel sourceSelectorViewModel,
         DataFlowSelectorViewModel dataFlowSelectorViewModel,
         DimensionsSelectorViewModel dimensionsSelectorViewModel
@@ -234,21 +261,54 @@ public partial class BrowserViewModel : BaseViewModel
             })
             .ObserveOn(RxApp.MainThreadScheduler);
 
-        var showResults = ReactiveCommand.CreateFromObservable(
+        var cmd = ReactiveCommand.Create(
             () =>
-                ShowResultsInteraction.Handle(
-                    Seq.create(
-                        new SeriesRequest(
-                            sourceSelectorViewModel.Selection.ValueUnsafe(),
-                            dataFlowSelectorViewModel.Selection.ValueUnsafe(),
-                            SelectionKey
-                        )
-                    )
-                ),
+            {
+                var inputs =
+                    from s in sourceSelectorViewModel.Selection
+                    from f in dataFlowSelectorViewModel.Selection
+                    select (s, f, SelectionKey);
+
+                return inputs
+                    .Some(t =>
+                    {
+                        var (source, flow, key) = t;
+                        return Option<DataViewModel>.Some(CreateDataViewModel(source, flow, key));
+                    })
+                    .None(() => Option<DataViewModel>.None);
+            },
             canShowResults
         );
 
-        return showResults;
+        cmd.Subscribe(o =>
+            o.IfSome(dvm =>
+            {
+                _dataViewsCache.AddOrUpdate(dvm);
+                SelectedView = dvm;
+            })
+        );
+
+        return cmd;
+    }
+
+    private static DataViewModel CreateDataViewModel(SeriesRequest request) =>
+        CreateDataViewModel(request.Source, request.Flow, (string)request.Key);
+
+    private static DataViewModel CreateDataViewModel(
+        SdmxWebSource source,
+        DataFlow flow,
+        string key
+    )
+    {
+        var title = DataViewModel.BuildTitle(source, flow, key);
+
+        var dvm = Locator.Current.GetService<DataViewModel>()!;
+        dvm.Source = source;
+        dvm.Flow = flow;
+        dvm.Key = key;
+        dvm.Title = title;
+
+        return dvm;
     }
 
     private void ManageBusyStatus(
@@ -498,5 +558,18 @@ public partial class BrowserViewModel : BaseViewModel
                 }
             }
         );
+    }
+
+    internal void UpdateTitle(string original, string renamed)
+    {
+        var lookup = _dataViewsCache.Lookup(original);
+
+        if (lookup.HasValue)
+        {
+            var dvm = lookup.Value;
+            _dataViewsCache.Remove(dvm);
+            dvm.Title = renamed;
+            _dataViewsCache.AddOrUpdate(dvm);
+        }
     }
 }

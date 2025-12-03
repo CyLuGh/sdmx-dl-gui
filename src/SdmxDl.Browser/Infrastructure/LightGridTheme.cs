@@ -3,9 +3,9 @@ using HierarchyGrid.Definitions;
 
 namespace SdmxDl.Browser.Infrastructure;
 
-public class GridTheme : ITheme
+public class LightGridTheme : ITheme
 {
-    public static GridTheme Instance { get; } = new();
+    public static LightGridTheme Instance { get; } = new();
 
     public ThemeColor BackgroundColor { get; } = new(255, 252, 252, 252);
 

@@ -14,7 +14,6 @@ using ReactiveUI.SourceGenerators;
 using SdmxDl.Browser.Models;
 using SdmxDl.Client;
 using SdmxDl.Client.Models;
-using Sdmxdl.Grpc;
 
 namespace SdmxDl.Browser.ViewModels;
 

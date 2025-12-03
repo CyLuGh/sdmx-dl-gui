@@ -29,12 +29,13 @@
         <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.10" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.10" />
         <PackageReference Include="Polly" Version="8.6.5" />
-        <PackageReference Include="ReactiveUI" Version="22.2.1" />
+        <PackageReference Include="ReactiveUI" Version="22.3.1" />
         <PackageReference Include="ReactiveUI.Avalonia" Version="11.3.8" />
         <PackageReference Include="ReactiveUI.SourceGenerators" Version="2.5.1">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="ScottPlot.Avalonia" Version="5.1.57" />
         <PackageReference Include="Splat.DependencyInjection.SourceGenerator" Version="1.2.3">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

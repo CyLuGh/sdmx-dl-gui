@@ -17,6 +17,9 @@ public partial class App : Application
         AvaloniaXamlLoader.Load(this);
     }
 
+    public static SukiColorTheme AppTheme =>
+        new("CustomTheme", Color.FromArgb(255, 0, 146, 182), Color.FromArgb(255, 226, 16, 115));
+
     public override void OnFrameworkInitializationCompleted()
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
@@ -24,15 +27,7 @@ public partial class App : Application
             var theme = SukiTheme
                 .GetInstance()
                 .ColorThemes.Find(c => c.DisplayName.Equals("CustomTheme"))
-                .Match(
-                    t => t,
-                    () =>
-                        new SukiColorTheme(
-                            "CustomTheme",
-                            Color.FromArgb(255, 0, 146, 182),
-                            Color.FromArgb(255, 226, 16, 115)
-                        )
-                );
+                .Match(t => t, () => AppTheme);
             SukiTheme.GetInstance().ChangeColorTheme(theme);
 
             desktop.MainWindow = new MainWindow();

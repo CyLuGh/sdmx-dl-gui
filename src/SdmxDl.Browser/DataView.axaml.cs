@@ -190,9 +190,8 @@ public partial class DataView : ReactiveUserControl<DataViewModel>
                                 coord,
                                 coord,
                                 view._linkedInteractivity.IsTimeSeries
-                                    ? $"{DateTime.FromOADate(coord.X):yyyy-MM-dd}: {coord.Y:N}"
-                                    : $"{coord.X:0}: {coord.Y:N}",
-                                Color.FromHex("f7f8fa").WithAlpha(180),
+                                    ? $"{series.LegendText} - {DateTime.FromOADate(coord.X):yyyy-MM-dd}: {coord.Y:N}"
+                                    : $"{series.LegendText} - {coord.X:0}: {coord.Y:N}",
                                 series.MarkerStyle.FillColor
                             );
 

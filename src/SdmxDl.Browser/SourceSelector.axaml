@@ -20,7 +20,8 @@
 					  IsChecked="{Binding IsSearching}"
 					  IsVisible="{Binding !IsSearching}"
 					  HorizontalAlignment="Stretch">
-			<TextBlock Text="{Binding Selection,Converter={StaticResource SelectorToggleTextConverter}}"/>
+			<TextBlock Text="{Binding Selection,Converter={StaticResource SelectorToggleTextConverter}}"
+					   TextTrimming="CharacterEllipsis" />
 			<Interaction.Behaviors>
 				<ButtonClickEventTriggerBehavior>
 					<FocusControlAction TargetControl="TextBoxSource" />
@@ -47,7 +48,8 @@
 		<Popup PlacementTarget="TextBoxSource"
 			   Placement="RightEdgeAlignedTop"
 			   PlacementConstraintAdjustment="FlipX"
-			   IsOpen="{Binding IsSearching}">
+			   IsLightDismissEnabled="True"
+			   IsOpen="{Binding IsSearching,Mode=TwoWay}">
 			<Interaction.Behaviors>
 				<EventTriggerBehavior EventName="KeyDown">
 					<InvokeCommandAction Command="{Binding CheckTextBoxInput}"
@@ -81,7 +83,9 @@
 								<ListBox.DataTemplates>
 									<DataTemplate DataType="models:SdmxWebSource">
 										<Grid>
-											<TextBlock Text="{Binding .,Converter={StaticResource SdmxWebSourceConverter}}" TextTrimming="CharacterEllipsis"/>
+											<TextBlock Text="{Binding .,Converter={StaticResource SdmxWebSourceConverter}}"
+													   TextTrimming="CharacterEllipsis"
+													   Foreground="{DynamicResource SukiText}"/>
 										</Grid>
 									</DataTemplate>
 								</ListBox.DataTemplates>

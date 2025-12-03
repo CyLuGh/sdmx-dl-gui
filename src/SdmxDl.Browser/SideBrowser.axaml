@@ -9,6 +9,7 @@
 			 xmlns:converters="using:SdmxDl.Browser.Infrastructure.Converters"
 			 mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="850"
 			 x:DataType="viewModels:BrowserViewModel"
+			 UseLayoutRounding="True"
 			 x:Class="SdmxDl.Browser.SideBrowser">
 	<UserControl.Resources>
 		<converters:RequestMultiConverter x:Key="RequestMultiConverter"/>
@@ -33,6 +34,7 @@
 					Padding="10"
 					VerticalAlignment="Top"
 					HorizontalAlignment="Left"
+					BoxShadow="{DynamicResource SukiPopupShadow}"
 					Grid.Row="0">
 				<TextBlock Text="Source"
 						   Foreground="{DynamicResource SukiStrongBackground}"
@@ -56,6 +58,7 @@
 					Padding="10"
 					VerticalAlignment="Top"
 					HorizontalAlignment="Left"
+					BoxShadow="{DynamicResource SukiPopupShadow}"
 					Grid.Row="1">
 				<TextBlock Text="Flow"
 						   Foreground="{DynamicResource SukiStrongBackground}"
@@ -80,6 +83,7 @@
 					Padding="10"
 					VerticalAlignment="Top"
 					HorizontalAlignment="Left"
+					BoxShadow="{DynamicResource SukiPopupShadow}"
 					Grid.Row="2">
 				<TextBlock Text="Dimensions"
 						   Foreground="{DynamicResource SukiStrongBackground}"
@@ -156,14 +160,13 @@
 				</Button>
 			</StackPanel >
 
-
-
 			<Border Background="{DynamicResource SukiPrimaryColor}"
 					IsVisible="{Binding Source={x:Static browser:ViewModelLocator.DataFlowSelectorViewModel}, Path=Selection.IsSome}"
 					CornerRadius="5"
 					Padding="10"
 					VerticalAlignment="Top"
 					HorizontalAlignment="Left"
+					BoxShadow="{DynamicResource SukiPopupShadow}"
 					Grid.Row="3">
 				<TextBlock Text="Key"
 						   Foreground="{DynamicResource SukiStrongBackground}"

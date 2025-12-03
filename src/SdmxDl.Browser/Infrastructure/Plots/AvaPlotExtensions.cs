@@ -49,6 +49,7 @@ internal static class AvaPlotExtensions
         plot.Add.Palette = new Microcharts();
 
         plot.Axes.Color(Colors.Gray);
+        plot.Grid.MajorLineColor = Colors.Gray.WithOpacity(.3);
     }
 
     internal static void HandleMouseLeft(
@@ -147,8 +148,7 @@ internal static class AvaPlotExtensions
             mouseLocation,
             mouseLocation,
             text,
-            Colors.Gray,
-            Colors.WhiteSmoke
+            points.Map(x => x.Scatter.Color).MixColors()
         );
 
         plot.Refresh();
@@ -229,9 +229,8 @@ internal static class AvaPlotExtensions
             mouseLocation,
             point.Coordinates,
             interactivity.IsTimeSeries
-                ? $"{DateTime.FromOADate(point.X):yyyy-MM-dd}: {point.Y:N}"
-                : $"{point.X:0}: {point.Y:N}",
-            Color.FromHex("f7f8fa").WithAlpha(180),
+                ? $"{scatter.LegendText} - {DateTime.FromOADate(point.X):yyyy-MM-dd}: {point.Y:N}"
+                : $"{scatter.LegendText} - {point.X:0}: {point.Y:N}",
             scatter.MarkerStyle.FillColor
         );
 
@@ -251,9 +250,8 @@ internal static class AvaPlotExtensions
 
         interactivity.Decorations.HighlightMarker.IsVisible = true;
         interactivity.Decorations.HighlightMarker.Location = coordinates;
-        interactivity.Decorations.HighlightMarker.MarkerStyle.OutlineColor = scatter
-            .MarkerStyle
-            .FillColor;
+        interactivity.Decorations.HighlightMarker.MarkerStyle.OutlineColor =
+            scatter.MarkerStyle.FillColor.GetMatchingForegroundColor();
         interactivity.Decorations.HighlightMarker.MarkerStyle.FillColor = scatter
             .MarkerStyle
             .FillColor;
@@ -265,10 +263,12 @@ internal static class AvaPlotExtensions
         Coordinates mouseLocation,
         Coordinates pointLocation,
         string text,
-        Color backgroundColor,
-        Option<Color> fontColor
+        Color backgroundColor
     )
     {
+        if (interactivity.Decorations.HighlightText is null)
+            return;
+
         // Change X and Y offset compare to mouse position
         var midX =
             plot.Plot.Axes.Bottom.Min
@@ -315,11 +315,12 @@ internal static class AvaPlotExtensions
 
         interactivity.Decorations.HighlightText.LabelText = text;
 
-        interactivity.Decorations.HighlightText.LabelFontColor = fontColor.Match(
-            c => c,
-            () => Colors.Gray
+        interactivity.Decorations.HighlightText.LabelFontColor =
+            backgroundColor.GetMatchingForegroundColor();
+
+        interactivity.Decorations.HighlightText.LabelBackgroundColor = backgroundColor.WithOpacity(
+            .8
         );
-        interactivity.Decorations.HighlightText.LabelBackgroundColor = backgroundColor;
         interactivity.Decorations.HighlightText.LabelPadding = 5;
     }
 
@@ -355,5 +356,26 @@ internal static class AvaPlotExtensions
         avaPlot.Refresh();
 
         return new(scatters.ToSeq(), deco, interactivityMode, true);
+    }
+
+    public static Color GetMatchingForegroundColor(this Color c) =>
+        c.IsBright() ? Colors.Black : Colors.White;
+
+    public static bool IsBright(this Color c) => c.PerceivedBrightness() > 130;
+
+    public static int PerceivedBrightness(this Color c) =>
+        (int)Math.Sqrt((c.R * c.R * .299) + (c.G * c.G * .587) + (c.B * c.B * .114));
+
+    public static Color MixColors(this IEnumerable<Color> colors)
+    {
+        var seq = colors.ToSeq();
+        if (seq.IsEmpty)
+            return Colors.Transparent;
+
+        Color result = seq[0];
+        for (int i = 1; i < seq.Length; i++)
+            result = result.MixedWith(seq[i], .5);
+
+        return result;
     }
 }

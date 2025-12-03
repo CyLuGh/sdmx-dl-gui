@@ -32,8 +32,9 @@
 
 	<Grid RowDefinitions="*,Auto" Margin="5">
 		<Image Source="{SvgImage /assets/SDMX_logo.svg}"
-			   MaxWidth="800"
+			   MaxWidth="500"
 			   IsVisible="{Binding !DataViews.Count}"
+			   VerticalAlignment="Center"
 			   Grid.Row="0" />
 
 		<TabControl ItemsSource="{Binding DataViews}"
@@ -93,15 +94,12 @@
 					VerticalAlignment="Bottom"
 					Orientation="Horizontal"
 					Grid.Row="1">
-			<TextBlock
-			Text="{Binding Path=Status, Converter={StaticResource BrowserStatusConverter},FallbackValue=STATUS}"
-			Classes="Accent"
-			IsVisible="{Binding Path=!ServerIsRunning}" />
+			<TextBlock Classes="Accent"
+					   IsVisible="{Binding Path=!ServerIsRunning}" />
 
-			<TextBlock
-			Text="{Binding Path=Status, Converter={StaticResource BrowserStatusConverter},FallbackValue=STATUS}"
-			Classes="Primary"
-			IsVisible="{Binding Path=ServerIsRunning}" />
+			<TextBlock Text="{Binding Path=Status, Converter={StaticResource BrowserStatusConverter},FallbackValue=STATUS}"
+					   Classes="Primary"
+					   IsVisible="{Binding Path=ServerIsRunning}" />
 
 			<TextBlock Text="{Binding Version}"
 					   FontStretch="Condensed"

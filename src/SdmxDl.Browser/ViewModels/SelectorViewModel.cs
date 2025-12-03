@@ -119,6 +119,44 @@ public abstract partial class SelectorViewModel<TData, TInput> : CancellableBase
         );
     }
 
+    private void TryValidate()
+    {
+        if (CurrentSelection is not null)
+            Observable.Return(RxUnit.Default).InvokeCommand(ValidateSelection);
+    }
+
+    private void TryUpwardSelection()
+    {
+        if (CurrentSources.IsEmpty)
+            return;
+        if (CurrentSelection is null)
+        {
+            CurrentSelection = CurrentSources[^1];
+        }
+        else
+        {
+            var position = CurrentSources.IndexOf(CurrentSelection!);
+            if (position > 0)
+                CurrentSelection = CurrentSources[position - 1];
+        }
+    }
+
+    private void TryDownwardSelection()
+    {
+        if (CurrentSources.IsEmpty)
+            return;
+        if (CurrentSelection is null)
+        {
+            CurrentSelection = CurrentSources[0];
+        }
+        else
+        {
+            var position = CurrentSources.IndexOf(CurrentSelection!);
+            if (position < CurrentSources.Length - 1)
+                CurrentSelection = CurrentSources[position + 1];
+        }
+    }
+
     private ReactiveCommand<KeyEventArgs, RxUnit> CreateCommandCheckTextBoxInput()
     {
         return ReactiveCommand.Create(
@@ -127,8 +165,7 @@ public abstract partial class SelectorViewModel<TData, TInput> : CancellableBase
                 switch (args.Key)
                 {
                     case Key.Return:
-                        if (CurrentSelection is not null)
-                            Observable.Return(RxUnit.Default).InvokeCommand(ValidateSelection);
+                        TryValidate();
                         break;
 
                     case Key.Escape:
@@ -136,35 +173,11 @@ public abstract partial class SelectorViewModel<TData, TInput> : CancellableBase
                         break;
 
                     case Key.Up:
-                        if (CurrentSources.IsEmpty)
-                            return;
-                        if (CurrentSelection is null)
-                        {
-                            CurrentSelection = CurrentSources[^1];
-                        }
-                        else
-                        {
-                            var position = CurrentSources.IndexOf((TData)CurrentSelection!);
-                            if (position > 0)
-                                CurrentSelection = CurrentSources[position - 1];
-                        }
-
+                        TryUpwardSelection();
                         break;
 
                     case Key.Down:
-                        if (CurrentSources.IsEmpty)
-                            return;
-                        if (CurrentSelection is null)
-                        {
-                            CurrentSelection = CurrentSources[0];
-                        }
-                        else
-                        {
-                            var position = CurrentSources.IndexOf((TData)CurrentSelection!);
-                            if (position < CurrentSources.Length - 1)
-                                CurrentSelection = CurrentSources[position + 1];
-                        }
-
+                        TryDownwardSelection();
                         break;
                 }
             }

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
+using Avalonia.Input;
 using LanguageExt;
 using ReactiveUI;
 using ReactiveUI.SourceGenerators;
@@ -19,10 +20,27 @@ public partial class RenameViewModel : BaseViewModel
     [ObservableAsProperty(ReadOnly = false)]
     private bool _isValid;
 
+    public ReactiveCommand<KeyEventArgs, RxUnit> CheckKeyboardInput { get; }
+
     public RenameViewModel(BrowserViewModel browserViewModel)
     {
         Close = CreateCommandClose();
         ParseRename = CreateCommandParseRename(browserViewModel, Close);
+
+        CheckKeyboardInput = ReactiveCommand.CreateRunInBackground(
+            (KeyEventArgs args) =>
+            {
+                switch (args.Key)
+                {
+                    case Key.Enter:
+                        Observable.Return(RxUnit.Default).InvokeCommand(ParseRename);
+                        break;
+                    case Key.Escape:
+                        Observable.Return(RxUnit.Default).InvokeCommand(Close);
+                        break;
+                }
+            }
+        );
 
         this.WhenActivated(disposables =>
         {

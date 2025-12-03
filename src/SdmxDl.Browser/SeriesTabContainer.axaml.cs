@@ -25,6 +25,33 @@ public partial class SeriesTabContainer : ReactiveUserControl<BrowserViewModel>
     {
         InitializeComponent();
 
+        this.WhenAnyValue(x => x.ViewModel)
+            .WhereNotNull()
+            .Subscribe(vm =>
+            {
+                vm.UpdateApplicationInteraction.RegisterHandler(async ctx =>
+                {
+                    var updateUrl = vm.Configuration.GetValue("UpdateUrl", string.Empty);
+
+                    if (!string.IsNullOrWhiteSpace(updateUrl))
+                    {
+                        var mgr = new UpdateManager(updateUrl);
+                        if (mgr.IsInstalled)
+                        {
+                            var info = await mgr.CheckForUpdatesAsync();
+
+                            if (info is not null)
+                            {
+                                await mgr.DownloadUpdatesAsync(info);
+                                mgr.ApplyUpdatesAndRestart(info);
+                            }
+                        }
+                    }
+
+                    ctx.SetOutput(RxUnit.Default);
+                });
+            });
+
         this.WhenActivated(disposables =>
         {
             this.WhenAnyValue(x => x.ViewModel)
@@ -89,28 +116,6 @@ public partial class SeriesTabContainer : ReactiveUserControl<BrowserViewModel>
                     .Dismiss()
                     .ByClicking()
                     .Queue();
-
-                ctx.SetOutput(RxUnit.Default);
-            })
-            .DisposeWith(disposables);
-
-        viewModel
-            .UpdateApplicationInteraction.RegisterHandler(async ctx =>
-            {
-                var mgr = new UpdateManager(
-                    viewModel.Configuration.GetValue("UpdateUrl", string.Empty)
-                );
-
-                if (mgr.IsInstalled)
-                {
-                    var info = await mgr.CheckForUpdatesAsync();
-
-                    if (info is not null)
-                    {
-                        await mgr.DownloadUpdatesAsync(info);
-                        mgr.ApplyUpdatesAndRestart(info);
-                    }
-                }
 
                 ctx.SetOutput(RxUnit.Default);
             })

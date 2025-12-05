@@ -215,7 +215,7 @@ public partial class BrowserViewModel : BaseViewModel
                 .Select(t => t.First)
                 .Select(async s =>
                 {
-                    var elements = await SeriesFinderViewModel.ParseQueriesImpl(s, clientFactory);
+                    var elements = await SeriesFinderViewModel.DoParseQueries(s, clientFactory);
                     return !elements.IsEmpty
                         ? Observable.Return(elements)
                         : Observable.Empty<Seq<SeriesRequest>>();

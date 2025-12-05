@@ -524,7 +524,7 @@ public partial class DataViewModel : BaseViewModel
         );
 
         _chartSeriesHelper = cmd.Merge(addRequest)
-            .Scan(Seq<ChartSeries>.Empty, (o, p) => o.Append(p).Distinct().Strict())
+            .Scan(Seq<ChartSeries>.Empty, (o, p) => o.Append(p))
             .ToProperty(this, x => x.ChartSeries, scheduler: RxApp.MainThreadScheduler);
 
         this.WhenAnyValue(x => x.DataSet)

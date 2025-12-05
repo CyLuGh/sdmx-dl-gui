@@ -1,41 +1,59 @@
 <UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
-             xmlns:viewModels="clr-namespace:SdmxDl.Browser.ViewModels"
-             xmlns:suki="https://github.com/kikipoulet/SukiUI"
-             MinWidth="500" MaxWidth="850"
-             x:Class="SdmxDl.Browser.SeriesFinderView"
-             x:DataType="viewModels:SeriesFinderViewModel">
-    <Interaction.Behaviors>
-        <EventTriggerBehavior EventName="KeyDown">
-            <InvokeCommandAction Command="{Binding CheckKeyboardInput}"
-                                 PassEventArgsToCommand="True" />
-        </EventTriggerBehavior>
-        <EventTriggerBehavior EventName="Loaded">
-            <FocusControlAction TargetControl="TextBoxQuery" />
-        </EventTriggerBehavior>
-    </Interaction.Behaviors>
-    <StackPanel Margin="20"
-                Spacing="10">
-        <TextBlock Text="Find series" FontWeight="DemiBold" Classes="h4"/>
-        
-        <TextBox x:Name="TextBoxQuery" Text="{Binding Query}"
-                 suki:TextBoxExtensions.AddDeleteButton="True"/>
-        
-        <StackPanel HorizontalAlignment="Right" Orientation="Horizontal"
-                    Spacing="5"
-                    Margin="0 15 0 0">
-            <Button Content="CANCEL" 
-                    Classes="Rounded Discrete" 
-                    Command="{Binding Close}"
-                    />
-            <Button Content="{materialIcons:MaterialIconTextExt Kind=Download, Text=RETRIEVE SERIES}"
-                    Command="{Binding ParseQuery}"
-                    CommandParameter="{Binding Query}"
-                    Classes="Rounded Flat"
-                     />
-        </StackPanel>
-    </StackPanel>
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:local="using:SdmxDl.Browser"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
+			 xmlns:viewModels="clr-namespace:SdmxDl.Browser.ViewModels"
+			 xmlns:suki="https://github.com/kikipoulet/SukiUI"
+			 Width="750"
+			 x:Class="SdmxDl.Browser.SeriesFinderView"
+			 x:DataType="viewModels:SeriesFinderViewModel">
+	<Interaction.Behaviors>
+		<EventTriggerBehavior EventName="KeyDown">
+			<InvokeCommandAction Command="{Binding CheckKeyboardInput}"
+								 PassEventArgsToCommand="True" />
+		</EventTriggerBehavior>
+		<EventTriggerBehavior EventName="Loaded">
+			<FocusControlAction TargetControl="TextBoxQuery" />
+		</EventTriggerBehavior>
+	</Interaction.Behaviors>
+	<StackPanel Margin="20"
+				Spacing="10">
+		<TextBlock Text="Find series" FontWeight="DemiBold" Classes="h4"/>
+
+		<TextBox x:Name="TextBoxQuery" Text="{Binding Query}"
+				 suki:TextBoxExtensions.AddDeleteButton="True"/>
+
+		<UniformGrid Rows="1"
+					 IsVisible="{Binding Source={x:Static local:ViewModelLocator.BrowserViewModel},Path=!!DataViews.Count}">
+			<RadioButton Content="Open in new view"
+						 IsChecked="{Binding !AddToExistingView}"/>
+			<RadioButton Content="Add to existing view"
+						 IsChecked="{Binding AddToExistingView}"/>
+			<ComboBox IsEnabled="{Binding AddToExistingView}"
+					  ItemsSource="{Binding Source={x:Static local:ViewModelLocator.BrowserViewModel},Path=DataViews}"
+					  SelectedItem="{Binding SelectedDataViewModel}" >
+				<ComboBox.ItemTemplate>
+					<DataTemplate x:DataType="viewModels:DataViewModel">
+						<TextBlock Text="{Binding Title}"/>
+					</DataTemplate>
+				</ComboBox.ItemTemplate>
+			</ComboBox>
+		</UniformGrid>
+
+		<StackPanel HorizontalAlignment="Right" Orientation="Horizontal"
+					Spacing="5"
+					Margin="0 15 0 0">
+			<Button Content="CANCEL"
+					Classes="Rounded Discrete"
+					Command="{Binding Close}"
+					/>
+			<Button Content="{materialIcons:MaterialIconTextExt Kind=Download, Text=RETRIEVE SERIES}"
+					Command="{Binding ParseQuery}"
+					CommandParameter="{Binding Query}"
+					Classes="Rounded Flat"
+					/>
+		</StackPanel>
+	</StackPanel>
 </UserControl>

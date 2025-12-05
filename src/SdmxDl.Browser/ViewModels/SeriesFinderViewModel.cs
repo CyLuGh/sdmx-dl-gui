@@ -1,4 +1,5 @@
 using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Disposables;
@@ -7,6 +8,7 @@ using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Input;
+using DynamicData.Aggregation;
 using LanguageExt;
 using Polly;
 using ReactiveUI;
@@ -21,6 +23,12 @@ public partial class SeriesFinderViewModel : BaseViewModel
 {
     [Reactive]
     public partial string? Query { get; set; }
+
+    [Reactive]
+    public partial bool AddToExistingView { get; set; }
+
+    [Reactive]
+    public partial DataViewModel? SelectedDataViewModel { get; set; }
 
     public ReactiveCommand<string?, Seq<SeriesRequest>> ParseQuery { get; }
     public RxCommand Close { get; }
@@ -60,15 +68,29 @@ public partial class SeriesFinderViewModel : BaseViewModel
                 .InvokeCommand(Close)
                 .DisposeWith(disposables);
 
-            ParseQuery
-                .Select(seq =>
-                    !seq.IsEmpty ? Observable.Return(seq) : Observable.Empty<Seq<SeriesRequest>>()
-                )
-                .Switch()
+            var queries = ParseQuery.Where(seq => !seq.IsEmpty);
+
+            this.WhenAnyValue(x => x.SelectedDataViewModel)
+                .WhereNotNull()
+                .Subscribe(vm =>
+                {
+                    queries
+                        .Where(_ => AddToExistingView)
+                        .Select(seq => Option<SeriesRequest>.Some(seq[0]))
+                        .InvokeCommand(vm, x => x.AddRequest)
+                        .DisposeWith(disposables);
+                })
+                .DisposeWith(disposables);
+
+            queries
+                .Where(_ => !AddToExistingView)
                 .InvokeCommand(browserViewModel, x => x.SendResults)
                 .DisposeWith(disposables);
         });
     }
+
+    private static bool CheckTarget(bool useTarget, DataViewModel? target) =>
+        !useTarget || target is not null;
 
     private ReactiveCommand<string?, Seq<SeriesRequest>> CreateCommandParseQuery(
         ClientFactory clientFactory
@@ -76,10 +98,16 @@ public partial class SeriesFinderViewModel : BaseViewModel
     {
         var canParse = this.WhenAnyValue(x => x.Query)
             .Select(CheckInput)
+            .CombineLatest(
+                this.WhenAnyValue(x => x.AddToExistingView)
+                    .CombineLatest(this.WhenAnyValue(x => x.SelectedDataViewModel))
+                    .Select(t => CheckTarget(t.First, t.Second))
+            )
+            .Select(t => t.First && t.Second)
             .ObserveOn(RxApp.MainThreadScheduler);
 
         var cmd = ReactiveCommand.CreateFromTask(
-            (string? s) => ParseQueriesImpl(s, clientFactory),
+            (string? s) => DoParseQueries(s, clientFactory),
             canParse
         );
 
@@ -112,7 +140,7 @@ public partial class SeriesFinderViewModel : BaseViewModel
             : input.Split(' ').ToSeq();
     }
 
-    internal static async Task<Seq<SeriesRequest>> ParseQueriesImpl(
+    internal static async Task<Seq<SeriesRequest>> DoParseQueries(
         string? input,
         ClientFactory clientFactory
     )
@@ -120,16 +148,17 @@ public partial class SeriesFinderViewModel : BaseViewModel
         if (!CheckInput(input))
             return Seq<SeriesRequest>.Empty;
 
-        return (
-            await Task.WhenAll(
-                SplitInput(input!).Select(part => ParseQueryImpl(part, clientFactory))
-            )
+        var requests = (
+            await Task.WhenAll(SplitInput(input!).Select(part => DoParseQuery(part, clientFactory)))
         )
             .ToSeq()
-            .Somes();
+            .Somes()
+            .Strict();
+
+        return requests;
     }
 
-    private static async Task<Option<SeriesRequest>> ParseQueryImpl(
+    private static async Task<Option<SeriesRequest>> DoParseQuery(
         string? input,
         ClientFactory clientFactory
     )

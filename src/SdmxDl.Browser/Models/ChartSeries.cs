@@ -68,8 +68,6 @@ public sealed record ChartSeries
 
     public override int GetHashCode() => Key.GetHashCode();
 
-    public bool Equals(ChartSeries? cs) => cs?.Key?.Equals(Key) == true;
-
     public ChartSeries(Series series)
     {
         Key = series.Key;

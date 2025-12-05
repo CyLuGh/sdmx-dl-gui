@@ -8,10 +8,10 @@
              x:Class="SdmxDl.Browser.PositionedDimensionView"
              x:DataType="viewModels:PositionedDimensionViewModel">
     <Grid ColumnDefinitions="25,*,Auto,Auto">
-        <TextBlock Text="{Binding CurrentPosition, FallbackValue=0}"
+        <!--<TextBlock Text="{Binding CurrentPosition, FallbackValue=0}"
                    VerticalAlignment="Center"
                    HorizontalAlignment="Center"
-                   Margin="5 0"/>
+                   Margin="5 0"/>-->
         <TextBlock Text="{Binding Name,FallbackValue=A_dimension_name}"
                    TextTrimming="CharacterEllipsis"
                    VerticalAlignment="Center"

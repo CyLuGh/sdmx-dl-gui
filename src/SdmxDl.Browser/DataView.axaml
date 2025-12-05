@@ -2,16 +2,22 @@
 			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:models="using:SdmxDl.Browser.Models"
 			 xmlns:suki="https://github.com/kikipoulet/SukiUI"
 			 xmlns:viewModels="clr-namespace:SdmxDl.Browser.ViewModels"
 			 xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.Avalonia;assembly=LiveChartsCore.SkiaSharpView.Avalonia"
 			 xmlns:scottPlot="clr-namespace:ScottPlot.Avalonia;assembly=ScottPlot.Avalonia"
 			 xmlns:materialIcons="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
 			 xmlns:hierarchyGrid="using:HierarchyGrid.Avalonia"
+			 xmlns:infrastructure="using:SdmxDl.Browser.Infrastructure"
 			 xmlns:browser="clr-namespace:SdmxDl.Browser"
+			 xmlns:converters="using:SdmxDl.Browser.Infrastructure.Converters"
 			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 			 x:Class="SdmxDl.Browser.DataView"
 			 x:DataType="viewModels:DataViewModel">
+	<UserControl.Resources>
+		<converters:SeriesRequestMenuItemConverter x:Key="SeriesRequestMenuItemConverter"/>
+	</UserControl.Resources>
 	<Grid Margin="0 5 0 0">
 		<suki:GlassCard IsVisible="{Binding ChartSeries.Count,FallbackValue=True}"
 						IsAnimated="False"
@@ -70,49 +76,52 @@
 						</Grid>
 					</UniformGrid>
 
-					<Menu VerticalAlignment="Top"
+
+					<Menu x:Name="CopyMenu"
+						  VerticalAlignment="Top"
 						  HorizontalAlignment="Right">
-						<MenuItem Header="{materialIcons:MaterialIconExt Kind=Clipboard}">
+						<MenuItem Header="{materialIcons:MaterialIconExt Kind=Clipboard}"
+								  IsVisible="{Binding !HasMultipleRequests}">
 							<MenuItem Command="{Binding Path=CopyToClipboard}"
-									  CommandParameter="{Binding Path=Uri}"
+									  CommandParameter="{Binding Path=SeriesRequest.Uri}"
 									  ToolTip.Tip="Copy URI to clipboard">
 								<MenuItem.Header>
 									<StackPanel Orientation="Horizontal">
 										<TextBlock Text="SDMX-DL URI" />
-										<TextBlock Text="{Binding Uri}" Margin="5 0 0 0" FontWeight="Light"
+										<TextBlock Text="{Binding SeriesRequest.Uri}" Margin="5 0 0 0" FontWeight="Light"
 												   FontStretch="Condensed" />
 									</StackPanel>
 								</MenuItem.Header>
 							</MenuItem>
 							<MenuItem Command="{Binding CopyToClipboard}"
-									  CommandParameter="{Binding SourceId}"
+									  CommandParameter="{Binding SeriesRequest.SourceId}"
 									  ToolTip.Tip="Copy source to clipboard">
 								<MenuItem.Header>
 									<StackPanel Orientation="Horizontal">
 										<TextBlock Text="Source" />
-										<TextBlock Text="{Binding SourceId}" Margin="5 0 0 0" FontWeight="Light"
+										<TextBlock Text="{Binding SeriesRequest.SourceId}" Margin="5 0 0 0" FontWeight="Light"
 												   FontStretch="Condensed" />
 									</StackPanel>
 								</MenuItem.Header>
 							</MenuItem>
 							<MenuItem Command="{Binding CopyToClipboard}"
-									  CommandParameter="{Binding FlowRef}"
+									  CommandParameter="{Binding SeriesRequest.FlowRef}"
 									  ToolTip.Tip="Copy flow to clipboard">
 								<MenuItem.Header>
 									<StackPanel Orientation="Horizontal">
 										<TextBlock Text="Flow" />
-										<TextBlock Text="{Binding FlowRef}" Margin="5 0 0 0" FontWeight="Light"
+										<TextBlock Text="{Binding SeriesRequest.FlowRef}" Margin="5 0 0 0" FontWeight="Light"
 												   FontStretch="Condensed" />
 									</StackPanel>
 								</MenuItem.Header>
 							</MenuItem>
 							<MenuItem Command="{Binding CopyToClipboard}"
-									  CommandParameter="{Binding FullKey}"
+									  CommandParameter="{Binding SeriesRequest.FullKey}"
 									  ToolTip.Tip="Copy key to clipboard">
 								<MenuItem.Header>
 									<StackPanel Orientation="Horizontal">
 										<TextBlock Text="Key" />
-										<TextBlock Text="{Binding FullKey}" Margin="5 0 0 0" FontWeight="Light"
+										<TextBlock Text="{Binding SeriesRequest.FullKey}" Margin="5 0 0 0" FontWeight="Light"
 												   FontStretch="Condensed" />
 									</StackPanel>
 								</MenuItem.Header>
@@ -130,35 +139,57 @@
 							</MenuItem>
 							<Separator />
 							<MenuItem Command="{Binding CopyToClipboard}"
-									  CommandParameter="{Binding FetchData}">
+									  CommandParameter="{Binding SeriesRequest.FetchData}">
 								<MenuItem.Header>
 									<StackPanel Orientation="Horizontal">
 										<TextBlock Text="Fetch data command" />
-										<TextBlock Text="{Binding FetchData}" Margin="5 0 0 0" FontWeight="Light"
+										<TextBlock Text="{Binding SeriesRequest.FetchData}" Margin="5 0 0 0" FontWeight="Light"
 												   FontStretch="Condensed" />
 									</StackPanel>
 								</MenuItem.Header>
 							</MenuItem>
 							<MenuItem Command="{Binding CopyToClipboard}"
-									  CommandParameter="{Binding FetchMeta}">
+									  CommandParameter="{Binding SeriesRequest.FetchMeta}">
 								<MenuItem.Header>
 									<StackPanel Orientation="Horizontal">
 										<TextBlock Text="Fetch meta command" />
-										<TextBlock Text="{Binding FetchMeta}" Margin="5 0 0 0" FontWeight="Light"
+										<TextBlock Text="{Binding SeriesRequest.FetchMeta}" Margin="5 0 0 0" FontWeight="Light"
 												   FontStretch="Condensed" />
 									</StackPanel>
 								</MenuItem.Header>
 							</MenuItem>
 							<MenuItem Command="{Binding CopyToClipboard}"
-									  CommandParameter="{Binding FetchKeys}">
+									  CommandParameter="{Binding SeriesRequest.FetchKeys}">
 								<MenuItem.Header>
 									<StackPanel Orientation="Horizontal">
 										<TextBlock Text="Fetch keys command" />
-										<TextBlock Text="{Binding FetchKeys}" Margin="5 0 0 0" FontWeight="Light"
+										<TextBlock Text="{Binding SeriesRequest.FetchKeys}" Margin="5 0 0 0" FontWeight="Light"
 												   FontStretch="Condensed" />
 									</StackPanel>
 								</MenuItem.Header>
 							</MenuItem>
+						</MenuItem>
+						<MenuItem Header="{materialIcons:MaterialIconExt Kind=Clipboard}"
+								  ItemsSource="{Binding Requests}"
+								  IsVisible="{Binding HasMultipleRequests}">
+							<MenuItem.Styles>
+								<Style Selector="MenuItem"
+									   x:DataType="infrastructure:SeriesRequestRootMenuItem">
+									<Setter Property="Header" Value="{Binding Title}"/>
+									<Setter Property="ItemsSource" Value="{Binding Commands}"/>
+									<Setter Property="Command" Value="{Binding CopyCommand}"/>
+									<Setter Property="CommandParameter" Value="{Binding CopyContent}"/>
+								</Style>
+							</MenuItem.Styles>
+							<!--<MenuItem.ItemContainerTheme>
+							<ControlTheme TargetType="MenuItem" BasedOn="{StaticResource {x:Type MenuItem}}"
+							x:DataType="infrastructure:SeriesRequestRootMenuItem" >
+							<Setter Property="Header" Value="{Binding Title}"/>
+							<Setter Property="ItemsSource" Value="{Binding Commands}"/>
+							<Setter Property="Command" Value="{Binding CopyCommand}"/>
+							<Setter Property="CommandParameter" Value="{Binding CopyContent}"/>
+							</ControlTheme>
+							</MenuItem.ItemContainerTheme>-->
 						</MenuItem>
 					</Menu>
 				</StackPanel>

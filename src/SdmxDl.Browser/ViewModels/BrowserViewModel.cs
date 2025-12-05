@@ -300,13 +300,10 @@ public partial class BrowserViewModel : BaseViewModel
         string key
     )
     {
-        var title = DataViewModel.BuildTitle(source, flow, key);
-
         var dvm = Locator.Current.GetService<DataViewModel>()!;
-        dvm.Source = source;
-        dvm.Flow = flow;
-        dvm.Key = key;
-        dvm.Title = title;
+        var sri = new SeriesRequest(source, flow, (KeyIdentifier)key);
+        dvm.SeriesRequest = sri;
+        dvm.Title = sri.Title;
 
         return dvm;
     }

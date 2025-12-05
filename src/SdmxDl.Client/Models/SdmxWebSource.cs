@@ -9,6 +9,14 @@ namespace SdmxDl.Client.Models;
 /// </summary>
 public readonly record struct SdmxWebSource
 {
+    public static readonly SdmxWebSource None =
+        new()
+        {
+            Id = "None",
+            Driver = "None",
+            Endpoint = "None"
+        };
+
     public required string Id { get; init; }
     public HashMap<string, string> Names { get; init; }
     public required string Driver { get; init; }

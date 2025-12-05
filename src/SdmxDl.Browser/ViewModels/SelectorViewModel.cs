@@ -99,8 +99,8 @@ public abstract partial class SelectorViewModel<TData, TInput> : CancellableBase
         _allDataHelper = command.ToProperty(
             this,
             x => x.AllData,
-            scheduler: RxApp.MainThreadScheduler,
-            initialValue: Seq<TData>.Empty
+            initialValue: Seq<TData>.Empty,
+            scheduler: RxApp.MainThreadScheduler
         );
         return command;
     }

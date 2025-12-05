@@ -8,6 +8,15 @@ namespace SdmxDl.Client.Models;
 /// </summary>
 public readonly record struct DataFlow
 {
+    public static readonly DataFlow None =
+        new()
+        {
+            Ref = "None",
+            StructureRef = "None",
+            Name = "None",
+            Description = "None"
+        };
+
     public required string Ref { get; init; }
     public required string StructureRef { get; init; }
     public required string Name { get; init; }

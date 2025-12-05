@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Disposables.Fluent;
 using System.Reactive.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using DynamicData;
 using HierarchyGrid.Definitions;
 using LanguageExt;
 using Polly;
@@ -23,13 +26,7 @@ public partial class DataViewModel : BaseViewModel
     public partial string Title { get; set; } = string.Empty;
 
     [Reactive]
-    public partial Option<SdmxWebSource> Source { get; set; }
-
-    [Reactive]
-    public partial Option<DataFlow> Flow { get; set; }
-
-    [Reactive]
-    public partial Option<string> Key { get; set; }
+    public partial SeriesRequest SeriesRequest { get; set; } = SeriesRequest.Empty;
 
     [Reactive]
     public partial DateTimeOffset StartDate { get; set; }
@@ -70,6 +67,15 @@ public partial class DataViewModel : BaseViewModel
     [ObservableAsProperty(ReadOnly = false)]
     private HierarchyDefinitions? _linkedHierarchyDefinitions;
 
+    private readonly SourceCache<SeriesRequest, KeyRequest> _requestsCache =
+        new(sr => (KeyRequest)sr);
+
+    private ReadOnlyObservableCollection<SeriesRequestRootMenuItem>? _requests;
+    public ReadOnlyObservableCollection<SeriesRequestRootMenuItem> Requests => _requests!;
+
+    [ObservableAsProperty]
+    private bool _hasMultipleRequests;
+
     public HierarchyGridViewModel StandAloneHierarchyGridViewModel { get; } =
         new()
         {
@@ -86,22 +92,7 @@ public partial class DataViewModel : BaseViewModel
             DefaultHeaderWidth = 250d,
         };
 
-    public static string BuildTitle(SdmxWebSource source, DataFlow flow, string key) =>
-        $"{source.Id} {flow.Ref} {key}";
-
-    public string Uri => BuildUri(Source, Flow, Key).Match(s => s, () => string.Empty);
-    public string SourceId => Source.Match(s => s.Id, () => string.Empty);
-    public string FlowRef => Flow.Match(s => s.Ref, () => string.Empty);
-    public string FullKey => Key.Match(s => s, () => string.Empty);
-
-    public string FetchData => $"sdmx-dl fetch data \"{SourceId}\" \"{FlowRef}\" \"{FullKey}\"";
-    public string FetchMeta => $"sdmx-dl fetch meta \"{SourceId}\" \"{FlowRef}\" \"{FullKey}\"";
-    public string FetchKeys => $"sdmx-dl fetch keys \"{SourceId}\" \"{FlowRef}\" \"{FullKey}\"";
-
-    private ReactiveCommand<
-        (SdmxWebSource, DataFlow, string),
-        Option<DataSet>
-    > RetrieveData { get; }
+    private ReactiveCommand<SeriesRequest, Option<DataSet>> RetrieveData { get; }
     private ReactiveCommand<DataSet, Seq<ChartSeries>> TransformData { get; }
     private ReactiveCommand<
         (Seq<ChartSeries>, DateTimeOffset, DateTimeOffset),
@@ -169,6 +160,20 @@ public partial class DataViewModel : BaseViewModel
         _isSplitViewHelper = settingsViewModel
             .WhenAnyValue(x => x.IsSplitView)
             .ToProperty(this, x => x.IsSplitView, scheduler: RxApp.MainThreadScheduler);
+
+        _requestsCache
+            .Connect()
+            .ObserveOn(RxApp.MainThreadScheduler)
+            .Transform(r => new SeriesRequestRootMenuItem(r) { CopyToClipboard = CopyToClipboard })
+            .Bind(out _requests)
+            .DisposeMany()
+            .Subscribe();
+
+        _hasMultipleRequestsHelper = _requestsCache
+            .Connect()
+            .DisposeMany()
+            .Select(_ => _requestsCache.Count > 1)
+            .ToProperty(this, x => x.HasMultipleRequests);
 
         this.WhenAnyValue(x => x.ChartSeries)
             .Where(x => !x.IsEmpty)
@@ -297,7 +302,11 @@ public partial class DataViewModel : BaseViewModel
             async (Option<SeriesRequest> oReq) =>
             {
                 return await oReq.MatchAsync(
-                        async req => await DoRetrieveDataSet(req, clientFactory, pipeline),
+                        async req =>
+                        {
+                            _requestsCache.AddOrUpdate(req);
+                            return await DoRetrieveDataSet(req, clientFactory, pipeline);
+                        },
                         () => Option<DataSet>.None
                     )
                     .Match(
@@ -307,12 +316,6 @@ public partial class DataViewModel : BaseViewModel
             }
         );
         return cmd;
-    }
-
-    public async Task Add(SeriesRequest request)
-    {
-        //TODO
-        //var dataSet = await DoRetrieveDataSet(request,Clientf);
     }
 
     public ReactiveCommand<Option<(DateTime, Scatter)>, bool> HighlightGrid { get; }
@@ -540,63 +543,24 @@ public partial class DataViewModel : BaseViewModel
     /// <param name="clientFactory">An instance of <see cref="ClientFactory"/> used to create a client for fetching data.</param>
     /// <param name="pipeline">An instance of <see cref="ResiliencePipeline"/> providing resilience strategies for the data retrieval operation.</param>
     /// <returns>A ReactiveCommand that retrieves data from a source asynchronously returning an optional DataSet.</returns>
-    private ReactiveCommand<
-        (SdmxWebSource, DataFlow, string),
-        Option<DataSet>
-    > CreateCommandRetrieveData(ClientFactory clientFactory, ResiliencePipeline pipeline)
+    private ReactiveCommand<SeriesRequest, Option<DataSet>> CreateCommandRetrieveData(
+        ClientFactory clientFactory,
+        ResiliencePipeline pipeline
+    )
     {
-        var cmd = ReactiveCommand.CreateFromTask<
-            (SdmxWebSource, DataFlow, string),
-            Option<DataSet>
-        >(async t =>
-        {
-            var (source, flow, key) = t;
-
-            var dataSet = await clientFactory
-                .GetClient()
-                .GetDataAsync(
-                    new()
-                    {
-                        Source = source.Id,
-                        Flow = flow.Ref,
-                        Key = key,
-                    }
-                );
-
-            return dataSet.ToModel();
-        });
+        var cmd = ReactiveCommand.CreateFromTask<SeriesRequest, Option<DataSet>>(sr =>
+            DoRetrieveDataSet(sr, clientFactory, pipeline)
+        );
 
         _dataSetHelper = cmd.ToProperty(this, x => x.DataSet, scheduler: RxApp.MainThreadScheduler);
 
-        this.WhenAnyValue(x => x.Source)
-            .CombineLatest(this.WhenAnyValue(x => x.Flow), this.WhenAnyValue(x => x.Key))
-            .Select(t =>
-            {
-                var (source, flow, key) = t;
-                var tuple = from s in source from f in flow from k in key select (s, f, k);
-
-                return tuple.Match(
-                    Observable.Return,
-                    Observable.Empty<(SdmxWebSource, DataFlow, string)>
-                );
-            })
-            .Switch()
+        this.WhenAnyValue(x => x.SeriesRequest)
+            .Where(x => x != SeriesRequest.Empty)
+            .Do(sr => _requestsCache.AddOrUpdate(sr))
             .InvokeCommand(cmd);
 
         return cmd;
     }
-
-    private static Option<string> BuildUri(
-        Option<SdmxWebSource> source,
-        Option<DataFlow> flow,
-        Option<string> key
-    ) => from s in source from f in flow from k in key select $"sdmx-dl:/{s.Id}/{f.Ref}/{k}";
-
-    private static Option<string> BuildTitle(
-        Option<SdmxWebSource> source,
-        Option<DataFlow> flow,
-        Option<string> key
-    ) => from s in source from f in flow from k in key select BuildTitle(s, f, k);
 
     private bool DoHighlightGrid(Option<(DateTime, Scatter)> highlightOpt)
     {
@@ -643,7 +607,7 @@ public partial class DataViewModel : BaseViewModel
             var vOffset = highlightOpt.Match(
                 o =>
                 {
-                    var (period, scatter) = o;
+                    var (_, scatter) = o;
 
                     if (
                         !LinkedHierarchyGridViewModel.DrawnCells.Exists(pc =>
@@ -687,13 +651,20 @@ public partial class DataViewModel : BaseViewModel
         return false;
     }
 
-    private async Task<Option<DataSet>> DoRetrieveDataSet(
+    private static async Task<Option<DataSet>> DoRetrieveDataSet(
         SeriesRequest seriesRequest,
         ClientFactory clientFactory,
         ResiliencePipeline pipeline
     )
     {
-        var dataSet = await clientFactory.GetClient().GetDataAsync((KeyRequest)seriesRequest);
+        var dataSet = await pipeline.ExecuteAsync(
+            async token =>
+                await clientFactory
+                    .GetClient()
+                    .GetDataAsync((KeyRequest)seriesRequest, cancellationToken: token),
+            CancellationToken.None
+        );
+
         return dataSet.ToModel();
     }
 }

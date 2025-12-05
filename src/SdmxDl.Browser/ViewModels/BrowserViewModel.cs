@@ -140,7 +140,6 @@ public partial class BrowserViewModel : BaseViewModel
             {
                 foreach (var req in requests)
                 {
-                    //DataViewModel.BuildTitle(req);
                     var dvm = CreateDataViewModel(req);
                     _dataViewsCache.AddOrUpdate(dvm);
                     SelectedView = dvm;
@@ -287,6 +286,8 @@ public partial class BrowserViewModel : BaseViewModel
                 SelectedView = dvm;
             })
         );
+
+        dimensionsSelectorViewModel.TriggerQuery.InvokeCommand(cmd);
 
         return cmd;
     }

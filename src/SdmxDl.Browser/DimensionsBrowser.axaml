@@ -1,45 +1,51 @@
 <UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:viewModels="clr-namespace:SdmxDl.Browser.ViewModels"
-             xmlns:browser="clr-namespace:SdmxDl.Browser"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="SdmxDl.Browser.DimensionsBrowser"
-             x:DataType="viewModels:DimensionsSelectorViewModel">
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:viewModels="clr-namespace:SdmxDl.Browser.ViewModels"
+			 xmlns:browser="clr-namespace:SdmxDl.Browser"
+			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+			 x:Class="SdmxDl.Browser.DimensionsBrowser"
+			 x:DataType="viewModels:DimensionsSelectorViewModel">
 
-    <Grid IsEnabled="{Binding DataStructure.IsSome}"
-          RowDefinitions="*,Auto">
-        <TabControl>
-            <TabItem Header="Hierarchy">
-                <TreeView ItemsSource="{Binding HierarchicalDimensions}"
-                          SelectionMode="Single"
-                          SelectedItem="{Binding SelectedDimension}">
-                    <TreeView.Styles>
-                        <Style Selector="TreeViewItem">
-                            <Setter Property="IsExpanded" Value="{Binding (viewModels:HierarchicalDimensionViewModel).IsExpanded}"></Setter>
-                        </Style>
-                    </TreeView.Styles>
-                    <TreeView.ItemTemplate>
-                        <TreeDataTemplate ItemsSource="{Binding Children}">
-                            <TextBlock Text="{Binding Description}"
-                                       TextTrimming="CharacterEllipsis"></TextBlock>
-                        </TreeDataTemplate> 
-                    </TreeView.ItemTemplate>
-                </TreeView>
-            </TabItem>
-            <TabItem Header="Options">
-                <ScrollViewer>
-                    <ItemsControl ItemsSource="{Binding PositionedDimensions}">
-                        <ItemsControl.DataTemplates>
-                            <DataTemplate DataType="viewModels:PositionedDimensionViewModel">
-                                <browser:PositionedDimensionView ViewModel="{Binding .}"
-                                                                 Margin="2" />
-                            </DataTemplate>
-                        </ItemsControl.DataTemplates>
-                    </ItemsControl>
-                </ScrollViewer>
-            </TabItem>
-        </TabControl>
-    </Grid>
+	<Grid IsEnabled="{Binding DataStructure.IsSome}"
+		  RowDefinitions="*,Auto">
+		<TabControl>
+			<TabItem Header="Hierarchy">
+				<TreeView ItemsSource="{Binding HierarchicalDimensions}"
+						  SelectionMode="Single"
+						  SelectedItem="{Binding SelectedDimension}">
+					<TreeView.Styles>
+						<Style Selector="TreeViewItem">
+							<Setter Property="IsExpanded" Value="{Binding (viewModels:HierarchicalDimensionViewModel).IsExpanded}"></Setter>
+						</Style>
+					</TreeView.Styles>
+					<TreeView.ItemTemplate>
+						<TreeDataTemplate ItemsSource="{Binding Children}">
+							<TextBlock Text="{Binding Description}"
+									   TextTrimming="CharacterEllipsis"></TextBlock>
+						</TreeDataTemplate>
+					</TreeView.ItemTemplate>
+					<TreeView.ContextMenu>
+						<ContextMenu>
+							<MenuItem Header="Retrieve series"
+									  Command="{Binding TriggerQuery}"/>
+						</ContextMenu>
+					</TreeView.ContextMenu>
+				</TreeView>
+			</TabItem>
+			<TabItem Header="Options">
+				<ScrollViewer>
+					<ItemsControl ItemsSource="{Binding PositionedDimensions}">
+						<ItemsControl.DataTemplates>
+							<DataTemplate DataType="viewModels:PositionedDimensionViewModel">
+								<browser:PositionedDimensionView ViewModel="{Binding .}"
+																 Margin="2" />
+							</DataTemplate>
+						</ItemsControl.DataTemplates>
+					</ItemsControl>
+				</ScrollViewer>
+			</TabItem>
+		</TabControl>
+	</Grid>
 </UserControl>

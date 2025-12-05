@@ -52,6 +52,11 @@ public partial class DimensionsSelectorViewModel : BaseViewModel
         HashSet<string>
     > FetchAvailableValues { get; }
 
+    /// <summary>
+    /// Command to be used in context menu to inform the browser that a query should be launched
+    /// </summary>
+    public RxCommand TriggerQuery { get; }
+
     public DimensionsSelectorViewModel(
         SourceSelectorViewModel sourceSelectorViewModel,
         DataFlowSelectorViewModel dataFlowSelectorViewModel,
@@ -71,6 +76,13 @@ public partial class DimensionsSelectorViewModel : BaseViewModel
             dataFlowSelectorViewModel,
             clientFactory,
             Clear
+        );
+
+        TriggerQuery = ReactiveCommand.Create(
+            () => RxUnit.Default,
+            this.WhenAnyValue(x => x.SelectedDimension)
+                .Select(d => d is not null)
+                .ObserveOn(RxApp.MainThreadScheduler)
         );
 
         this.WhenActivated(disposables =>

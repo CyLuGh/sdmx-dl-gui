@@ -24,7 +24,6 @@
         <TextBox x:Name="TextBoxQuery" Text="{Binding Query}"
                  suki:TextBoxExtensions.AddDeleteButton="True"/>
         
-        
         <StackPanel HorizontalAlignment="Right" Orientation="Horizontal"
                     Spacing="5"
                     Margin="0 15 0 0">

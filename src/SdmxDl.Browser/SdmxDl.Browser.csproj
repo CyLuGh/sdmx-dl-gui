@@ -1,58 +1,62 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <OutputType>WinExe</OutputType>
-        <TargetFramework>net9.0</TargetFramework>
-        <Nullable>enable</Nullable>
-        <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
-        <ApplicationManifest>app.manifest</ApplicationManifest>
-        <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
-        <LangVersion>preview</LangVersion>
-    </PropertyGroup>
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <LangVersion>preview</LangVersion>
+    <SatelliteResourceLanguages>en-US;en</SatelliteResourceLanguages>
+    <Authors>Demortier Jeremy</Authors>
+    <AssemblyVersion>0.3.0</AssemblyVersion>
+    <ApplicationIcon>Assets\SDMX_logo_squared.ico</ApplicationIcon>
+  </PropertyGroup>
 
-    <ItemGroup>
-        <PackageReference Include="Avalonia" Version="11.3.9" />
-        <PackageReference Include="Avalonia.Desktop" Version="11.3.9" />
-        <PackageReference Include="Avalonia.Svg.Skia" Version="11.3.0" />
-        <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.9" />
-        <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.9" />
-        <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-        <PackageReference Include="Avalonia.Diagnostics" Version="11.3.9">
-            <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
-            <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
-        </PackageReference>
-        <PackageReference Include="Avalonia.Xaml.Behaviors" Version="11.3.0.6" />
-        <PackageReference Include="HierarchyGrid.Avalonia" Version="3.5.2" />
-        <PackageReference Include="Jot" Version="2.1.17" />
-        <PackageReference Include="LanguageExt.Core" Version="4.4.9" />
-        <PackageReference Include="LiveChartsCore.SkiaSharpView.Avalonia" Version="2.0.0-rc5.4" />
-        <PackageReference Include="Material.Icons.Avalonia" Version="2.4.1" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.10" />
-        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.10" />
-        <PackageReference Include="Polly" Version="8.6.5" />
-        <PackageReference Include="ReactiveUI" Version="22.3.1" />
-        <PackageReference Include="ReactiveUI.Avalonia" Version="11.3.8" />
-        <PackageReference Include="ReactiveUI.SourceGenerators" Version="2.5.1">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="ScottPlot.Avalonia" Version="5.1.57" />
-        <PackageReference Include="Splat.DependencyInjection.SourceGenerator" Version="1.2.3">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="SukiUI" Version="6.0.3" />
-        <PackageReference Include="Velopack" Version="0.0.1298" />
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="11.3.9" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.3.9" />
+    <PackageReference Include="Avalonia.Svg.Skia" Version="11.3.0" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.9" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.9" />
+    <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
+    <PackageReference Include="Avalonia.Diagnostics" Version="11.3.9">
+      <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
+      <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Avalonia.Xaml.Behaviors" Version="11.3.0.6" />
+    <PackageReference Include="HierarchyGrid.Avalonia" Version="3.5.2" />
+    <PackageReference Include="Jot" Version="2.1.17" />
+    <PackageReference Include="LanguageExt.Core" Version="4.4.9" />
+    <PackageReference Include="LiveChartsCore.SkiaSharpView.Avalonia" Version="2.0.0-rc5.4" />
+    <PackageReference Include="Material.Icons.Avalonia" Version="2.4.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.10" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.10" />
+    <PackageReference Include="Polly" Version="8.6.5" />
+    <PackageReference Include="ReactiveUI" Version="22.3.1" />
+    <PackageReference Include="ReactiveUI.Avalonia" Version="11.3.8" />
+    <PackageReference Include="ReactiveUI.SourceGenerators" Version="2.5.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="ScottPlot.Avalonia" Version="5.1.57" />
+    <PackageReference Include="Splat.DependencyInjection.SourceGenerator" Version="1.2.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="SukiUI" Version="6.0.3" />
+    <PackageReference Include="Velopack" Version="0.0.1298" />
+  </ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\SdmxDl.Client\SdmxDl.Client.csproj" />
-    </ItemGroup>
-    
-    <ItemGroup>
-        <Content Include="appsettings.json" />
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SdmxDl.Client\SdmxDl.Client.csproj" />
+  </ItemGroup>
 
-    <ItemGroup>
-      <AvaloniaResource Include="assets\*" />
-    </ItemGroup>
+  <ItemGroup>
+    <Content Include="appsettings.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AvaloniaResource Include="assets\*" />
+  </ItemGroup>
 </Project>

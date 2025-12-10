@@ -108,5 +108,22 @@
 					   Margin="5 0"
 					   IsVisible="{Binding Path=ServerIsRunning}" />
 		</StackPanel>
+
+		<Border Background="{DynamicResource SukiCardBackground}"
+				BoxShadow="{DynamicResource SukiPopupShadow}"
+				VerticalAlignment="Center"
+				HorizontalAlignment="Center"
+				IsVisible="{Binding IsUpdating}"
+				Grid.RowSpan="2">
+			<StackPanel Spacing="20"
+						VerticalAlignment="Center"
+						HorizontalAlignment="Center"
+						Margin="70 50">
+				<suki:CircleProgressBar IsIndeterminate="True"/>
+				<TextBlock Text="Looking for update"
+						   HorizontalAlignment="Center"
+						   Classes="h4"/>
+			</StackPanel>
+		</Border>
 	</Grid>
 </UserControl>

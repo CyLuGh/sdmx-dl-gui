@@ -92,6 +92,9 @@ public partial class BrowserViewModel : BaseViewModel
     private RxCommand UpdateApplication { get; }
     internal RxInteraction UpdateApplicationInteraction { get; } = new(RxApp.MainThreadScheduler);
 
+    [ObservableAsProperty]
+    private bool _isUpdating;
+
     public BrowserViewModel(
         IConfiguration configuration,
         ClientFactory clientFactory,
@@ -106,6 +109,11 @@ public partial class BrowserViewModel : BaseViewModel
         UpdateApplicationInteraction.RegisterHandler(ctx => ctx.SetOutput(RxUnit.Default));
         UpdateApplication = ReactiveCommand.CreateFromObservable(
             () => UpdateApplicationInteraction.Handle(RxUnit.Default)
+        );
+        _isUpdatingHelper = UpdateApplication.IsExecuting.ToProperty(
+            this,
+            x => x.IsUpdating,
+            scheduler: RxApp.MainThreadScheduler
         );
 
         ConfigureServer = CreateCommandConfigureServer();
